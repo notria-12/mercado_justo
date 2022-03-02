@@ -164,39 +164,109 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                             products.length,
                             (index) => DataRow(cells: [
                                   DataCell(
-                                    Container(
-                                      // color: Colors.blueAccent,
-                                      // height: 100,
-                                      width: 180,
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Expanded(
-                                              child: Container(
-                                            // color: Colors.amberAccent,
-                                            height: 90,
-                                            // width: 90,
-                                            child: Image.asset(
-                                                products[index].imagePath),
-                                          )),
-                                          Expanded(
+                                      Container(
+                                        width: 180,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Expanded(
+                                                child: Container(
+                                              height: 90,
+                                              child: Image.asset(
+                                                  products[index].imagePath),
+                                            )),
+                                            Expanded(
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    products[index].name,
+                                                    // overflow:
+                                                    // TextOverflow.ellipsis,
+                                                  ),
+                                                ],
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ), onTap: () {
+                                    showModalBottomSheet(
+                                        context: context,
+                                        builder: (context) {
+                                          return Container(
+                                            padding: EdgeInsets.all(8),
                                             child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
                                               children: [
+                                                Align(
+                                                  child: IconButton(
+                                                      padding: EdgeInsets.zero,
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      },
+                                                      icon: Icon(Icons.close)),
+                                                  alignment: Alignment.topRight,
+                                                ),
+                                                Container(
+                                                  height: 200,
+                                                  child: Image.asset(
+                                                      products[index]
+                                                          .imagePath),
+                                                ),
+                                                TextButton(
+                                                    style: TextButton.styleFrom(
+                                                        tapTargetSize:
+                                                            MaterialTapTargetSize
+                                                                .shrinkWrap,
+                                                        minimumSize: Size.zero,
+                                                        padding:
+                                                            EdgeInsets.zero),
+                                                    onPressed: () {},
+                                                    child: Text(
+                                                      'Achou algum erro? clique aqui.',
+                                                      style: TextStyle(
+                                                          color: Colors.red),
+                                                    )),
+                                                SizedBox(
+                                                  height: 8,
+                                                ),
                                                 Text(
                                                   products[index].name,
-                                                  // overflow:
-                                                  // TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.bold),
                                                 ),
+                                                SizedBox(
+                                                  height: 8,
+                                                ),
+                                                Text(
+                                                    "Ref: ${products[index].ref}"),
+                                                SizedBox(
+                                                  height: 8,
+                                                ),
+                                                Text(
+                                                  'Valor médio: R\$ 7,85',
+                                                  style: TextStyle(
+                                                      color: Colors.blue,
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w600),
+                                                )
                                               ],
                                             ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
+                                            decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.only(
+                                                    topLeft:
+                                                        Radius.circular(15),
+                                                    topRight:
+                                                        Radius.circular(15))),
+                                            // height: 600,
+                                          );
+                                        });
+                                  }),
                                   ...List.generate(
                                       markets.length,
                                       (index) => DataCell(Container(
