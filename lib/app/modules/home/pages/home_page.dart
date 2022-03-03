@@ -142,22 +142,29 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                                   style: TextStyle(color: Colors.lightBlue),
                                 )),
                                 decoration: BoxDecoration(
-                                    color: Color.fromRGBO(190, 235, 199, 1),
+                                    color:
+                                        const Color.fromRGBO(190, 235, 199, 1),
                                     borderRadius: BorderRadius.circular(5)),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 40,
                               ),
-                              Icon(Icons.share_outlined)
+                              const Icon(Icons.share_outlined)
                             ],
                           )),
                           ...List.generate(
                               markets.length,
                               (index) => DataColumn(
-                                      label: Container(
-                                    width: 100,
-                                    child:
-                                        Image.asset(markets[index].imagePath),
+                                      label: InkWell(
+                                    onTap: () {
+                                      Modular.to.pushNamed('/marketDetail/',
+                                          arguments: markets[index]);
+                                    },
+                                    child: Container(
+                                      width: 100,
+                                      child:
+                                          Image.asset(markets[index].imagePath),
+                                    ),
                                   )))
                         ],
                         rows: List.generate(
