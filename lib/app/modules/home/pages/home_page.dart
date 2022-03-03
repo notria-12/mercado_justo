@@ -106,7 +106,9 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                         height: 45,
                         child: ElevatedButton(
                           child: Text('Entrar / Cadastrar'),
-                          onPressed: () {},
+                          onPressed: () {
+                            Modular.to.pushNamed('/login/');
+                          },
                         ),
                       )
                     ],
