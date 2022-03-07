@@ -42,9 +42,7 @@ class CustomDataTableState<T> extends State<CustomDataTable<T>> {
               width: width,
               child: data as Widget,
             )
-          : SizedBox(
-              width: width,
-              child: widget.cellBuilder?.call(data) ?? Text('$data'));
+          : SizedBox(width: width, child: widget.cellBuilder.call(data));
 
   Widget _buildFixedCol() => widget.fixedColCells == null
       ? SizedBox.shrink()

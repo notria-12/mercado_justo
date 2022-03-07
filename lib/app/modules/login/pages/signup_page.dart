@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+import 'package:mercado_justo/shared/widgets/custom_text_input_widget.dart';
 
 class SignUpPage extends StatefulWidget {
   final String title;
@@ -19,8 +21,7 @@ class SignUpPageState extends State<SignUpPage> {
         ),
       ),
       body: Container(
-        padding: EdgeInsets.all(16),
-        // color: Colors.amber,
+        padding: const EdgeInsets.all(16),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -28,106 +29,51 @@ class SignUpPageState extends State<SignUpPage> {
               Container(
                 height: 120,
                 width: 120,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                     image: DecorationImage(
                         image: AssetImage('assets/img/logo.png'),
                         fit: BoxFit.cover)),
               ),
-              // Image.asset('assets/img/logo.png'),
-              SizedBox(
+              const SizedBox(
                 height: 8,
               ),
-              Text(
+              const Text(
                 'CADASTRO',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 30,
               ),
               Form(
                   child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Seu Nome',
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Container(
-                    height: 45,
-                    // padding: EdgeInsets.all(4),
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                          hintText: 'Seu nome completo',
-                          border: InputBorder.none,
-                          prefixIcon: Icon(Icons.person)),
-                    ),
-                    decoration:
-                        BoxDecoration(border: Border.all(color: Colors.grey)),
-                  ),
-                  SizedBox(
+                  CustomTextInput(
+                      label: 'Seu Nome',
+                      hintText: 'Seu nome completo',
+                      icon: const Icon(Icons.person)),
+                  const SizedBox(
                     height: 20,
                   ),
-                  Text(
-                    'Celular',
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Container(
-                    height: 45,
-                    // padding: EdgeInsets.all(4),
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                          hintText: 'DDD + número',
-                          border: InputBorder.none,
-                          prefixIcon: Icon(Icons.phone)),
-                    ),
-                    decoration:
-                        BoxDecoration(border: Border.all(color: Colors.grey)),
-                  ),
-                  SizedBox(
+                  CustomTextInput(
+                      label: 'Celular',
+                      hintText: 'DDD + número',
+                      icon: const Icon(Icons.phone)),
+                  const SizedBox(
                     height: 20,
                   ),
-                  Text(
-                    'Seu E-mail',
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Container(
-                    height: 45,
-                    // padding: EdgeInsets.all(4),
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                          hintText: 'Seu e-mail',
-                          border: InputBorder.none,
-                          prefixIcon: Icon(Icons.email)),
-                    ),
-                    decoration:
-                        BoxDecoration(border: Border.all(color: Colors.grey)),
-                  ),
-                  SizedBox(
+                  CustomTextInput(
+                      label: 'Seu E-mail',
+                      hintText: 'Seu e-mail',
+                      icon: const Icon(Icons.email)),
+                  const SizedBox(
                     height: 20,
                   ),
                   Container(
                     height: 50,
                     width: double.maxFinite,
                     child: ElevatedButton(
-                      child: Text(
+                      child: const Text(
                         'Cadastrar',
                         style: TextStyle(fontSize: 16),
                       ),
@@ -136,7 +82,7 @@ class SignUpPageState extends State<SignUpPage> {
                   ),
                 ],
               )),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               TextButton(
@@ -145,10 +91,13 @@ class SignUpPageState extends State<SignUpPage> {
                     minimumSize: Size.zero,
                     padding: EdgeInsets.zero,
                   ),
-                  onPressed: () {},
-                  child: Text(
+                  onPressed: () {
+                    Modular.to.pushReplacementNamed('/login/');
+                  },
+                  child: const Text(
                     'Já tenho conta',
                     style: TextStyle(
+                        decoration: TextDecoration.underline,
                         color: Colors.grey,
                         fontSize: 16,
                         textBaseline: TextBaseline.alphabetic),

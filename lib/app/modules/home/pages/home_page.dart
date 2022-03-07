@@ -29,43 +29,8 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
     [5, "Em falta", 5],
     [9, 4, 1],
     ["Em falta", 8, 10],
-    // [10, 10, 9, 6, 6],
-    // [5, 4, 5, 7, 5],
-    // [9, 4, 1, 7, 8],
-    // [7, 8, 10, 8, 7],
-    // [10, 10, 9, 6, 6],
-    // [5, 4, 5, 7, 5],
-    // [9, 4, 1, 7, 8],
-    // [7, 8, 10, 8, 7],
-    // [10, 10, 9, 6, 6],
-    // [5, 4, 5, 7, 5],
-    // [9, 4, 1, 7, 8]
   ];
-  final _fixedColCells = [
-    "Pablo",
-    "Gustavo",
-    "John",
-    "Jack",
-    "Pablo",
-    "Gustavo",
-    "John",
-    "Jack",
-    "Pablo",
-    "Gustavo",
-    "John",
-    "Jack",
-    "Pablo",
-    "Gustavo",
-    "John",
-    "Jack",
-  ];
-  final _fixedRowCells = [
-    "Math",
-    "Informatics",
-    "Geography",
-    "Physics",
-    "Biology"
-  ];
+
   List<Product> products = [
     Product(
         imagePath: 'assets/img/products/absvt_intimus.jpg',

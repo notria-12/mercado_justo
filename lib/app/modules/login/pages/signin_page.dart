@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+import 'package:mercado_justo/shared/widgets/custom_text_input_widget.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({Key? key}) : super(key: key);
@@ -13,13 +15,90 @@ class _SignInPageState extends State<SignInPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Bem vindo!'),
+        backgroundColor: Colors.green,
         centerTitle: true,
       ),
       body: Container(
         padding: EdgeInsets.all(16),
         child: SingleChildScrollView(
             child: Column(
-          children: [],
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              height: 110,
+              width: 110,
+              decoration: const BoxDecoration(
+                  image: DecorationImage(
+                      image: AssetImage('assets/img/logo.png'),
+                      fit: BoxFit.cover)),
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            const Text(
+              'ACESSAR SUA CONTA',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+            ),
+            const SizedBox(
+              height: 30,
+            ),
+            CustomTextInput(
+                label: 'Seu celular com DD',
+                hintText: 'DDD + número',
+                icon: const Icon(Icons.phone)),
+            const SizedBox(
+              height: 20,
+            ),
+            Container(
+              height: 50,
+              width: double.maxFinite,
+              child: ElevatedButton(
+                child: const Text(
+                  'Enviar código',
+                  style: TextStyle(fontSize: 16),
+                ),
+                onPressed: () {},
+              ),
+            ),
+            const SizedBox(
+              height: 30,
+            ),
+            TextButton(
+                style: TextButton.styleFrom(
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  minimumSize: Size.zero,
+                  padding: EdgeInsets.zero,
+                ),
+                onPressed: () {},
+                child: const Text(
+                  'Não estou com acesso ao meu celular',
+                  style: TextStyle(
+                      decoration: TextDecoration.underline,
+                      color: Colors.grey,
+                      fontSize: 16,
+                      textBaseline: TextBaseline.alphabetic),
+                )),
+            const SizedBox(
+              height: 20,
+            ),
+            TextButton(
+                style: TextButton.styleFrom(
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  minimumSize: Size.zero,
+                  padding: EdgeInsets.zero,
+                ),
+                onPressed: () {
+                  Modular.to.pushNamed('/login/signup/');
+                },
+                child: const Text(
+                  'Criar uma conta',
+                  style: TextStyle(
+                      decoration: TextDecoration.underline,
+                      color: Colors.grey,
+                      fontSize: 16,
+                      textBaseline: TextBaseline.alphabetic),
+                )),
+          ],
         )),
       ),
     );
