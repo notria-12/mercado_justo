@@ -49,8 +49,10 @@ class CustomDataTableState<T> extends State<CustomDataTable<T>> {
   Widget _buildFixedCol() => widget.fixedColCells == null
       ? SizedBox.shrink()
       : Material(
-          // color: Colors.lightBlueAccent,
+          color: Colors.white,
           child: DataTable(
+              // border:
+              //     TableBorder(right: BorderSide(color: Colors.grey, width: 1)),
               horizontalMargin: widget.cellMargin,
               columnSpacing: widget.cellSpacing,
               headingRowHeight: widget.cellHeight,
@@ -74,6 +76,8 @@ class CustomDataTableState<T> extends State<CustomDataTable<T>> {
       : Material(
           color: Colors.white,
           child: DataTable(
+              border: TableBorder(
+                  verticalInside: BorderSide(color: Colors.grey, width: 0.5)),
               horizontalMargin: widget.cellMargin,
               columnSpacing: widget.cellSpacing,
               headingRowHeight: widget.headingHeight,
@@ -87,12 +91,14 @@ class CustomDataTableState<T> extends State<CustomDataTable<T>> {
         );
 
   Widget _buildSubTable() => Material(
-      // color: Colors.lightGreenAccent,
+      color: Colors.white,
       child: DataTable(
           horizontalMargin: widget.cellMargin,
           columnSpacing: widget.cellSpacing,
           headingRowHeight: widget.cellHeight,
           dataRowHeight: widget.cellHeight,
+          border: TableBorder(
+              verticalInside: BorderSide(color: Colors.grey, width: 0.5)),
           columns: widget.rowsCells.first
               .map((c) => DataColumn(label: _buildChild(widget.cellWidth, c)))
               .toList(),
@@ -108,8 +114,10 @@ class CustomDataTableState<T> extends State<CustomDataTable<T>> {
       widget.fixedColCells == null || widget.fixedRowCells == null
           ? SizedBox.shrink()
           : Material(
-              // color: Colors.amberAccent,
+              color: Colors.white,
               child: DataTable(
+                  // border: TableBorder(
+                  //     right: BorderSide(color: Colors.grey, width: 1)),
                   horizontalMargin: widget.cellMargin,
                   columnSpacing: widget.cellSpacing,
                   headingRowHeight: widget.headingHeight,

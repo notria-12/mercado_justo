@@ -16,11 +16,19 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends ModularState<HomePage, HomeStore> {
   final _rowsCells = [
-    [7, 8, 10, 8, 7],
-    [10, 10, 9, 6, 6],
-    [5, 4, 5, 7, 5],
-    [9, 4, 1, 7, 8],
-    [7, 8, 10, 8, 7],
+    [
+      7,
+      "Em falta",
+      10,
+    ],
+    [
+      10,
+      10,
+      "Em falta",
+    ],
+    [5, "Em falta", 5],
+    [9, 4, 1],
+    ["Em falta", 8, 10],
     // [10, 10, 9, 6, 6],
     // [5, 4, 5, 7, 5],
     // [9, 4, 1, 7, 8],
@@ -108,11 +116,12 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
           backgroundColor: Colors.green,
         ),
         body: Container(
+          color: Colors.white,
           child: Column(
             children: [
-              Padding(
-                padding: EdgeInsets.all(16),
-                child: Expanded(
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
                   child: Column(
                     children: [
                       Image.asset('assets/img/logo.png'),
@@ -157,8 +166,8 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                       )
                     ],
                   ),
-                  flex: 4,
                 ),
+                flex: 4,
               ),
               Expanded(
                 flex: 6,
@@ -189,29 +198,102 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                   rowsCells: _rowsCells,
                   fixedColCells: List.generate(
                       products.length,
-                      (index) => Container(
-                          width: 180,
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                    child: Container(
-                                  height: 90,
-                                  child: Image.asset(products[index].imagePath),
-                                )),
-                                Expanded(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        products[index].name,
-                                        // overflow: TextOverflow.ellipsis,
-                                        // softWrap: true,
+                      (index) => InkWell(
+                            onTap: () {
+                              showModalBottomSheet(
+                                  context: context,
+                                  builder: (context) {
+                                    return Container(
+                                      padding: EdgeInsets.all(8),
+                                      child: Column(
+                                        children: [
+                                          Align(
+                                            child: IconButton(
+                                                padding: EdgeInsets.zero,
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                icon: Icon(Icons.close)),
+                                            alignment: Alignment.topRight,
+                                          ),
+                                          Container(
+                                            height: 200,
+                                            child: Image.asset(
+                                                products[index].imagePath),
+                                          ),
+                                          TextButton(
+                                              style: TextButton.styleFrom(
+                                                  tapTargetSize:
+                                                      MaterialTapTargetSize
+                                                          .shrinkWrap,
+                                                  minimumSize: Size.zero,
+                                                  padding: EdgeInsets.zero),
+                                              onPressed: () {},
+                                              child: Text(
+                                                'Achou algum erro? clique aqui.',
+                                                style: TextStyle(
+                                                    color: Colors.red),
+                                              )),
+                                          SizedBox(
+                                            height: 8,
+                                          ),
+                                          Text(
+                                            products[index].name,
+                                            style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          SizedBox(
+                                            height: 8,
+                                          ),
+                                          Text("Ref: ${products[index].ref}"),
+                                          SizedBox(
+                                            height: 8,
+                                          ),
+                                          Text(
+                                            'Valor médio: R\$ 7,85',
+                                            style: TextStyle(
+                                                color: Colors.blue,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600),
+                                          )
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                )
-                              ]))),
+                                      decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(15),
+                                              topRight: Radius.circular(15))),
+                                      // height: 600,
+                                    );
+                                  });
+                            },
+                            child: Container(
+                                width: 180,
+                                child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Expanded(
+                                          child: Container(
+                                        height: 90,
+                                        child: Image.asset(
+                                            products[index].imagePath),
+                                      )),
+                                      Expanded(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              products[index].name,
+                                              // overflow: TextOverflow.ellipsis,
+                                              // softWrap: true,
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    ])),
+                          )),
                   fixedRowCells: List.generate(
                       markets.length,
                       (index) => InkWell(
@@ -315,80 +397,80 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                 //                           ],
                 //                         ),
                 //                       ), onTap: () {
-                //                     showModalBottomSheet(
-                //                         context: context,
-                //                         builder: (context) {
-                //                           return Container(
-                //                             padding: EdgeInsets.all(8),
-                //                             child: Column(
-                //                               children: [
-                //                                 Align(
-                //                                   child: IconButton(
-                //                                       padding: EdgeInsets.zero,
-                //                                       onPressed: () {
-                //                                         Navigator.of(context)
-                //                                             .pop();
-                //                                       },
-                //                                       icon: Icon(Icons.close)),
-                //                                   alignment: Alignment.topRight,
-                //                                 ),
-                //                                 Container(
-                //                                   height: 200,
-                //                                   child: Image.asset(
-                //                                       products[index]
-                //                                           .imagePath),
-                //                                 ),
-                //                                 TextButton(
-                //                                     style: TextButton.styleFrom(
-                //                                         tapTargetSize:
-                //                                             MaterialTapTargetSize
-                //                                                 .shrinkWrap,
-                //                                         minimumSize: Size.zero,
-                //                                         padding:
-                //                                             EdgeInsets.zero),
-                //                                     onPressed: () {},
-                //                                     child: Text(
-                //                                       'Achou algum erro? clique aqui.',
-                //                                       style: TextStyle(
-                //                                           color: Colors.red),
-                //                                     )),
-                //                                 SizedBox(
-                //                                   height: 8,
-                //                                 ),
-                //                                 Text(
-                //                                   products[index].name,
-                //                                   style: TextStyle(
-                //                                       fontSize: 20,
-                //                                       fontWeight:
-                //                                           FontWeight.bold),
-                //                                 ),
-                //                                 SizedBox(
-                //                                   height: 8,
-                //                                 ),
-                //                                 Text(
-                //                                     "Ref: ${products[index].ref}"),
-                //                                 SizedBox(
-                //                                   height: 8,
-                //                                 ),
-                //                                 Text(
-                //                                   'Valor médio: R\$ 7,85',
-                //                                   style: TextStyle(
-                //                                       color: Colors.blue,
-                //                                       fontSize: 16,
-                //                                       fontWeight:
-                //                                           FontWeight.w600),
-                //                                 )
-                //                               ],
-                //                             ),
-                //                             decoration: BoxDecoration(
-                //                                 borderRadius: BorderRadius.only(
-                //                                     topLeft:
-                //                                         Radius.circular(15),
-                //                                     topRight:
-                //                                         Radius.circular(15))),
-                //                             // height: 600,
-                //                           );
-                //                         });
+                // showModalBottomSheet(
+                //     context: context,
+                //     builder: (context) {
+                //       return Container(
+                //         padding: EdgeInsets.all(8),
+                //         child: Column(
+                //           children: [
+                //             Align(
+                //               child: IconButton(
+                //                   padding: EdgeInsets.zero,
+                //                   onPressed: () {
+                //                     Navigator.of(context)
+                //                         .pop();
+                //                   },
+                //                   icon: Icon(Icons.close)),
+                //               alignment: Alignment.topRight,
+                //             ),
+                //             Container(
+                //               height: 200,
+                //               child: Image.asset(
+                //                   products[index]
+                //                       .imagePath),
+                //             ),
+                //             TextButton(
+                //                 style: TextButton.styleFrom(
+                //                     tapTargetSize:
+                //                         MaterialTapTargetSize
+                //                             .shrinkWrap,
+                //                     minimumSize: Size.zero,
+                //                     padding:
+                //                         EdgeInsets.zero),
+                //                 onPressed: () {},
+                //                 child: Text(
+                //                   'Achou algum erro? clique aqui.',
+                //                   style: TextStyle(
+                //                       color: Colors.red),
+                //                 )),
+                //             SizedBox(
+                //               height: 8,
+                //             ),
+                //             Text(
+                //               products[index].name,
+                //               style: TextStyle(
+                //                   fontSize: 20,
+                //                   fontWeight:
+                //                       FontWeight.bold),
+                //             ),
+                //             SizedBox(
+                //               height: 8,
+                //             ),
+                //             Text(
+                //                 "Ref: ${products[index].ref}"),
+                //             SizedBox(
+                //               height: 8,
+                //             ),
+                //             Text(
+                //               'Valor médio: R\$ 7,85',
+                //               style: TextStyle(
+                //                   color: Colors.blue,
+                //                   fontSize: 16,
+                //                   fontWeight:
+                //                       FontWeight.w600),
+                //             )
+                //           ],
+                //         ),
+                //         decoration: BoxDecoration(
+                //             borderRadius: BorderRadius.only(
+                //                 topLeft:
+                //                     Radius.circular(15),
+                //                 topRight:
+                //                     Radius.circular(15))),
+                //         // height: 600,
+                //       );
+                //     });
                 //                   }),
                 //                   ...List.generate(
                 //                       markets.length,

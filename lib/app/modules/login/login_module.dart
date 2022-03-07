@@ -1,5 +1,5 @@
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:mercado_justo/app/modules/login/login_page.dart';
+import 'package:mercado_justo/app/modules/login/pages/signup_page.dart';
 
 class LoginModule extends Module {
   @override
@@ -7,6 +7,6 @@ class LoginModule extends Module {
 
   @override
   final List<ModularRoute> routes = [
-    ChildRoute(Modular.initialRoute, child: (_, args) => LoginPage()),
+    ChildRoute(Modular.initialRoute, child: (_, args) => SignUpPage()),
   ];
 }
