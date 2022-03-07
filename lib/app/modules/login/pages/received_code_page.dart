@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/shared/widgets/custom_text_input_widget.dart';
 
-class SignInPage extends StatefulWidget {
-  const SignInPage({Key? key}) : super(key: key);
+class ReceivedCodePage extends StatefulWidget {
+  const ReceivedCodePage({Key? key}) : super(key: key);
 
   @override
-  State<SignInPage> createState() => _SignInPageState();
+  State<ReceivedCodePage> createState() => _ReceivedCodePageState();
 }
 
-class _SignInPageState extends State<SignInPage> {
+class _ReceivedCodePageState extends State<ReceivedCodePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,16 +36,16 @@ class _SignInPageState extends State<SignInPage> {
               height: 8,
             ),
             const Text(
-              'ACESSAR SUA CONTA',
+              'CÓDIGO',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
             ),
             const SizedBox(
               height: 30,
             ),
             CustomTextInput(
-                label: 'Seu celular com DD',
-                hintText: 'DDD + número',
-                icon: const Icon(Icons.phone)),
+                label: 'Código recebido',
+                hintText: 'Informe o código',
+                icon: const Icon(Icons.lock)),
             const SizedBox(
               height: 20,
             ),
@@ -54,12 +54,10 @@ class _SignInPageState extends State<SignInPage> {
               width: double.maxFinite,
               child: ElevatedButton(
                 child: const Text(
-                  'Enviar código',
+                  'Entrar',
                   style: TextStyle(fontSize: 16),
                 ),
-                onPressed: () {
-                  Modular.to.pushNamed('/login/receivedCode/');
-                },
+                onPressed: () {},
               ),
             ),
             const SizedBox(
@@ -71,31 +69,9 @@ class _SignInPageState extends State<SignInPage> {
                   minimumSize: Size.zero,
                   padding: EdgeInsets.zero,
                 ),
-                onPressed: () {
-                  Modular.to.pushNamed('/login/codeEmail/');
-                },
+                onPressed: () {},
                 child: const Text(
                   'Não estou com acesso ao meu celular',
-                  style: TextStyle(
-                      decoration: TextDecoration.underline,
-                      color: Colors.grey,
-                      fontSize: 16,
-                      textBaseline: TextBaseline.alphabetic),
-                )),
-            const SizedBox(
-              height: 20,
-            ),
-            TextButton(
-                style: TextButton.styleFrom(
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  minimumSize: Size.zero,
-                  padding: EdgeInsets.zero,
-                ),
-                onPressed: () {
-                  Modular.to.pushNamed('/login/signup/');
-                },
-                child: const Text(
-                  'Criar uma conta',
                   style: TextStyle(
                       decoration: TextDecoration.underline,
                       color: Colors.grey,
