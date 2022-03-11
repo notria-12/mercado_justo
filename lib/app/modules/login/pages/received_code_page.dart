@@ -57,7 +57,10 @@ class _ReceivedCodePageState extends State<ReceivedCodePage> {
                   'Entrar',
                   style: TextStyle(fontSize: 16),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Modular.to.pushNamedAndRemoveUntil(
+                      '/home_auth/', ModalRoute.withName('/'));
+                },
               ),
             ),
             const SizedBox(

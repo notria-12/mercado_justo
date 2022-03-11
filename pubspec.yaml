@@ -21,6 +21,7 @@ dependencies:
   flutter_modular: ^4.5.0
   mobx: ^2.0.6+1
   flutter_mobx: ^2.0.4
+  material_design_icons_flutter: ^5.0.6595
 
 dev_dependencies:
   flutter_test:
