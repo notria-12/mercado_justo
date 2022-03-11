@@ -19,12 +19,12 @@ class CustomDataTable<T> extends StatefulWidget {
       required this.fixedRowCells,
       required this.rowsCells,
       required this.cellBuilder,
-      this.fixedColWidth = 180,
+      this.fixedColWidth = 90,
       this.cellHeight = 56.0,
-      this.cellWidth = 120.0,
+      this.cellWidth = 100.0,
       this.cellMargin = 10.0,
       this.cellSpacing = 10.0,
-      this.headingHeight = 80});
+      this.headingHeight = 60});
 
   @override
   State<StatefulWidget> createState() => CustomDataTableState();
@@ -53,7 +53,7 @@ class CustomDataTableState<T> extends State<CustomDataTable<T>> {
               //     TableBorder(right: BorderSide(color: Colors.grey, width: 1)),
               horizontalMargin: widget.cellMargin,
               columnSpacing: widget.cellSpacing,
-              headingRowHeight: widget.cellHeight,
+              headingRowHeight: widget.headingHeight,
               dataRowHeight: widget.cellHeight,
               columns: [
                 DataColumn(
@@ -75,7 +75,7 @@ class CustomDataTableState<T> extends State<CustomDataTable<T>> {
           color: Colors.white,
           child: DataTable(
               border: TableBorder(
-                  verticalInside: BorderSide(color: Colors.grey, width: 0.5)),
+                  verticalInside: BorderSide(color: Colors.grey, width: 0.3)),
               horizontalMargin: widget.cellMargin,
               columnSpacing: widget.cellSpacing,
               headingRowHeight: widget.headingHeight,
@@ -93,10 +93,10 @@ class CustomDataTableState<T> extends State<CustomDataTable<T>> {
       child: DataTable(
           horizontalMargin: widget.cellMargin,
           columnSpacing: widget.cellSpacing,
-          headingRowHeight: widget.cellHeight,
+          headingRowHeight: widget.headingHeight,
           dataRowHeight: widget.cellHeight,
           border: TableBorder(
-              verticalInside: BorderSide(color: Colors.grey, width: 0.5)),
+              verticalInside: BorderSide(color: Colors.grey, width: 0.3)),
           columns: widget.rowsCells.first
               .map((c) => DataColumn(label: _buildChild(widget.cellWidth, c)))
               .toList(),

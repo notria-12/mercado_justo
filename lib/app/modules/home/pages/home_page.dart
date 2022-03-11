@@ -74,6 +74,9 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
 
   @override
   Widget build(BuildContext context) {
+    for (int i = 0; i < products.length; i++) {
+      _rowsCells[i] = [products[i].name, ..._rowsCells[i]];
+    }
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
@@ -119,10 +122,12 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                       SizedBox(
                         height: 12,
                       ),
-                      SizedBox(
-                        width: 260,
+                      Container(
+                        width: 300,
                         height: 45,
                         child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              primary: Colors.lightBlue),
                           child: Text('Entrar / Cadastrar'),
                           onPressed: () {
                             Modular.to.pushNamed('/login/');
@@ -142,22 +147,33 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                   fixedCornerCell: Row(
                     // mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Container(
-                        height: 40,
-                        width: 40,
-                        child: Center(
-                            child: Text(
-                          '+ A',
-                          style: TextStyle(color: Colors.lightBlue),
-                        )),
-                        decoration: BoxDecoration(
-                            color: const Color.fromRGBO(190, 235, 199, 1),
-                            borderRadius: BorderRadius.circular(5)),
+                      InkWell(
+                        onTap: () {},
+                        child: Container(
+                          height: 35,
+                          width: 35,
+                          child: Center(
+                              child: Text(
+                            '+ A',
+                            style: TextStyle(color: Colors.lightBlue),
+                          )),
+                          decoration: BoxDecoration(
+                              color: const Color.fromRGBO(190, 235, 199, 1),
+                              borderRadius: BorderRadius.circular(5)),
+                        ),
                       ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      const Icon(Icons.share_outlined)
+                      // const SizedBox(
+                      //   width: 5,
+                      // ),
+                      IconButton(
+                        padding: EdgeInsets.zero,
+                        icon: const Icon(
+                          Icons.share_outlined,
+                          color: Colors.grey,
+                          size: 28,
+                        ),
+                        onPressed: () {},
+                      )
                     ],
                   ),
                   rowsCells: _rowsCells,
@@ -197,7 +213,8 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                                               child: Text(
                                                 'Achou algum erro? clique aqui.',
                                                 style: TextStyle(
-                                                    color: Colors.red),
+                                                    color: Colors.red,
+                                                    fontSize: 12),
                                               )),
                                           SizedBox(
                                             height: 8,
@@ -233,44 +250,45 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                                   });
                             },
                             child: Container(
-                                width: 180,
+                                width: 80,
                                 child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
-                                      Expanded(
-                                          child: Container(
+                                      Container(
                                         height: 90,
                                         child: Image.asset(
                                             products[index].imagePath),
-                                      )),
-                                      Expanded(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              products[index].name,
-                                              // overflow: TextOverflow.ellipsis,
-                                              // softWrap: true,
-                                            ),
-                                          ],
-                                        ),
-                                      )
+                                      ),
+                                      // Expanded(
+                                      //   child: Column(
+                                      //     mainAxisAlignment:
+                                      //         MainAxisAlignment.center,
+                                      //     children: [
+                                      //       Text(
+                                      //         products[index].name,
+                                      //         // overflow: TextOverflow.ellipsis,
+                                      //         // softWrap: true,
+                                      //       ),
+                                      //     ],
+                                      //   ),
+                                      // )
                                     ])),
                           )),
-                  fixedRowCells: List.generate(
-                      markets.length,
-                      (index) => InkWell(
-                            onTap: () {
-                              Modular.to.pushNamed('/marketDetail/',
-                                  arguments: markets[index]);
-                            },
-                            child: Container(
-                              width: 100,
-                              child: Image.asset(markets[index].imagePath),
-                            ),
-                          )),
+                  fixedRowCells: [
+                    Container(),
+                    ...List.generate(
+                        markets.length,
+                        (index) => InkWell(
+                              onTap: () {
+                                Modular.to.pushNamed('/marketDetail/',
+                                    arguments: markets[index]);
+                              },
+                              child: Container(
+                                width: 100,
+                                child: Image.asset(markets[index].imagePath),
+                              ),
+                            ))
+                  ],
                   cellBuilder: (data) {
                     return Center(
                       child: Text(
