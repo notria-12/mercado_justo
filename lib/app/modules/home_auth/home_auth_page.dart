@@ -32,7 +32,8 @@ class HomeAuthPageState extends State<HomeAuthPage> {
   List<Product> products = [
     Product(
         imagePath: 'assets/img/products/absvt_intimus.jpg',
-        name: "Absorvente Intimus Tripla Ação",
+        name:
+            "Absorvente Intimus Tripla Proteção Coberturar Estra Suave com Abas 8un",
         ref: "21213"),
     Product(
         imagePath: 'assets/img/products/always_noite.jpg',
@@ -143,7 +144,7 @@ class HomeAuthPageState extends State<HomeAuthPage> {
             Expanded(
               flex: 11,
               child: CustomDataTable(
-                cellHeight: 100,
+                cellHeight: 135,
                 fixedCornerCell: Row(
                   children: [
                     InkWell(
@@ -179,10 +180,14 @@ class HomeAuthPageState extends State<HomeAuthPage> {
                           onTap: () {
                             showModalBottomSheet(
                                 context: context,
+                                isScrollControlled: true,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12)),
                                 builder: (context) {
-                                  return Container(
-                                    padding: EdgeInsets.all(8),
+                                  return SingleChildScrollView(
                                     child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                       children: [
                                         Align(
                                           child: IconButton(
@@ -217,6 +222,7 @@ class HomeAuthPageState extends State<HomeAuthPage> {
                                         ),
                                         Text(
                                           products[index].name,
+                                          textAlign: TextAlign.center,
                                           style: TextStyle(
                                               fontSize: 20,
                                               fontWeight: FontWeight.bold),
@@ -231,30 +237,221 @@ class HomeAuthPageState extends State<HomeAuthPage> {
                                         Text(
                                           'Valor médio: R\$ 7,85',
                                           style: TextStyle(
-                                              color: Colors.blue,
-                                              fontSize: 16,
+                                              // color: Colors.blue,
+                                              fontSize: 20,
                                               fontWeight: FontWeight.w600),
-                                        )
+                                        ),
+                                        SizedBox(
+                                          height: 120,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Container(
+                                              height: 30,
+                                              width: 30,
+                                              decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color: Colors.lightBlue),
+                                              child: Center(
+                                                  child: Icon(
+                                                MdiIcons.minus,
+                                                color: Colors.white,
+                                                size: 18,
+                                              )),
+                                            ),
+                                            SizedBox(
+                                              width: 20,
+                                            ),
+                                            Container(
+                                              width: 120,
+                                              height: 50,
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 50),
+                                              child: Center(
+                                                child: TextFormField(
+                                                  initialValue: '1',
+                                                  decoration: InputDecoration(
+                                                      border: InputBorder.none),
+                                                  keyboardType:
+                                                      TextInputType.number,
+                                                ),
+                                              ),
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                  border: Border.all(
+                                                      color: Colors.grey)),
+                                            ),
+                                            SizedBox(
+                                              width: 20,
+                                            ),
+                                            Container(
+                                              height: 30,
+                                              width: 30,
+                                              decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color: Colors.lightBlue),
+                                              child: Center(
+                                                  child: Icon(
+                                                Icons.add,
+                                                color: Colors.white,
+                                                size: 18,
+                                              )),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: 20,
+                                        ),
+                                        SizedBox(
+                                          height: 50,
+                                          width: 240,
+                                          child: ElevatedButton(
+                                            child: Center(
+                                              child: Text(
+                                                'Selecione ou Adicione uma Lista',
+                                                style: TextStyle(
+                                                    color: Colors.white),
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              showModalBottomSheet(
+                                                  context: context,
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              12)),
+                                                  builder: (context) {
+                                                    return Container(
+                                                      child: Column(children: [
+                                                        SizedBox(
+                                                          height: 10,
+                                                        ),
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          children: [
+                                                            SizedBox(
+                                                              width: 20,
+                                                            ),
+                                                            Text(
+                                                              'Selecione ou Adicione uma lista',
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
+                                                              style: TextStyle(
+                                                                  fontSize: 22,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600),
+                                                            ),
+                                                            IconButton(
+                                                                onPressed: () {
+                                                                  Modular.to
+                                                                      .pop();
+                                                                },
+                                                                icon: Icon(Icons
+                                                                    .close))
+                                                          ],
+                                                        ),
+                                                        SizedBox(
+                                                          height: 30,
+                                                        ),
+                                                        Expanded(
+                                                            flex: 8,
+                                                            child:
+                                                                SingleChildScrollView(
+                                                              child: Column(
+                                                                children: [
+                                                                  CustomButtom(
+                                                                    label:
+                                                                        'Compras do mês',
+                                                                  ),
+                                                                  SizedBox(
+                                                                    height: 20,
+                                                                  ),
+                                                                  CustomButtom(
+                                                                    label:
+                                                                        'Despensa',
+                                                                  ),
+                                                                  SizedBox(
+                                                                    height: 20,
+                                                                  ),
+                                                                  CustomButtom(
+                                                                    label:
+                                                                        'Churrasco de final de semana',
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            )),
+                                                        Expanded(
+                                                          flex: 2,
+                                                          child: Column(
+                                                            children: [
+                                                              CustomButtom(
+                                                                label:
+                                                                    'Criar nova lista',
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        )
+                                                      ]),
+                                                    );
+                                                  });
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                                primary: Colors.lightBlue,
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8))),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 30,
+                                        ),
                                       ],
                                     ),
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(15),
-                                            topRight: Radius.circular(15))),
-                                    // height: 600,
                                   );
                                 });
                           },
                           child: Container(
                               width: 80,
-                              child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
+                              child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Container(
                                       height: 90,
                                       child: Image.asset(
                                           products[index].imagePath),
                                     ),
+                                    SizedBox(
+                                      height: 12,
+                                    ),
+                                    Row(
+                                      children: [
+                                        Container(
+                                          height: 20,
+                                          width: 20,
+                                          decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Colors.lightBlue),
+                                          child: Center(
+                                              child: Icon(
+                                            Icons.add,
+                                            color: Colors.white,
+                                            size: 18,
+                                          )),
+                                        ),
+                                        SizedBox(
+                                          width: 4,
+                                        ),
+                                        Text('Add Lista')
+                                      ],
+                                    )
                                   ])),
                         )),
                 fixedRowCells: [
@@ -300,6 +497,37 @@ class HomeAuthPageState extends State<HomeAuthPage> {
         //fixedColor: Colors.grey,
         // selectedItemColor: Colors.lightGreen,
         unselectedItemColor: Colors.black,
+      ),
+    );
+  }
+}
+
+class CustomButtom extends StatelessWidget {
+  String label;
+
+  CustomButtom({
+    required this.label,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 50,
+      width: 300,
+      child: ElevatedButton(
+        child: Center(
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 22),
+          ),
+        ),
+        onPressed: () {},
+        style: ElevatedButton.styleFrom(
+            primary: Colors.lightBlue,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
       ),
     );
   }
