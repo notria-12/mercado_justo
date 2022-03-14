@@ -53,6 +53,7 @@ class _CodeEmailPageState extends State<CodeEmailPage> {
               height: 50,
               width: double.maxFinite,
               child: ElevatedButton(
+                style: ElevatedButton.styleFrom(primary: Colors.lightBlue),
                 child: const Text(
                   'Enviar código',
                   style: TextStyle(fontSize: 16),
