@@ -93,9 +93,14 @@ class HomeAuthPageState extends State<HomeAuthPage> {
               shape: BoxShape.circle,
               color: Colors.white,
             ),
-            child: Icon(
-              Icons.person_outline,
-              color: Colors.grey,
+            child: InkWell(
+              onTap: () {
+                Modular.to.pushNamed('/profile/');
+              },
+              child: Icon(
+                Icons.person_outline,
+                color: Colors.grey,
+              ),
             ),
           ),
           SizedBox(
@@ -316,92 +321,7 @@ class HomeAuthPageState extends State<HomeAuthPage> {
                                                     color: Colors.white),
                                               ),
                                             ),
-                                            onPressed: () {
-                                              showModalBottomSheet(
-                                                  context: context,
-                                                  shape: RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              12)),
-                                                  builder: (context) {
-                                                    return Container(
-                                                      child: Column(children: [
-                                                        SizedBox(
-                                                          height: 10,
-                                                        ),
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceBetween,
-                                                          children: [
-                                                            SizedBox(
-                                                              width: 20,
-                                                            ),
-                                                            Text(
-                                                              'Selecione ou Adicione uma lista',
-                                                              textAlign:
-                                                                  TextAlign
-                                                                      .center,
-                                                              style: TextStyle(
-                                                                  fontSize: 22,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w600),
-                                                            ),
-                                                            IconButton(
-                                                                onPressed: () {
-                                                                  Modular.to
-                                                                      .pop();
-                                                                },
-                                                                icon: Icon(Icons
-                                                                    .close))
-                                                          ],
-                                                        ),
-                                                        SizedBox(
-                                                          height: 30,
-                                                        ),
-                                                        Expanded(
-                                                            flex: 8,
-                                                            child:
-                                                                SingleChildScrollView(
-                                                              child: Column(
-                                                                children: [
-                                                                  CustomButtom(
-                                                                    label:
-                                                                        'Compras do mês',
-                                                                  ),
-                                                                  SizedBox(
-                                                                    height: 20,
-                                                                  ),
-                                                                  CustomButtom(
-                                                                    label:
-                                                                        'Despensa',
-                                                                  ),
-                                                                  SizedBox(
-                                                                    height: 20,
-                                                                  ),
-                                                                  CustomButtom(
-                                                                    label:
-                                                                        'Churrasco de final de semana',
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            )),
-                                                        Expanded(
-                                                          flex: 2,
-                                                          child: Column(
-                                                            children: [
-                                                              CustomButtom(
-                                                                label:
-                                                                    'Criar nova lista',
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        )
-                                                      ]),
-                                                    );
-                                                  });
-                                            },
+                                            onPressed: selectList,
                                             style: ElevatedButton.styleFrom(
                                                 primary: Colors.lightBlue,
                                                 shape: RoundedRectangleBorder(
@@ -500,13 +420,204 @@ class HomeAuthPageState extends State<HomeAuthPage> {
       ),
     );
   }
+
+  void selectList() {
+    showModalBottomSheet(
+        context: context,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        builder: (context) {
+          return Container(
+            child: Column(children: [
+              SizedBox(
+                height: 10,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(
+                    width: 20,
+                  ),
+                  Text(
+                    'Selecione ou Adicione uma lista',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+                  ),
+                  IconButton(
+                      onPressed: () {
+                        Modular.to.pop();
+                      },
+                      icon: Icon(Icons.close))
+                ],
+              ),
+              SizedBox(
+                height: 30,
+              ),
+              Expanded(
+                  flex: 8,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        CustomButtom(
+                          label: 'Compras do mês',
+                          onPressed: addToList,
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        CustomButtom(
+                          label: 'Despensa',
+                          onPressed: addToList,
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        CustomButtom(
+                          label: 'Churrasco de final de semana',
+                          onPressed: addToList,
+                        ),
+                      ],
+                    ),
+                  )),
+              Expanded(
+                flex: 2,
+                child: Column(
+                  children: [
+                    CustomButtom(
+                      label: 'Criar nova lista',
+                      onPressed: addNewList,
+                    ),
+                  ],
+                ),
+              )
+            ]),
+          );
+        });
+  }
+
+  void addToList() {
+    Modular.to.pop();
+    Modular.to.pop();
+    showModalBottomSheet(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        context: context,
+        builder: (context) {
+          return Container(
+            padding: EdgeInsets.all(16),
+            height: 200,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Text(
+                  'Produto adicionado com sucesso!',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                SizedBox(
+                  height: 50,
+                  width: 300,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Modular.to.pop();
+                    },
+                    child: Center(
+                      child: Text(
+                        'OK',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                        primary: Colors.lightBlue,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8))),
+                  ),
+                )
+              ],
+            ),
+          );
+        });
+  }
+
+  void addNewList() {
+    Modular.to.pop();
+    // Modular.to.pop();
+    showModalBottomSheet(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        context: context,
+        builder: (context) {
+          return Container(
+            padding: EdgeInsets.all(16),
+            height: 250,
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    IconButton(
+                        padding: EdgeInsets.zero,
+                        onPressed: () {
+                          Modular.to.pop();
+                        },
+                        icon: Icon(Icons.close))
+                  ],
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  width: 300,
+                  child: TextFormField(
+                    decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Digite o nome da nova lista',
+                        hintStyle:
+                            TextStyle(color: Colors.black, fontSize: 20)),
+                  ),
+                  decoration: BoxDecoration(
+                      color: Colors.blueGrey[50],
+                      borderRadius: BorderRadius.circular(10)),
+                ),
+                SizedBox(
+                  height: 50,
+                ),
+                SizedBox(
+                  height: 50,
+                  width: 300,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Modular.to.pop();
+                      selectList();
+                    },
+                    child: Center(
+                      child: Text(
+                        'Criar nova lista',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                        primary: Colors.lightBlue,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8))),
+                  ),
+                )
+              ],
+            ),
+          );
+        });
+  }
 }
 
 class CustomButtom extends StatelessWidget {
   String label;
+  VoidCallback onPressed;
 
   CustomButtom({
     required this.label,
+    required this.onPressed,
     Key? key,
   }) : super(key: key);
 
@@ -523,7 +634,7 @@ class CustomButtom extends StatelessWidget {
             style: TextStyle(fontSize: 22),
           ),
         ),
-        onPressed: () {},
+        onPressed: onPressed,
         style: ElevatedButton.styleFrom(
             primary: Colors.lightBlue,
             shape:
