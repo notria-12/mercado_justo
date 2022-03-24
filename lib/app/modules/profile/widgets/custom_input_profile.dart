@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class CustomTextInput extends StatefulWidget {
+class CustomInputProfile extends StatefulWidget {
   String label;
   String? hintText;
   Icon? icon;
-  CustomTextInput({
+  CustomInputProfile({
     Key? key,
     required this.label,
     this.hintText,
@@ -12,10 +12,10 @@ class CustomTextInput extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<CustomTextInput> createState() => _CustomTextInputState();
+  State<CustomInputProfile> createState() => _CustomInputProfileState();
 }
 
-class _CustomTextInputState extends State<CustomTextInput> {
+class _CustomInputProfileState extends State<CustomInputProfile> {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -24,20 +24,23 @@ class _CustomTextInputState extends State<CustomTextInput> {
         Text(
           widget.label,
           style: const TextStyle(
-              fontSize: 16, fontWeight: FontWeight.w600, color: Colors.grey),
+              fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black54),
         ),
         const SizedBox(
           height: 10,
         ),
         Container(
-          height: 45,
+          padding: EdgeInsets.all(8),
+          height: 40,
           child: TextFormField(
             decoration: InputDecoration(
                 hintText: widget.hintText,
                 border: InputBorder.none,
                 prefixIcon: widget.icon),
           ),
-          decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
+          decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              borderRadius: BorderRadius.circular(4)),
         ),
       ],
     );

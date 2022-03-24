@@ -1,5 +1,7 @@
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:mercado_justo/app/modules/profile/profile_page.dart';
+import 'package:mercado_justo/app/modules/profile/pages/edit_profile_page.dart';
+
+import 'package:mercado_justo/app/modules/profile/pages/profile_page.dart';
 
 class ProfileModule extends Module {
   @override
@@ -10,6 +12,10 @@ class ProfileModule extends Module {
     ChildRoute(
       '/',
       child: (context, args) => ProfilePage(),
+    ),
+    ChildRoute(
+      '/edit',
+      child: (context, args) => EditProfilePage(),
     )
   ];
 }
