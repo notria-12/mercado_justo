@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/app/modules/profile/widgets/button_profile_option.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({
@@ -96,7 +97,7 @@ class ProfilePageState extends State<ProfilePage> {
               ),
               ButtonProfileOptions(
                 label: 'Relatar um problema',
-                onTap: () {},
+                onTap: _launchURL,
               ),
               SizedBox(
                 height: 15,
@@ -157,5 +158,11 @@ class ProfilePageState extends State<ProfilePage> {
         ),
       ),
     );
+  }
+
+  void _launchURL() async {
+    String _url =
+        "mailto:conta@mercadojustoapp.com.br?subject=Problema%20Encontrado&body=";
+    if (!await launch(_url)) throw 'Could not launch $_url';
   }
 }
