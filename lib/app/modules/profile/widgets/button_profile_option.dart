@@ -15,7 +15,7 @@ class ButtonProfileOptions extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-            color: Colors.black12,
+            color: Color.fromARGB(255, 240, 241, 241),
             borderRadius: BorderRadius.circular(4),
             border: Border.all(color: Colors.black38)),
         height: 50,

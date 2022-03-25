@@ -29,11 +29,11 @@ class ProfilePageState extends State<ProfilePage> {
                 height: 50,
               ),
               Container(
-                height: 100,
-                width: 100,
+                height: 90,
+                width: 90,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.black12,
+                  color: Color.fromARGB(255, 240, 241, 241),
                 ),
                 child: Center(
                   child: Icon(
@@ -108,18 +108,23 @@ class ProfilePageState extends State<ProfilePage> {
               SizedBox(
                 height: 15,
               ),
-              Container(
-                height: 50,
-                width: 300,
-                decoration: BoxDecoration(
-                    color: Colors.green,
-                    borderRadius: BorderRadius.circular(4)),
-                child: Center(
-                    child: Text('Seja Premium',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16))),
+              InkWell(
+                onTap: () {
+                  Modular.to.pushNamed('/signature/');
+                },
+                child: Container(
+                  height: 50,
+                  width: 300,
+                  decoration: BoxDecoration(
+                      color: Colors.green,
+                      borderRadius: BorderRadius.circular(4)),
+                  child: Center(
+                      child: Text('Seja Premium',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16))),
+                ),
               ),
               SizedBox(
                 height: 15,
