@@ -1,0 +1,27 @@
+{
+    // Use o IntelliSense para saber mais sobre os atributos possíveis.
+    // Focalizar para exibir as descrições dos atributos existentes.
+    // Para obter mais informações, acesse: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "mercado_justo",
+            "request": "launch",
+            "type": "dart",
+            "args": [ "--dart-define", "BASE_URL=https://mercado-justo-api.herokuapp.com/mercado-justo/api/v1/"]
+        },
+        {
+            "name": "mercado_justo (profile mode)",
+            "request": "launch",
+            "type": "dart",
+            "args": [ "--dart-define", "BASE_URL=https://mercado-justo-api.herokuapp.com/mercado-justo/api/v1/"],
+            "flutterMode": "profile"
+        },
+        {
+            "name": "mercado_justo (release mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        }
+    ]
+}
