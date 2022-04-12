@@ -8,8 +8,10 @@ import 'interceptors/log_interceptor.dart';
 class CustomDioBrowser extends DioForBrowser {
   CustomDioBrowser() {
     const baseUrl = String.fromEnvironment("BASE_URL",
-        defaultValue: "https://api2.dev.apagaofogo.eco.br:8001");
+        defaultValue:
+            "https://mercado-justo-api.herokuapp.com/mercado-justo/api/v1/");
     options.baseUrl = baseUrl;
+    options.headers.addAll({"X-App-Origem": "ADMIN_MERCADO_JUSTO"});
     interceptors.addAll([
       AppLogInterceptor(),
       TokenInterceptor(),

@@ -1,3 +1,5 @@
+import 'package:mercado_justo/app/modules/login/login_repository.dart';
+import 'package:mercado_justo/app/modules/login/login_store.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/app/modules/login/pages/code_by_email_page.dart';
 import 'package:mercado_justo/app/modules/login/pages/received_code_page.dart';
@@ -6,7 +8,10 @@ import 'package:mercado_justo/app/modules/login/pages/signup_page.dart';
 
 class LoginModule extends Module {
   @override
-  final List<Bind> binds = [];
+  final List<Bind> binds = [
+    Bind.lazySingleton((i) => LoginStore(i())),
+    Bind.lazySingleton((i) => LoginRepository()),
+  ];
 
   @override
   final List<ModularRoute> routes = [

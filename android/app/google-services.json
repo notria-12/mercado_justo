@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "589939512131",
+    "project_id": "mercado-justo-bc5a8",
+    "storage_bucket": "mercado-justo-bc5a8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:589939512131:android:e53efd5963f00e126d95f6",
+        "android_client_info": {
+          "package_name": "com.example.mercado_justo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "589939512131-r5nr9abln2iqovjgfh4ueiuc6o6a1mli.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD7e5PJDEMCbA4lXt89SHw0Y89Hpqly5zk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "589939512131-r5nr9abln2iqovjgfh4ueiuc6o6a1mli.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

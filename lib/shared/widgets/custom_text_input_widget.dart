@@ -1,15 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class CustomTextInput extends StatefulWidget {
   String label;
   String? hintText;
   Icon? icon;
-  CustomTextInput({
-    Key? key,
-    required this.label,
-    this.hintText,
-    this.icon,
-  }) : super(key: key);
+  List<TextInputFormatter>? inputFotmatters;
+  TextInputType? inputType;
+  final FormFieldValidator<String>? validator;
+  final FormFieldValidator<String>? onSave;
+  CustomTextInput(
+      {Key? key,
+      required this.label,
+      this.hintText,
+      this.icon,
+      this.inputFotmatters,
+      this.validator,
+      this.inputType,
+      this.onSave})
+      : super(key: key);
 
   @override
   State<CustomTextInput> createState() => _CustomTextInputState();
@@ -30,12 +39,16 @@ class _CustomTextInputState extends State<CustomTextInput> {
           height: 10,
         ),
         Container(
-          height: 45,
           child: TextFormField(
+            onSaved: widget.onSave,
+            inputFormatters: widget.inputFotmatters,
+            keyboardType: widget.inputType,
+            validator: widget.validator,
             decoration: InputDecoration(
-                hintText: widget.hintText,
-                border: InputBorder.none,
-                prefixIcon: widget.icon),
+              hintText: widget.hintText,
+              border: InputBorder.none,
+              prefixIcon: widget.icon,
+            ),
           ),
           decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
         ),

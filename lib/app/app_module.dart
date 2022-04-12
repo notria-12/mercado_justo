@@ -4,7 +4,9 @@ import 'package:mercado_justo/app/modules/login/login_module.dart';
 import 'package:mercado_justo/app/modules/profile/profile_module.dart';
 import 'package:mercado_justo/app/modules/signature/signature_module.dart';
 import 'package:mercado_justo/shared/auth/auth_controller.dart';
-import 'package:mercado_justo/shared/services/dio/custom_dio.dart';
+import '../shared/services/dio/custom_dio.dart'
+    if (dart.library.io) '../shared/services/dio/custom_dio_native.dart'
+    if (dart.library.js) '../shared/services/dio/custom_dio_browser.dart';
 
 import 'modules/home/home_module.dart';
 
