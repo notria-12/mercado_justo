@@ -1,9 +1,14 @@
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/app/modules/home_auth/home_auth_page.dart';
+import 'package:mercado_justo/shared/controllers/product_store.dart';
+import 'package:mercado_justo/shared/repositories/product_repository.dart';
 
 class HomeAuthModule extends Module {
   @override
-  final List<Bind> binds = [];
+  final List<Bind> binds = [
+    Bind.singleton((i) => ProductStore(repository: i())),
+    Bind.singleton((i) => ProductRepository(dio: i()))
+  ];
 
   @override
   final List<ModularRoute> routes = [

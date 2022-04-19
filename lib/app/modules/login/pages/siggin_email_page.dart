@@ -80,7 +80,7 @@ class _SignInEmailPageState extends ModularState<SignInEmailPage, LoginStore> {
                   height: 50,
                   width: double.maxFinite,
                   child: store.loginState is AppStateLoading
-                      ? CircularProgressIndicator()
+                      ? Center(child: CircularProgressIndicator())
                       : ElevatedButton(
                           style: ElevatedButton.styleFrom(
                               primary: Colors.lightBlue),

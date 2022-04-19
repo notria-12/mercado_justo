@@ -1,3 +1,4 @@
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/app/modules/login/login_repository.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mobx/mobx.dart';
@@ -33,6 +34,7 @@ abstract class _LoginStoreBase with Store {
       loginState = AppStateLoading();
       await repository.signInWithEmail(cpf!, password!);
       loginState = AppStateSuccess();
+      Modular.to.pushReplacementNamed("/home_auth/");
     } catch (e) {
       loginState = AppStateError();
     }

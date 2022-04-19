@@ -25,6 +25,12 @@ class HomeAuthPageState extends State<HomeAuthPage> {
   int _currentIndex = 0;
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       // drawer: Drawer(),

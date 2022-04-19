@@ -33,24 +33,34 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
 
   List<Product> products = [
     Product(
+        id: "",
+        barCode: [],
         imagePath: 'assets/img/products/absvt_intimus.jpg',
-        name: "Absorvente Intimus Tripla Ação",
+        description: "Absorvente Intimus Tripla Ação",
         ref: "21213"),
     Product(
+        id: "",
+        barCode: [],
         imagePath: 'assets/img/products/always_noite.jpg',
-        name: "Absorvente Always Noturno",
+        description: "Absorvente Always Noturno",
         ref: "12131"),
     Product(
+        id: "",
+        barCode: [],
         imagePath: 'assets/img/products/carga_gillette.jpg',
-        name: "Carga para aparelho de Barbear",
+        description: "Carga para aparelho de Barbear",
         ref: "21213"),
     Product(
+        id: "",
+        barCode: [],
         imagePath: 'assets/img/products/rexona_men.jpg',
-        name: "Desodorante aerosol Rexona Men 48h",
+        description: "Desodorante aerosol Rexona Men 48h",
         ref: "21213"),
     Product(
+        id: "",
+        barCode: [],
         imagePath: 'assets/img/products/seda_ceramidas.jpg',
-        name: "Shampoo Seda Ceramidas",
+        description: "Shampoo Seda Ceramidas",
         ref: "21213")
   ];
 
@@ -75,7 +85,7 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
   @override
   Widget build(BuildContext context) {
     for (int i = 0; i < products.length; i++) {
-      _rowsCells[i] = [products[i].name, ..._rowsCells[i]];
+      _rowsCells[i] = [products[i].description, ..._rowsCells[i]];
     }
     return Scaffold(
         appBar: AppBar(
@@ -200,7 +210,7 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                                           Container(
                                             height: 200,
                                             child: Image.asset(
-                                                products[index].imagePath),
+                                                products[index].imagePath!),
                                           ),
                                           TextButton(
                                               style: TextButton.styleFrom(
@@ -220,7 +230,7 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                                             height: 8,
                                           ),
                                           Text(
-                                            products[index].name,
+                                            products[index].description,
                                             style: TextStyle(
                                                 fontSize: 20,
                                                 fontWeight: FontWeight.bold),
@@ -257,7 +267,7 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                                       Container(
                                         height: 90,
                                         child: Image.asset(
-                                            products[index].imagePath),
+                                            products[index].imagePath!),
                                       ),
                                       // Expanded(
                                       //   child: Column(
