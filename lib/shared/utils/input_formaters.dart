@@ -5,4 +5,9 @@ class InputFormater {
         mask: '(##) #####-####',
         filter: {"#": RegExp(r'[0-9]')},
       );
+
+  static MaskTextInputFormatter get cpfMask => MaskTextInputFormatter(
+        mask: '###.###.###-##',
+        filter: {"#": RegExp(r'[0-9]')},
+      );
 }

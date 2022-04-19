@@ -7,7 +7,10 @@ class TokenInterceptor extends InterceptorsWrapper {
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     if (options.path != "/login/application") {
       final token = Modular.get<AuthController>().token;
-      options.headers.addAll({"Authorization": "Bearer $token"});
+      options.headers.addAll({
+        "Authorization": "Bearer $token",
+        "X-App-Origem": "SWAGGER_MERCADO_JUSTO"
+      });
     }
 
     super.onRequest(options, handler);

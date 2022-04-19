@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:mercado_justo/app/modules/login/login_store.dart';
-import 'package:mercado_justo/shared/validators/input_formaters.dart';
+import 'package:mercado_justo/shared/utils/app_state.dart';
+import 'package:mercado_justo/shared/utils/input_formaters.dart';
+
 import 'package:mercado_justo/shared/widgets/custom_text_input_widget.dart';
 
 class SignInPage extends StatefulWidget {
@@ -67,20 +71,49 @@ class _SignInPageState extends ModularState<SignInPage, LoginStore> {
               Container(
                 height: 50,
                 width: double.maxFinite,
-                child: ElevatedButton(
-                  child: const Text(
-                    'Enviar código',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  onPressed: () {
-                    final formState = _formKey.currentState!;
-                    if (formState.validate()) {
-                      formState.save();
-                      print(store.phoneNumber);
-                      Modular.to.pushNamed('/login/receivedCode/');
-                    }
-                  },
-                ),
+                child: Observer(builder: (_) {
+                  return store.loginState != AppStateLoading
+                      ? ElevatedButton(
+                          child: const Text(
+                            'Enviar código',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          onPressed: () {
+                            final formState = _formKey.currentState!;
+                            if (formState.validate()) {
+                              formState.save();
+                              store.verifyPhoneNumber().then((value) =>
+                                  Modular.to.pushNamed('/login/receivedCode/'));
+                            }
+                          },
+                        )
+                      : Center(
+                          child: CircularProgressIndicator(),
+                        );
+                }),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Text("OU"),
+              SizedBox(
+                height: 10,
+              ),
+              Container(
+                height: 50,
+                width: double.maxFinite,
+                child: Observer(builder: (_) {
+                  return ElevatedButton.icon(
+                    icon: Icon(MdiIcons.google),
+                    label: Text(
+                      'Entrar com Google',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    onPressed: () {
+                      store.loginGoogle();
+                    },
+                  );
+                }),
               ),
               const SizedBox(
                 height: 30,

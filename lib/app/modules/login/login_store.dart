@@ -1,4 +1,5 @@
 import 'package:mercado_justo/app/modules/login/login_repository.dart';
+import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mobx/mobx.dart';
 
 part 'login_store.g.dart';
@@ -12,10 +13,57 @@ abstract class _LoginStoreBase with Store {
   @observable
   String? phoneNumber;
 
-  Future verifyPhoneNumber(String phoneNumber, String code) async {
+  @observable
+  String? code;
+
+  @observable
+  String? cpf;
+
+  @observable
+  String? password;
+
+  @observable
+  String? verificationId;
+
+  @observable
+  AppState loginState = AppStateEmpty();
+
+  Future loginWithCPF() async {
     try {
-      await repository.verifyPhoneNumber(phoneNumber, code);
+      loginState = AppStateLoading();
+      await repository.signInWithEmail(cpf!, password!);
+      loginState = AppStateSuccess();
     } catch (e) {
+      loginState = AppStateError();
+    }
+  }
+
+  Future loginGoogle() async {
+    try {
+      repository.signInWithGoogle();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future verifyPhoneNumber() async {
+    try {
+      loginState = AppStateLoading();
+      verificationId = await repository.verifyPhoneNumber(phoneNumber!);
+      loginState = AppStateSuccess();
+    } catch (e) {
+      loginState = AppStateError();
+      rethrow;
+    }
+  }
+
+  Future verifyCode() async {
+    try {
+      loginState = AppStateLoading();
+      await repository.verifyCode(verificationId!, code!);
+      loginState = AppStateSuccess();
+    } catch (e) {
+      loginState = AppStateError();
       rethrow;
     }
   }
