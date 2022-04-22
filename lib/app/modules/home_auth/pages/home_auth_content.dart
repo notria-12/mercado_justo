@@ -3,6 +3,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:mercado_justo/app/modules/home_auth/widgets/custom_button_widget.dart';
+import 'package:mercado_justo/shared/controllers/market_store.dart';
 import 'package:mercado_justo/shared/controllers/product_store.dart';
 import 'package:mercado_justo/shared/models/market_model.dart';
 import 'package:mercado_justo/shared/models/product_model.dart';
@@ -17,6 +18,7 @@ class HomeAuthContent extends StatefulWidget {
 
 class _HomeAuthContentState extends State<HomeAuthContent> {
   final productStore = Modular.get<ProductStore>();
+  final marketStore = Modular.get<MarketStore>();
   // final _rowsCells = [
   //   [
   //     7,
@@ -35,26 +37,27 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
   @override
   void initState() {
     productStore.getAllProducts();
+    marketStore.getAllMarkets();
     super.initState();
   }
 
-  List<Market> markets = [
-    Market(
-        name: 'Pão de Açúcar',
-        imagePath: 'assets/img/markets/pão_de_açucar.jpg',
-        siteAddress: '',
-        addresses: ['R. Teodoro Sampaio, 1240 - São Paulo - SP']),
-    Market(
-        name: 'Carrefour',
-        imagePath: 'assets/img/markets/carrefour.jpg',
-        siteAddress: '',
-        addresses: ['R. Teodoro Sampaio, 1240 - São Paulo - SP']),
-    Market(
-        name: 'ASSAÍ',
-        imagePath: 'assets/img/markets/assai.png',
-        siteAddress: '',
-        addresses: ['R. Teodoro Sampaio, 1240 - São Paulo - SP']),
-  ];
+  // List<Market> markets = [
+  //   Market(
+  //       name: 'Pão de Açúcar',
+  //       imagePath: 'assets/img/markets/pão_de_açucar.jpg',
+  //       siteAddress: '',
+  //       addresses: ['R. Teodoro Sampaio, 1240 - São Paulo - SP']),
+  //   Market(
+  //       name: 'Carrefour',
+  //       imagePath: 'assets/img/markets/carrefour.jpg',
+  //       siteAddress: '',
+  //       addresses: ['R. Teodoro Sampaio, 1240 - São Paulo - SP']),
+  //   Market(
+  //       name: 'ASSAÍ',
+  //       imagePath: 'assets/img/markets/assai.png',
+  //       siteAddress: '',
+  //       addresses: ['R. Teodoro Sampaio, 1240 - São Paulo - SP']),
+  // ];
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -143,9 +146,7 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                         }
                         return [
                           productStore.products[index].description,
-                          12.56,
-                          'em falta',
-                          10.99
+                          ...marketStore.markets.map((e) => "Em falta").toList()
                         ];
                       })
                     ],
@@ -355,15 +356,31 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                     fixedRowCells: [
                       Container(),
                       ...List.generate(
-                          markets.length,
+                          marketStore.markets.length,
                           (index) => InkWell(
                                 onTap: () {
                                   Modular.to.pushNamed('/marketDetail/',
-                                      arguments: markets[index]);
+                                      arguments: marketStore.markets[index]);
                                 },
                                 child: Container(
                                   width: 100,
-                                  child: Image.asset(markets[index].imagePath),
+                                  child: FutureBuilder<String>(
+                                    builder: ((context, snapshot) {
+                                      if (snapshot.hasError) {
+                                        return Container(
+                                          color: Colors.blueGrey,
+                                        );
+                                      }
+                                      if (snapshot.hasData) {
+                                        return Image.network(snapshot.data!);
+                                      }
+                                      return Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    }),
+                                    future: marketStore.getMarketImage(
+                                        id: marketStore.markets[index].id),
+                                  ),
                                 ),
                               ))
                     ],

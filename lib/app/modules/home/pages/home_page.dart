@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/app/modules/home/home_store.dart';
+import 'package:mercado_justo/shared/controllers/market_store.dart';
 import 'package:mercado_justo/shared/models/market_model.dart';
 import 'package:mercado_justo/shared/models/product_model.dart';
 import 'package:mercado_justo/shared/widgets/custom_table_widget.dart';
@@ -15,6 +16,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends ModularState<HomePage, HomeStore> {
+  final marketStore = Modular.get<MarketStore>();
   final _rowsCells = [
     [
       7,
@@ -69,17 +71,38 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
         name: 'Pão de Açúcar',
         imagePath: 'assets/img/markets/pão_de_açucar.jpg',
         siteAddress: '',
-        addresses: ['R. Teodoro Sampaio, 1240 - São Paulo - SP']),
+        address: 'R. Teodoro Sampaio, 1240 - São Paulo - SP',
+        cnpj: '',
+        hashId: '',
+        id: 17,
+        isVisible: false,
+        latitude: -23.5219785,
+        longitude: -46.7249393,
+        phoneNumber: ''),
     Market(
         name: 'Carrefour',
         imagePath: 'assets/img/markets/carrefour.jpg',
         siteAddress: '',
-        addresses: ['R. Teodoro Sampaio, 1240 - São Paulo - SP']),
+        address: 'R. Teodoro Sampaio, 1240 - São Paulo - SP',
+        cnpj: '',
+        hashId: '',
+        id: 10,
+        isVisible: false,
+        latitude: -23.5219785,
+        longitude: -46.7249393,
+        phoneNumber: ''),
     Market(
         name: 'ASSAÍ',
         imagePath: 'assets/img/markets/assai.png',
         siteAddress: '',
-        addresses: ['R. Teodoro Sampaio, 1240 - São Paulo - SP']),
+        address: 'R. Teodoro Sampaio, 1240 - São Paulo - SP',
+        cnpj: '',
+        hashId: '',
+        id: 8,
+        isVisible: false,
+        latitude: -23.5219785,
+        longitude: -46.7249393,
+        phoneNumber: ''),
   ];
 
   @override
@@ -288,17 +311,34 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                   fixedRowCells: [
                     Container(),
                     ...List.generate(
-                        markets.length,
-                        (index) => InkWell(
-                              onTap: () {
-                                Modular.to.pushNamed('/marketDetail/',
-                                    arguments: markets[index]);
-                              },
-                              child: Container(
-                                width: 100,
-                                child: Image.asset(markets[index].imagePath),
-                              ),
-                            ))
+                      markets.length,
+                      (index) => InkWell(
+                        onTap: () {
+                          Modular.to.pushNamed('/marketDetail/',
+                              arguments: markets[index]);
+                        },
+                        child: Container(
+                          width: 100,
+                          child: FutureBuilder<String>(
+                            builder: ((context, snapshot) {
+                              if (snapshot.hasError) {
+                                return Container(
+                                  color: Colors.blueGrey,
+                                );
+                              }
+                              if (snapshot.hasData) {
+                                return Image.network(snapshot.data!);
+                              }
+                              return Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }),
+                            future: marketStore.getMarketImage(
+                                id: markets[index].id),
+                          ),
+                        ),
+                      ),
+                    )
                   ],
                   cellBuilder: (data) {
                     return Center(

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+import 'package:mercado_justo/shared/controllers/market_store.dart';
 import 'package:mercado_justo/shared/models/market_model.dart';
 
 class MarketDetail extends StatelessWidget {
   Market market;
   MarketDetail({Key? key, required this.market}) : super(key: key);
+  final marketStore = Modular.get<MarketStore>();
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +26,22 @@ class MarketDetail extends StatelessWidget {
                   Container(
                     height: 80,
                     width: 110,
-                    child: Image.asset(market.imagePath),
+                    child: FutureBuilder<String>(
+                      builder: ((context, snapshot) {
+                        if (snapshot.hasError) {
+                          return Container(
+                            color: Colors.blueGrey,
+                          );
+                        }
+                        if (snapshot.hasData) {
+                          return Image.network(snapshot.data!);
+                        }
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }),
+                      future: marketStore.getMarketImage(id: market.id),
+                    ),
                   ),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -85,7 +103,7 @@ class MarketDetail extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          market.addresses[0],
+                          market.address,
                           style: TextStyle(fontSize: 20),
                         ),
                         RichText(

@@ -1,10 +1,7 @@
-import 'dart:convert';
-
-import 'package:mercado_justo/shared/utils/app_state.dart';
-import 'package:mobx/mobx.dart';
-
 import 'package:mercado_justo/shared/models/product_model.dart';
 import 'package:mercado_justo/shared/repositories/product_repository.dart';
+import 'package:mercado_justo/shared/utils/app_state.dart';
+import 'package:mobx/mobx.dart';
 
 part 'product_store.g.dart';
 
