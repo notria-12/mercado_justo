@@ -37,31 +37,6 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
     productStore.getAllProducts();
     super.initState();
   }
-  // List<Product> products = [
-  //   Product(
-  //       imagePath: 'assets/img/products/absvt_intimus.jpg',
-  //       description:
-  //           "Absorvente Intimus Tripla Proteção Coberturar Estra Suave com Abas 8un",
-  //       ref: "21213"),
-  //   Product(
-  //       imagePath: 'assets/img/products/always_noite.jpg',
-  //       description: "Absorvente Always Noturno",
-  //       ref: "12131"),
-  //   Product(
-  //       imagePath: 'assets/img/products/carga_gillette.jpg',
-  //       description: "Carga para aparelho de Barbear",
-  //       ref: "21213"),
-  //   Product(
-  //       imagePath: 'assets/img/products/rexona_men.jpg',
-  //       description: "Desodorante aerosol Rexona Men 48h",
-  //       ref: "21213"),
-  //   Product(
-  //       id: "",
-  //       barCode: [],
-  //       imagePath: 'assets/img/products/seda_ceramidas.jpg',
-  //       description: "Shampoo Seda Ceramidas",
-  //       ref: "21213")
-  // ];
 
   List<Market> markets = [
     Market(
@@ -82,11 +57,6 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
   ];
   @override
   Widget build(BuildContext context) {
-    // if (_rowsCells[0].length < 4) {
-    //   for (int i = 0; i < products.length; i++) {
-    //     _rowsCells[i] = [products[i].name, ..._rowsCells[i]];
-    //   }
-    // }
     return Container(
       color: Colors.white,
       child: Column(
@@ -129,269 +99,291 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
             flex: 11,
             child: Observer(
               builder: (_) {
-                return CustomDataTable(
-                  cellHeight: 135,
-                  fixedCornerCell: Row(
-                    children: [
-                      InkWell(
-                        onTap: () {},
-                        child: Container(
-                          height: 35,
-                          width: 35,
-                          child: Center(
-                              child: Text(
-                            '+ A',
-                            style: TextStyle(color: Colors.lightBlue),
-                          )),
-                          decoration: BoxDecoration(
-                              color: const Color.fromRGBO(190, 235, 199, 1),
-                              borderRadius: BorderRadius.circular(5)),
+                if (productStore.products.isEmpty) {
+                  return Container();
+                } else {
+                  return CustomDataTable(
+                    loadMoreItens: () {
+                      productStore.getAllProducts();
+                    },
+                    loadMore: true,
+                    cellHeight: 135,
+                    fixedCornerCell: Row(
+                      children: [
+                        InkWell(
+                          onTap: () {},
+                          child: Container(
+                            height: 35,
+                            width: 35,
+                            child: Center(
+                                child: Text(
+                              '+ A',
+                              style: TextStyle(color: Colors.lightBlue),
+                            )),
+                            decoration: BoxDecoration(
+                                color: const Color.fromRGBO(190, 235, 199, 1),
+                                borderRadius: BorderRadius.circular(5)),
+                          ),
                         ),
-                      ),
-                      IconButton(
-                        padding: EdgeInsets.zero,
-                        icon: const Icon(
-                          Icons.share_outlined,
-                          color: Colors.grey,
-                          size: 28,
-                        ),
-                        onPressed: () {},
-                      )
+                        IconButton(
+                          padding: EdgeInsets.zero,
+                          icon: const Icon(
+                            Icons.share_outlined,
+                            color: Colors.grey,
+                            size: 28,
+                          ),
+                          onPressed: () {},
+                        )
+                      ],
+                    ),
+                    rowsCells: [
+                      ...List.generate(productStore.products.length, (index) {
+                        if (index == productStore.products.length) {
+                          print(index);
+                        }
+                        return [
+                          productStore.products[index].description,
+                          12.56,
+                          'em falta',
+                          10.99
+                        ];
+                      })
                     ],
-                  ),
-                  rowsCells: [
-                    ...List.generate(
+                    fixedColCells: List.generate(
                         productStore.products.length,
-                        (index) => [
-                              productStore.products[index].description,
-                              12.56,
-                              'em falta',
-                              10.99
-                            ])
-                  ],
-                  fixedColCells: List.generate(
-                      productStore.products.length,
-                      (index) => InkWell(
-                            onTap: () {
-                              showModalBottomSheet(
-                                  context: context,
-                                  isScrollControlled: true,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12)),
-                                  builder: (context) {
-                                    return SingleChildScrollView(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          Align(
-                                            child: IconButton(
-                                                padding: EdgeInsets.zero,
-                                                onPressed: () {
-                                                  Navigator.of(context).pop();
-                                                },
-                                                icon: Icon(Icons.close)),
-                                            alignment: Alignment.topRight,
-                                          ),
-                                          Container(
-                                            height: 200,
-                                            child: futureProductImage(index),
-                                          ),
-                                          TextButton(
-                                              style: TextButton.styleFrom(
-                                                  tapTargetSize:
-                                                      MaterialTapTargetSize
-                                                          .shrinkWrap,
-                                                  minimumSize: Size.zero,
-                                                  padding: EdgeInsets.zero),
-                                              onPressed: () {},
-                                              child: Text(
-                                                'Achou algum erro? clique aqui.',
-                                                style: TextStyle(
-                                                    color: Colors.red,
-                                                    fontSize: 12),
-                                              )),
-                                          SizedBox(
-                                            height: 8,
-                                          ),
-                                          Text(
-                                            productStore
-                                                .products[index].description,
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          SizedBox(
-                                            height: 8,
-                                          ),
-                                          Text(
-                                              "Ref: ${productStore.products[index].ref}"),
-                                          SizedBox(
-                                            height: 8,
-                                          ),
-                                          Text(
-                                            'Valor médio: R\$ 7,85',
-                                            style: TextStyle(
-                                                // color: Colors.blue,
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.w600),
-                                          ),
-                                          SizedBox(
-                                            height: 120,
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Container(
-                                                height: 30,
-                                                width: 30,
-                                                decoration: BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    color: Colors.lightBlue),
-                                                child: Center(
-                                                    child: Icon(
-                                                  MdiIcons.minus,
-                                                  color: Colors.white,
-                                                  size: 18,
-                                                )),
-                                              ),
-                                              SizedBox(
-                                                width: 20,
-                                              ),
-                                              Container(
-                                                width: 120,
-                                                height: 50,
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 50),
-                                                child: Center(
-                                                  child: TextFormField(
-                                                    initialValue: '1',
-                                                    decoration: InputDecoration(
-                                                        border:
-                                                            InputBorder.none),
-                                                    keyboardType:
-                                                        TextInputType.number,
-                                                  ),
-                                                ),
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8),
-                                                    border: Border.all(
-                                                        color: Colors.grey)),
-                                              ),
-                                              SizedBox(
-                                                width: 20,
-                                              ),
-                                              Container(
-                                                height: 30,
-                                                width: 30,
-                                                decoration: BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    color: Colors.lightBlue),
-                                                child: Center(
-                                                    child: Icon(
-                                                  Icons.add,
-                                                  color: Colors.white,
-                                                  size: 18,
-                                                )),
-                                              ),
-                                            ],
-                                          ),
-                                          SizedBox(
-                                            height: 20,
-                                          ),
-                                          SizedBox(
-                                            height: 50,
-                                            width: 240,
-                                            child: ElevatedButton(
-                                              child: Center(
-                                                child: Text(
-                                                  'Selecione ou Adicione uma Lista',
-                                                  style: TextStyle(
-                                                      color: Colors.white),
-                                                ),
-                                              ),
-                                              onPressed: selectList,
-                                              style: ElevatedButton.styleFrom(
-                                                  primary: Colors.lightBlue,
-                                                  shape: RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8))),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: 30,
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  });
-                            },
-                            child: Container(
-                                width: 80,
-                                child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        height: 90,
-                                        child: futureProductImage(index),
-                                      ),
-                                      SizedBox(
-                                        height: 12,
-                                      ),
-                                      Row(
-                                        children: [
-                                          Container(
-                                            height: 20,
-                                            width: 20,
-                                            decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                color: Colors.lightBlue),
-                                            child: Center(
-                                                child: Icon(
-                                              Icons.add,
-                                              color: Colors.white,
-                                              size: 18,
-                                            )),
-                                          ),
-                                          SizedBox(
-                                            width: 4,
-                                          ),
-                                          Text('Add Lista')
-                                        ],
-                                      )
-                                    ])),
-                          )),
-                  fixedRowCells: [
-                    Container(),
-                    ...List.generate(
-                        markets.length,
                         (index) => InkWell(
                               onTap: () {
-                                Modular.to.pushNamed('/marketDetail/',
-                                    arguments: markets[index]);
+                                showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(12)),
+                                    builder: (context) {
+                                      return SingleChildScrollView(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Align(
+                                              child: IconButton(
+                                                  padding: EdgeInsets.zero,
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  icon: Icon(Icons.close)),
+                                              alignment: Alignment.topRight,
+                                            ),
+                                            Container(
+                                              height: 200,
+                                              child: futureProductImage(index),
+                                            ),
+                                            TextButton(
+                                                style: TextButton.styleFrom(
+                                                    tapTargetSize:
+                                                        MaterialTapTargetSize
+                                                            .shrinkWrap,
+                                                    minimumSize: Size.zero,
+                                                    padding: EdgeInsets.zero),
+                                                onPressed: () {},
+                                                child: Text(
+                                                  'Achou algum erro? clique aqui.',
+                                                  style: TextStyle(
+                                                      color: Colors.red,
+                                                      fontSize: 12),
+                                                )),
+                                            SizedBox(
+                                              height: 8,
+                                            ),
+                                            Text(
+                                              productStore
+                                                  .products[index].description,
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            SizedBox(
+                                              height: 8,
+                                            ),
+                                            Text(
+                                                "Ref: ${productStore.products[index].ref}"),
+                                            SizedBox(
+                                              height: 8,
+                                            ),
+                                            Text(
+                                              'Valor médio: R\$ 7,85',
+                                              style: TextStyle(
+                                                  // color: Colors.blue,
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.w600),
+                                            ),
+                                            SizedBox(
+                                              height: 120,
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Container(
+                                                  height: 30,
+                                                  width: 30,
+                                                  decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      color: Colors.lightBlue),
+                                                  child: Center(
+                                                      child: Icon(
+                                                    MdiIcons.minus,
+                                                    color: Colors.white,
+                                                    size: 18,
+                                                  )),
+                                                ),
+                                                SizedBox(
+                                                  width: 20,
+                                                ),
+                                                Container(
+                                                  width: 120,
+                                                  height: 50,
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 50),
+                                                  child: Center(
+                                                    child: TextFormField(
+                                                      initialValue: '1',
+                                                      decoration:
+                                                          InputDecoration(
+                                                              border:
+                                                                  InputBorder
+                                                                      .none),
+                                                      keyboardType:
+                                                          TextInputType.number,
+                                                    ),
+                                                  ),
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8),
+                                                      border: Border.all(
+                                                          color: Colors.grey)),
+                                                ),
+                                                SizedBox(
+                                                  width: 20,
+                                                ),
+                                                Container(
+                                                  height: 30,
+                                                  width: 30,
+                                                  decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      color: Colors.lightBlue),
+                                                  child: Center(
+                                                      child: Icon(
+                                                    Icons.add,
+                                                    color: Colors.white,
+                                                    size: 18,
+                                                  )),
+                                                ),
+                                              ],
+                                            ),
+                                            SizedBox(
+                                              height: 20,
+                                            ),
+                                            SizedBox(
+                                              height: 50,
+                                              width: 240,
+                                              child: ElevatedButton(
+                                                child: Center(
+                                                  child: Text(
+                                                    'Selecione ou Adicione uma Lista',
+                                                    style: TextStyle(
+                                                        color: Colors.white),
+                                                  ),
+                                                ),
+                                                onPressed: selectList,
+                                                style: ElevatedButton.styleFrom(
+                                                    primary: Colors.lightBlue,
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8))),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 30,
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    });
                               },
                               child: Container(
-                                width: 100,
-                                child: Image.asset(markets[index].imagePath),
-                              ),
-                            ))
-                  ],
-                  cellBuilder: (data) {
-                    return Center(
-                      child: Text(
-                        '$data',
-                      ),
-                    );
-                  },
-                );
+                                  width: 80,
+                                  child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          height: 90,
+                                          child: futureProductImage(index),
+                                        ),
+                                        SizedBox(
+                                          height: 12,
+                                        ),
+                                        Row(
+                                          children: [
+                                            Container(
+                                              height: 20,
+                                              width: 20,
+                                              decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color: Colors.lightBlue),
+                                              child: Center(
+                                                  child: Icon(
+                                                Icons.add,
+                                                color: Colors.white,
+                                                size: 18,
+                                              )),
+                                            ),
+                                            SizedBox(
+                                              width: 4,
+                                            ),
+                                            Text('Add Lista')
+                                          ],
+                                        )
+                                      ])),
+                            )),
+                    fixedRowCells: [
+                      Container(),
+                      ...List.generate(
+                          markets.length,
+                          (index) => InkWell(
+                                onTap: () {
+                                  Modular.to.pushNamed('/marketDetail/',
+                                      arguments: markets[index]);
+                                },
+                                child: Container(
+                                  width: 100,
+                                  child: Image.asset(markets[index].imagePath),
+                                ),
+                              ))
+                    ],
+                    cellBuilder: (data) {
+                      return Center(
+                        child: Text(
+                          '$data',
+                        ),
+                      );
+                    },
+                  );
+                }
               },
             ),
-          )
+          ),
+          // Expanded(
+          //     child: Container(
+          //   height: 40,
+          //   child: Icon(Icons.add),
+          // ))
         ],
       ),
     );

@@ -48,7 +48,7 @@ class LoginRepository {
   Future<String?> verifyPhoneNumber(String phoneNumber) async {
     String? verificationId;
     await FirebaseAuth.instance.verifyPhoneNumber(
-      phoneNumber: phoneNumber,
+      phoneNumber: "+55 " + phoneNumber,
       verificationCompleted: (PhoneAuthCredential credential) {},
       verificationFailed: (FirebaseAuthException e) {
         if (e.code == 'invalid-phone-number') {

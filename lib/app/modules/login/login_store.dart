@@ -51,7 +51,9 @@ abstract class _LoginStoreBase with Store {
   Future verifyPhoneNumber() async {
     try {
       loginState = AppStateLoading();
-      verificationId = await repository.verifyPhoneNumber(phoneNumber!);
+      var id = await repository.verifyPhoneNumber(phoneNumber!);
+      print(id);
+      print(verificationId);
       loginState = AppStateSuccess();
     } catch (e) {
       loginState = AppStateError();

@@ -8,9 +8,12 @@ class ProductRepository {
     required this.dio,
   });
 
-  Future<List<Product>> getAllProducts() async {
+  Future<List<Product>> getAllProducts({required int page}) async {
     try {
-      final result = await dio.get('/produtos/');
+      final result;
+
+      result = await dio.get('/produtos?pagina=${page}');
+
       List list = result.data['dados'] as List;
 
       return list.map((e) => Product.fromMap(e)).toList();

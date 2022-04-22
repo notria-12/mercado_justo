@@ -12,13 +12,17 @@ class CustomDataTable<T> extends StatefulWidget {
   final double headingHeight;
   final double cellMargin;
   final double cellSpacing;
+  final bool loadMore;
+  VoidCallback? loadMoreItens;
 
   CustomDataTable(
-      {required this.fixedCornerCell,
+      {required this.loadMore,
+      required this.fixedCornerCell,
       required this.fixedColCells,
       required this.fixedRowCells,
       required this.rowsCells,
       required this.cellBuilder,
+      this.loadMoreItens,
       this.fixedColWidth = 90,
       this.cellHeight = 56.0,
       this.cellWidth = 100.0,
@@ -35,6 +39,7 @@ class CustomDataTableState<T> extends State<CustomDataTable<T>> {
   final _rowController = ScrollController();
   final _subTableYController = ScrollController();
   final _subTableXController = ScrollController();
+  final _controller = ScrollController();
 
   Widget _buildChild(double width, T data, {bool isNotSubTable = false}) =>
       isNotSubTable
@@ -138,6 +143,15 @@ class CustomDataTableState<T> extends State<CustomDataTable<T>> {
     _subTableYController.addListener(() {
       _columnController.jumpTo(_subTableYController.position.pixels);
     });
+
+    // _controller.addListener(() {
+    //   if (_controller.position.atEdge) {
+    //     bool isTop = _controller.position.pixels == 0;
+    //     if (!isTop) {
+    //       print('At the top');
+    //     }
+    //   } else {}
+    // });
   }
 
   @override
@@ -145,26 +159,47 @@ class CustomDataTableState<T> extends State<CustomDataTable<T>> {
     return Stack(
       children: <Widget>[
         SingleChildScrollView(
-          child: Row(
-            children: <Widget>[
-              SingleChildScrollView(
-                controller: _columnController,
-                scrollDirection: Axis.vertical,
-                // controller: _subTableYController,
-                // physics: NeverScrollableScrollPhysics(),
-                child: _buildFixedCol(),
+          controller: _controller,
+          child: Column(
+            children: [
+              Row(
+                children: <Widget>[
+                  SingleChildScrollView(
+                    controller: _columnController,
+                    scrollDirection: Axis.vertical,
+                    // controller: _subTableYController,
+                    // physics: NeverScrollableScrollPhysics(),
+                    child: _buildFixedCol(),
+                  ),
+                  Flexible(
+                    child: SingleChildScrollView(
+                      controller: _subTableXController,
+                      scrollDirection: Axis.horizontal,
+                      // child: SingleChildScrollView(
+                      //   controller: _subTableYController,
+                      //   scrollDirection: Axis.vertical,
+                      child: _buildSubTable(),
+                      // ),
+                    ),
+                  ),
+                ],
               ),
-              Flexible(
-                child: SingleChildScrollView(
-                  controller: _subTableXController,
-                  scrollDirection: Axis.horizontal,
-                  // child: SingleChildScrollView(
-                  //   controller: _subTableYController,
-                  //   scrollDirection: Axis.vertical,
-                  child: _buildSubTable(),
-                  // ),
+              Visibility(
+                visible: widget.loadMore,
+                child: InkWell(
+                  onTap: widget.loadMoreItens,
+                  child: Container(
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.blueAccent)),
+                    height: 40,
+                    child: Icon(
+                      Icons.add,
+                      color: Colors.blueAccent,
+                    ),
+                  ),
                 ),
-              ),
+              )
             ],
           ),
         ),

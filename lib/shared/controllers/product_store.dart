@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mobx/mobx.dart';
 
 import 'package:mercado_justo/shared/models/product_model.dart';
@@ -14,13 +15,23 @@ abstract class _ProductStoreBase with Store {
   _ProductStoreBase({
     required this.repository,
   });
+  @observable
+  List<Product> products = [];
 
-  ObservableList<Product> products = ObservableList.of([]);
+  @observable
+  AppState productState = AppStateEmpty();
+
+  @observable
+  int page = 1;
 
   Future getAllProducts() async {
     try {
-      products = ObservableList.of(await repository.getAllProducts());
+      productState = AppStateLoading();
+      products = [...products, ...await repository.getAllProducts(page: page)];
+      page++;
+      productState = AppStateSuccess();
     } catch (e) {
+      productState = AppStateError();
       rethrow;
     }
   }

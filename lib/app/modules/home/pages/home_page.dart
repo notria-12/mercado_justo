@@ -153,6 +153,7 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                 flex: 6,
 
                 child: CustomDataTable(
+                  loadMore: false,
                   cellHeight: 100,
                   fixedCornerCell: Row(
                     // mainAxisAlignment: MainAxisAlignment.spaceAround,
