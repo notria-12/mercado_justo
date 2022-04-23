@@ -210,7 +210,14 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                       )
                     ],
                   ),
-                  rowsCells: _rowsCells,
+                  rowsCells: [
+                    ...List.generate(products.length, (index) {
+                      return [
+                        Text(products[index].description),
+                        ...markets.map((e) => Text('Em Falta')).toList()
+                      ];
+                    })
+                  ],
                   fixedColCells: List.generate(
                       products.length,
                       (index) => InkWell(

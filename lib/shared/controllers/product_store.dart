@@ -35,8 +35,12 @@ abstract class _ProductStoreBase with Store {
 
   Future<String> getProductImage({required String barCode}) async {
     try {
-      return await repository.getProductImage(barCode);
+      productState = AppStateLoading();
+      String imagePath = await repository.getProductImage(barCode);
+      productState = AppStateSuccess();
+      return imagePath;
     } catch (e) {
+      productState = AppStateError();
       rethrow;
     }
   }

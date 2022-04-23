@@ -92,29 +92,29 @@ class _SignInPageState extends ModularState<SignInPage, LoginStore> {
                         );
                 }),
               ),
-              SizedBox(
-                height: 10,
-              ),
-              Text("OU"),
-              SizedBox(
-                height: 10,
-              ),
-              Container(
-                height: 50,
-                width: double.maxFinite,
-                child: Observer(builder: (_) {
-                  return ElevatedButton.icon(
-                    icon: Icon(MdiIcons.google),
-                    label: Text(
-                      'Entrar com Google',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    onPressed: () {
-                      store.loginGoogle();
-                    },
-                  );
-                }),
-              ),
+              // SizedBox(
+              //   height: 10,
+              // ),
+              // Text("OU"),
+              // SizedBox(
+              //   height: 10,
+              // ),
+              // Container(
+              //   height: 50,
+              //   width: double.maxFinite,
+              //   child: Observer(builder: (_) {
+              //     return ElevatedButton.icon(
+              //       icon: Icon(MdiIcons.google),
+              //       label: Text(
+              //         'Entrar com Google',
+              //         style: TextStyle(fontSize: 16),
+              //       ),
+              //       onPressed: () {
+              //         store.loginGoogle();
+              //       },
+              //     );
+              //   }),
+              // ),
               const SizedBox(
                 height: 30,
               ),

@@ -9,7 +9,7 @@ class MarketRepository {
     try {
       final result;
 
-      result = await dio.get('/mercados?pagina=${page}');
+      result = await dio.get('/mercados?pagina=${page}&itens_pagina=2');
 
       List list = result.data['dados'] as List;
 

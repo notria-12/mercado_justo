@@ -4,9 +4,11 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:mercado_justo/app/modules/home_auth/widgets/custom_button_widget.dart';
 import 'package:mercado_justo/shared/controllers/market_store.dart';
+import 'package:mercado_justo/shared/controllers/price_store.dart';
 import 'package:mercado_justo/shared/controllers/product_store.dart';
 import 'package:mercado_justo/shared/models/market_model.dart';
 import 'package:mercado_justo/shared/models/product_model.dart';
+import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/widgets/custom_table_widget.dart';
 
 class HomeAuthContent extends StatefulWidget {
@@ -141,12 +143,32 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                     ),
                     rowsCells: [
                       ...List.generate(productStore.products.length, (index) {
-                        if (index == productStore.products.length) {
-                          print(index);
-                        }
                         return [
-                          productStore.products[index].description,
-                          ...marketStore.markets.map((e) => "Em falta").toList()
+                          Text(productStore.products[index].description),
+                          ...marketStore.markets
+                              .map((e) => FutureBuilder<String>(
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasError) {
+                                      return Text("Erro ao buscar");
+                                    }
+                                    if (snapshot.hasData) {
+                                      return Center(
+                                        child: Text(snapshot.data!.isEmpty
+                                            ? 'Em Falta'
+                                            : snapshot.data!),
+                                      );
+                                    }
+                                    return Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  },
+                                  future: Modular.get<PriceStore>()
+                                      .getProductPriceByMarket(
+                                    marketId: e.id,
+                                    barCode: productStore
+                                        .products[index].barCode.first,
+                                  )))
+                              .toList()
                         ];
                       })
                     ],
@@ -425,6 +447,25 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
           barCode: productStore.products[index].barCode.first),
     );
   }
+
+  // Widget getProductImage(int index) {
+  //   return Observer(
+  //     builder: ((context) {
+  //       if (productStore.productState is AppStateError) {
+  //         return Container(
+  //           color: Colors.blueGrey,
+  //         );
+  //       }
+  //       if (productStore.productState is AppStateSuccess) {
+  //         return Image.network(snapshot.data!);
+  //       }
+  //       return Center(
+  //         child: CircularProgressIndicator(),
+  //       );
+  //     }),
+
+  //   );
+  // }
 
   void selectList() {
     showModalBottomSheet(
