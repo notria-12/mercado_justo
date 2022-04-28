@@ -17,6 +17,9 @@ abstract class _MarketStoreBase with Store {
   List<Market> markets = [];
 
   @observable
+  List<List<Market>> groupMarkets = [];
+
+  @observable
   int page = 1;
 
   Future getAllMarkets() async {
@@ -29,11 +32,24 @@ abstract class _MarketStoreBase with Store {
     }
   }
 
+  Future getGroupMarkets() async {
+    try {
+      groupMarkets = await repository.getGroupMarkets();
+      markets = groupMarkets.map((e) => e[0]).toList();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<String> getMarketImage({required int id}) async {
     try {
       return await repository.getMarketLogo(id);
     } catch (e) {
       rethrow;
     }
+  }
+
+  List<Market> getMarketsByName(String name) {
+    return groupMarkets.firstWhere((element) => element[0].name == name);
   }
 }

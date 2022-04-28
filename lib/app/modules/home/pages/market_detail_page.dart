@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/shared/controllers/market_store.dart';
 import 'package:mercado_justo/shared/models/market_model.dart';
+import 'package:mercado_justo/shared/utils/utils.dart';
 
 class MarketDetail extends StatelessWidget {
   Market market;
@@ -48,7 +50,9 @@ class MarketDetail extends StatelessWidget {
                                 fontSize: 20, fontWeight: FontWeight.w400),
                           ),
                           TextButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Utils.launchUrl(market.siteAddress);
+                              },
                               child: Text(
                                 'Clique Aqui!',
                                 style:
@@ -70,49 +74,69 @@ class MarketDetail extends StatelessWidget {
               SizedBox(
                 height: 20,
               ),
-              Row(
-                children: [
-                  SizedBox(
-                    width: 15,
-                  ),
-                  Container(
-                    height: 40,
-                    width: 40,
-                    child: Image.asset('assets/img/turn_right.jpg'),
-                  ),
-                  SizedBox(
-                    width: 15,
-                  ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          market.address,
-                          style: TextStyle(fontSize: 20),
-                        ),
-                        RichText(
-                            text: const TextSpan(
-                                text: 'Distância: ',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.normal,
-                                    fontSize: 20,
-                                    color: Colors.black),
-                                children: [
-                              TextSpan(
-                                  text: '1,5km',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 20,
-                                  ))
-                            ])),
-                      ],
-                    ),
-                  )
-                ],
-              )
+              ...marketStore
+                  .getMarketsByName(market.name)
+                  .map((e) => AddressWidget(market: e))
+                  .toList()
             ],
           )),
+    );
+  }
+}
+
+class AddressWidget extends StatelessWidget {
+  const AddressWidget({
+    Key? key,
+    required this.market,
+  }) : super(key: key);
+
+  final Market market;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 15,
+          ),
+          Container(
+            height: 40,
+            width: 40,
+            child: Image.asset('assets/img/turn_right.jpg'),
+          ),
+          SizedBox(
+            width: 15,
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  market.address,
+                  style: TextStyle(fontSize: 20),
+                ),
+                RichText(
+                    text: const TextSpan(
+                        text: 'Distância: ',
+                        style: TextStyle(
+                            fontWeight: FontWeight.normal,
+                            fontSize: 20,
+                            color: Colors.black),
+                        children: [
+                      TextSpan(
+                          text: '1,5km',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 20,
+                          ))
+                    ])),
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 }

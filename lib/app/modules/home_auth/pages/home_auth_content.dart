@@ -25,7 +25,7 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
   @override
   void initState() {
     productStore.getAllProducts();
-    marketStore.getAllMarkets();
+    marketStore.getGroupMarkets();
     super.initState();
   }
 
