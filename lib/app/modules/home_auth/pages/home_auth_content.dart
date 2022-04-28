@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -6,10 +7,9 @@ import 'package:mercado_justo/app/modules/home_auth/widgets/custom_button_widget
 import 'package:mercado_justo/shared/controllers/market_store.dart';
 import 'package:mercado_justo/shared/controllers/price_store.dart';
 import 'package:mercado_justo/shared/controllers/product_store.dart';
-import 'package:mercado_justo/shared/models/market_model.dart';
-import 'package:mercado_justo/shared/models/product_model.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/widgets/custom_table_widget.dart';
+import 'package:mercado_justo/shared/widgets/load_more_button.dart';
 
 class HomeAuthContent extends StatefulWidget {
   const HomeAuthContent({Key? key}) : super(key: key);
@@ -21,21 +21,7 @@ class HomeAuthContent extends StatefulWidget {
 class _HomeAuthContentState extends State<HomeAuthContent> {
   final productStore = Modular.get<ProductStore>();
   final marketStore = Modular.get<MarketStore>();
-  // final _rowsCells = [
-  //   [
-  //     7,
-  //     "Em falta",
-  //     10,
-  //   ],
-  //   [
-  //     10,
-  //     10,
-  //     "Em falta",
-  //   ],
-  //   [5, "Em falta", 5],
-  //   [9, 4, 1],
-  //   ["Em falta", 8, 10],
-  // ];
+
   @override
   void initState() {
     productStore.getAllProducts();
@@ -43,23 +29,6 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
     super.initState();
   }
 
-  // List<Market> markets = [
-  //   Market(
-  //       name: 'Pão de Açúcar',
-  //       imagePath: 'assets/img/markets/pão_de_açucar.jpg',
-  //       siteAddress: '',
-  //       addresses: ['R. Teodoro Sampaio, 1240 - São Paulo - SP']),
-  //   Market(
-  //       name: 'Carrefour',
-  //       imagePath: 'assets/img/markets/carrefour.jpg',
-  //       siteAddress: '',
-  //       addresses: ['R. Teodoro Sampaio, 1240 - São Paulo - SP']),
-  //   Market(
-  //       name: 'ASSAÍ',
-  //       imagePath: 'assets/img/markets/assai.png',
-  //       siteAddress: '',
-  //       addresses: ['R. Teodoro Sampaio, 1240 - São Paulo - SP']),
-  // ];
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -108,8 +77,18 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                   return Container();
                 } else {
                   return CustomDataTable(
-                    loadMoreItens: () {
-                      productStore.getAllProducts();
+                    loadMoreWidget: productStore.productState is AppStateLoading
+                        ? Container(
+                            height: 40,
+                            child: Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          )
+                        : LoadMoreButton(loadMoreItens: (() {
+                            productStore.getAllProducts();
+                          })),
+                    loadMoreColumns: () {
+                      marketStore.getAllMarkets();
                     },
                     loadMore: true,
                     cellHeight: 135,
@@ -146,28 +125,12 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                         return [
                           Text(productStore.products[index].description),
                           ...marketStore.markets
-                              .map((e) => FutureBuilder<String>(
-                                  builder: (context, snapshot) {
-                                    if (snapshot.hasError) {
-                                      return Text("Erro ao buscar");
-                                    }
-                                    if (snapshot.hasData) {
-                                      return Center(
-                                        child: Text(snapshot.data!.isEmpty
-                                            ? 'Em Falta'
-                                            : snapshot.data!),
-                                      );
-                                    }
-                                    return Center(
-                                      child: CircularProgressIndicator(),
-                                    );
-                                  },
-                                  future: Modular.get<PriceStore>()
-                                      .getProductPriceByMarket(
+                              .map((e) => GetPrice(
+                                    productStore: productStore,
                                     marketId: e.id,
-                                    barCode: productStore
+                                    productBarCode: productStore
                                         .products[index].barCode.first,
-                                  )))
+                                  ))
                               .toList()
                         ];
                       })
@@ -199,7 +162,8 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                                             ),
                                             Container(
                                               height: 200,
-                                              child: futureProductImage(index),
+                                              child: Image.network(productStore
+                                                  .products[index].imagePath!),
                                             ),
                                             TextButton(
                                                 style: TextButton.styleFrom(
@@ -347,7 +311,10 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                                       children: [
                                         Container(
                                           height: 90,
-                                          child: futureProductImage(index),
+                                          child: Image.network(
+                                            productStore
+                                                .products[index].imagePath!,
+                                          ),
                                         ),
                                         SizedBox(
                                           height: 12,
@@ -386,23 +353,8 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                                 },
                                 child: Container(
                                   width: 100,
-                                  child: FutureBuilder<String>(
-                                    builder: ((context, snapshot) {
-                                      if (snapshot.hasError) {
-                                        return Container(
-                                          color: Colors.blueGrey,
-                                        );
-                                      }
-                                      if (snapshot.hasData) {
-                                        return Image.network(snapshot.data!);
-                                      }
-                                      return Center(
-                                        child: CircularProgressIndicator(),
-                                      );
-                                    }),
-                                    future: marketStore.getMarketImage(
-                                        id: marketStore.markets[index].id),
-                                  ),
+                                  child: Image.network(
+                                      marketStore.markets[index].imagePath!),
                                 ),
                               ))
                     ],
@@ -428,25 +380,25 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
     );
   }
 
-  FutureBuilder<String> futureProductImage(int index) {
-    return FutureBuilder<String>(
-      builder: ((context, snapshot) {
-        if (snapshot.hasError) {
-          return Container(
-            color: Colors.blueGrey,
-          );
-        }
-        if (snapshot.hasData) {
-          return Image.network(snapshot.data!);
-        }
-        return Center(
-          child: CircularProgressIndicator(),
-        );
-      }),
-      future: productStore.getProductImage(
-          barCode: productStore.products[index].barCode.first),
-    );
-  }
+  // FutureBuilder<String> futureProductImage(int index) {
+  //   return FutureBuilder<String>(
+  //     builder: ((context, snapshot) {
+  //       if (snapshot.hasError) {
+  //         return Container(
+  //           color: Colors.blueGrey,
+  //         );
+  //       }
+  //       if (snapshot.hasData) {
+  //         return Image.network(snapshot.data!);
+  //       }
+  //       return Center(
+  //         child: CircularProgressIndicator(),
+  //       );
+  //     }),
+  //     future: productStore.getProductImage(
+  //         barCode: productStore.products[index].barCode.first),
+  //   );
+  // }
 
   // Widget getProductImage(int index) {
   //   return Observer(
@@ -654,5 +606,41 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
             ),
           );
         });
+  }
+}
+
+class GetPrice extends StatelessWidget {
+  GetPrice({
+    Key? key,
+    required this.productStore,
+    required this.marketId,
+    required this.productBarCode,
+  }) : super(key: key);
+
+  final ProductStore productStore;
+  final int marketId;
+  final String productBarCode;
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return const Text("Erro ao buscar");
+          }
+          if (snapshot.hasData) {
+            String data = snapshot.data! as String;
+            return Center(
+              child: Text(data.isEmpty ? 'Em Falta' : data),
+            );
+          }
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+        future: Modular.get<PriceStore>().getProductPriceByMarket(
+          marketId: marketId,
+          barCode: productBarCode,
+        ));
   }
 }

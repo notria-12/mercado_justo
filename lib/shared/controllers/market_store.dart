@@ -21,7 +21,9 @@ abstract class _MarketStoreBase with Store {
 
   Future getAllMarkets() async {
     try {
-      markets = [...markets, ...await repository.getAllMarkets(page: page)];
+      List<Market> auxMarkets = await repository.getAllMarkets(page: page);
+      markets = [...markets, ...auxMarkets];
+      page++;
     } catch (e) {
       rethrow;
     }

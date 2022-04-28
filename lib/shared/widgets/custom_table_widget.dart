@@ -13,7 +13,9 @@ class CustomDataTable<T> extends StatefulWidget {
   final double cellMargin;
   final double cellSpacing;
   final bool loadMore;
-  VoidCallback? loadMoreItens;
+  final Widget? loadMoreWidget;
+
+  VoidCallback? loadMoreColumns;
 
   CustomDataTable(
       {required this.loadMore,
@@ -22,7 +24,8 @@ class CustomDataTable<T> extends StatefulWidget {
       required this.fixedRowCells,
       required this.rowsCells,
       required this.cellBuilder,
-      this.loadMoreItens,
+      this.loadMoreWidget,
+      this.loadMoreColumns,
       this.fixedColWidth = 90,
       this.cellHeight = 56.0,
       this.cellWidth = 100.0,
@@ -144,11 +147,13 @@ class CustomDataTableState<T> extends State<CustomDataTable<T>> {
       _columnController.jumpTo(_subTableYController.position.pixels);
     });
 
-    // _controller.addListener(() {
-    //   if (_controller.position.atEdge) {
-    //     bool isTop = _controller.position.pixels == 0;
+    // _rowController.addListener(() {
+    //   if (_rowController.position.atEdge) {
+    //     bool isTop = _rowController.position.pixels == 0;
     //     if (!isTop) {
-    //       print('At the top');
+    //       if (widget.loadMore) {
+    //         widget.loadMoreColumns!();
+    //       }
     //     }
     //   } else {}
     // });
@@ -186,19 +191,7 @@ class CustomDataTableState<T> extends State<CustomDataTable<T>> {
               ),
               Visibility(
                 visible: widget.loadMore,
-                child: InkWell(
-                  onTap: widget.loadMoreItens,
-                  child: Container(
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.blueAccent)),
-                    height: 40,
-                    child: Icon(
-                      Icons.add,
-                      color: Colors.blueAccent,
-                    ),
-                  ),
-                ),
+                child: widget.loadMoreWidget ?? Container(),
               )
             ],
           ),
@@ -214,6 +207,22 @@ class CustomDataTableState<T> extends State<CustomDataTable<T>> {
                 child: _buildFixedRow(),
               ),
             ),
+            // Visibility(
+            //   visible: widget.loadMore,
+            //   child: InkWell(
+            //     onTap: widget.loadMoreColumns,
+            //     child: Container(
+            //       decoration: BoxDecoration(
+            //           shape: BoxShape.circle,
+            //           border: Border.all(color: Colors.blueAccent)),
+            //       height: 40,
+            //       child: Icon(
+            //         Icons.add,
+            //         color: Colors.blueAccent,
+            //       ),
+            //     ),
+            //   ),
+            // )
           ],
         ),
       ],

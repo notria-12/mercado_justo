@@ -1,4 +1,5 @@
 import 'package:mercado_justo/shared/repositories/price_repository.dart';
+import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mobx/mobx.dart';
 
 part 'price_store.g.dart';
@@ -11,14 +12,19 @@ abstract class _PriceStoreBase with Store {
     required this.repository,
   });
 
+  @override
+  AppState priceStatus = AppStateEmpty();
+
   Future<String> getProductPriceByMarket(
       {required int marketId, required String barCode}) async {
     try {
+      priceStatus = AppStateLoading();
       final price = await repository.getProductPriceByMarket(
           marketId: marketId, barCode: barCode);
+      priceStatus = AppStateSuccess();
       return price.price;
     } catch (e) {
-      print(e);
+      priceStatus = AppStateError();
       rethrow;
     }
   }

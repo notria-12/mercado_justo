@@ -9,11 +9,16 @@ class MarketRepository {
     try {
       final result;
 
-      result = await dio.get('/mercados?pagina=${page}&itens_pagina=2');
+      result = await dio.get('/mercados?pagina=${page}&itens_pagina=5');
 
       List list = result.data['dados'] as List;
+      List<Market> markets = list.map((e) => Market.fromMap(e)).toList();
+      for (var i = 0; i < markets.length; i++) {
+        String imagePath = await getMarketLogo(markets[i].id);
+        markets[i] = markets[i].copyWith(imagePath: imagePath);
+      }
 
-      return list.map((e) => Market.fromMap(e)).toList();
+      return markets;
     } catch (e) {
       //TODO: tratar esse erro com decência
       rethrow;

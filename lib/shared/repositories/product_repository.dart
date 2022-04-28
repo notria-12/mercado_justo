@@ -12,11 +12,16 @@ class ProductRepository {
     try {
       final result;
 
-      result = await dio.get('/produtos?pagina=${page}');
+      result = await dio.get('/produtos?pagina=${page}&itens_pagina=15');
 
       List list = result.data['dados'] as List;
+      List<Product> products = list.map((e) => Product.fromMap(e)).toList();
+      for (int i = 0; i < products.length; i++) {
+        String imagePath = await getProductImage(products[i].barCode.first);
+        products[i] = products[i].copyWith(imagePath: imagePath);
+      }
 
-      return list.map((e) => Product.fromMap(e)).toList();
+      return products;
     } catch (e) {
       //TODO: tratar esse erro com decência
       rethrow;

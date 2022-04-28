@@ -26,22 +26,7 @@ class MarketDetail extends StatelessWidget {
                   Container(
                     height: 80,
                     width: 110,
-                    child: FutureBuilder<String>(
-                      builder: ((context, snapshot) {
-                        if (snapshot.hasError) {
-                          return Container(
-                            color: Colors.blueGrey,
-                          );
-                        }
-                        if (snapshot.hasData) {
-                          return Image.network(snapshot.data!);
-                        }
-                        return Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }),
-                      future: marketStore.getMarketImage(id: market.id),
-                    ),
+                    child: Image.network(market.imagePath!),
                   ),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
