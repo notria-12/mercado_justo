@@ -5,6 +5,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:mercado_justo/app/modules/home_auth/home_auth_store.dart';
 import 'package:mercado_justo/app/modules/home_auth/pages/home_auth_content.dart';
 import 'package:mercado_justo/app/modules/home_auth/pages/product_list_page.dart';
+import 'package:mercado_justo/app/modules/home_auth/widgets/custom_drawer.dart';
 import 'package:mercado_justo/app/modules/home_auth/widgets/drawer_item.dart';
 import 'package:mercado_justo/shared/auth/auth_controller.dart';
 
@@ -31,129 +32,7 @@ class HomeAuthPageState extends ModularState<HomeAuthPage, HomeAuthStore> {
         return SafeArea(
           child: Scaffold(
             key: _scaffoldKey,
-            endDrawer: Drawer(
-                child: Container(
-              padding: EdgeInsets.all(16),
-              child: Column(children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    IconButton(
-                        padding: EdgeInsets.zero,
-                        onPressed: () {
-                          Modular.to.pop();
-                        },
-                        icon: Icon(
-                          Icons.close,
-                          color: Colors.lightBlue,
-                        )),
-                    Container(
-                        height: 60,
-                        width: 60,
-                        decoration: BoxDecoration(
-                            image: DecorationImage(
-                                image: AssetImage('assets/img/logo.png'))))
-                  ],
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
-                DrawerItem(
-                    child: const Text(
-                  'Início',
-                  style: TextStyle(
-                      fontSize: 15,
-                      // fontWeight: FontWeight.w400,
-                      color: Colors.black87),
-                )),
-                DrawerItem(
-                    child: const Text(
-                  'Minhas Listas',
-                  style: TextStyle(
-                      fontSize: 15,
-                      // fontWeight: FontWeight.w400,
-                      color: Colors.black87),
-                )),
-                DrawerItem(
-                    child: const Text(
-                  'Meu Perfil',
-                  style: TextStyle(
-                      fontSize: 15,
-                      // fontWeight: FontWeight.w400,
-                      color: Colors.black87),
-                )),
-                DrawerItem(
-                    child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                  color: Colors.green,
-                  child: const Text('Seja Premium',
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white)),
-                )),
-                DrawerItem(
-                    child: const Text(
-                  'Redes Sociais',
-                  style: TextStyle(
-                      fontSize: 15,
-                      // fontWeight: FontWeight.w400,
-                      color: Colors.black87),
-                )),
-                DrawerItem(
-                    child: const Text(
-                  'Avaliar Mercado Justo',
-                  style: TextStyle(
-                      fontSize: 15,
-                      // fontWeight: FontWeight.w400,
-                      color: Colors.black87),
-                )),
-                DrawerItem(
-                    child: const Text(
-                  'Perguntas Frequentes',
-                  style: TextStyle(
-                      fontSize: 15,
-                      // fontWeight: FontWeight.w400,
-                      color: Colors.black87),
-                )),
-                DrawerItem(
-                    child: const Text(
-                  'Compartilhar o App com Amigos',
-                  style: TextStyle(
-                      fontSize: 15,
-                      // fontWeight: FontWeight.w400,
-                      color: Colors.black87),
-                )),
-                DrawerItem(
-                    child: const Text(
-                  'Termos e Condições',
-                  style: TextStyle(
-                      fontSize: 15,
-                      // fontWeight: FontWeight.w400,
-                      color: Colors.black87),
-                )),
-                DrawerItem(
-                    child: const Text(
-                  'Configurações',
-                  style: TextStyle(
-                      fontSize: 15,
-                      // fontWeight: FontWeight.w400,
-                      color: Colors.black87),
-                )),
-                DrawerItem(
-                  child: const Text(
-                    'Sair',
-                    style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87),
-                  ),
-                  onTap: () {
-                    Modular.get<AuthController>().logoutUser();
-                  },
-                ),
-              ]),
-            )),
+            endDrawer: const CustomDrawer(),
             appBar: AppBar(
               centerTitle: true,
               title: Text(titles[store.currentIndex]),
