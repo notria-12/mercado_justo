@@ -74,7 +74,18 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
             child: Observer(
               builder: (_) {
                 if (productStore.products.isEmpty) {
-                  return Container();
+                  return Center(
+                    child: Column(
+                      children: [
+                        Text("Os produtos estão sendo carregados..."),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        CircularProgressIndicator()
+                      ],
+                      mainAxisAlignment: MainAxisAlignment.center,
+                    ),
+                  );
                 } else {
                   return CustomDataTable(
                     loadMoreWidget: productStore.productState is AppStateLoading
@@ -314,6 +325,18 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                                           child: Image.network(
                                             productStore
                                                 .products[index].imagePath!,
+                                            errorBuilder:
+                                                (context, error, stackTrace) {
+                                              return Container(
+                                                color: Colors.amber,
+                                                alignment: Alignment.center,
+                                                child: const Text(
+                                                  'Whoops!',
+                                                  style:
+                                                      TextStyle(fontSize: 30),
+                                                ),
+                                              );
+                                            },
                                           ),
                                         ),
                                         SizedBox(
@@ -631,7 +654,11 @@ class GetPrice extends StatelessWidget {
           if (snapshot.hasData) {
             String data = snapshot.data! as String;
             return Center(
-              child: Text(data.isEmpty ? 'Em Falta' : data),
+              child: Text(data.isEmpty
+                  ? 'Em Falta'
+                  : data == 'R\$ 0,00'
+                      ? 'Em Falta'
+                      : data),
             );
           }
           return const Center(

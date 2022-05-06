@@ -24,6 +24,21 @@ mixin _$MarketStore on _MarketStoreBase, Store {
     });
   }
 
+  final _$groupMarketsAtom = Atom(name: '_MarketStoreBase.groupMarkets');
+
+  @override
+  List<List<Market>> get groupMarkets {
+    _$groupMarketsAtom.reportRead();
+    return super.groupMarkets;
+  }
+
+  @override
+  set groupMarkets(List<List<Market>> value) {
+    _$groupMarketsAtom.reportWrite(value, super.groupMarkets, () {
+      super.groupMarkets = value;
+    });
+  }
+
   final _$pageAtom = Atom(name: '_MarketStoreBase.page');
 
   @override
@@ -43,6 +58,7 @@ mixin _$MarketStore on _MarketStoreBase, Store {
   String toString() {
     return '''
 markets: ${markets},
+groupMarkets: ${groupMarkets},
 page: ${page}
     ''';
   }
