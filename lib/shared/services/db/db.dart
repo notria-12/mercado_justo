@@ -16,16 +16,23 @@ class SQLHelper {
     });
   }
 
+  static Future destroyDB() async {
+    Directory directory = await getApplicationDocumentsDirectory();
+    final path = join(directory.path, "mj.db");
+    await deleteDatabase(path);
+  }
+
   static Future<void> createTables(Database database) async {
     await database.execute("""CREATE TABLE products(
-        id TEXT PRIMARY KEY NOT NULL,
+        id INTEGER PRIMARY KEY NOT NULL,
+        hash_id TEXT,
         image_path TEXT,
         bar_code TEXT,
         description TEXT,
-        order INTEGER,
+        product_order INTEGER,
         category TEXT,
-        category2 TEXT,
-        category3 TEXT,
+        category_2 TEXT,
+        category_3 TEXT,
         createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
       )
       """);
@@ -39,10 +46,12 @@ class SQLHelper {
 
     await database.execute("""CREATE TABLE list_products(
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-        FOREIGN KEY (list_id) REFERENCES lists (id),
-        FOREIGN KEY (product_id) REFERENCES products (id),
+        list_id INTEGER NOT NULL,
+        product_id INTEGER NOT NULL,
         quantity INTEGER NOT NULL,
-        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+        FOREIGN KEY (list_id) REFERENCES lists (id),
+        FOREIGN KEY (product_id) REFERENCES products (id)
       )
       """);
     // await database.execute("""CREATE TABLE markets(

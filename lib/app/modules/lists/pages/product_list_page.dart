@@ -3,6 +3,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/app/modules/home_auth/widgets/custom_button_widget.dart';
 import 'package:mercado_justo/app/modules/login/pages/code_by_email_page.dart';
 import 'package:mercado_justo/shared/widgets/bottomsheets.dart';
+import 'package:mercado_justo/shared/widgets/dialogs.dart';
 
 class ProductListPage extends StatefulWidget {
   const ProductListPage({Key? key}) : super(key: key);
@@ -92,7 +93,9 @@ class _ProductListPageState extends State<ProductListPage> {
             children: [
               CustomButtom(
                 label: 'Criar nova lista',
-                onPressed: () {},
+                onPressed: () {
+                  Dialogs().addNewList(context);
+                },
               ),
             ],
           ),

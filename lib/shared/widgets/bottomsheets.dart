@@ -67,7 +67,7 @@ class CustomBottonSheets {
                   children: [
                     CustomButtom(
                       label: 'Criar nova lista',
-                      onPressed: () => Dialogs.addNewList(context),
+                      onPressed: () => Dialogs().addNewList(context),
                     ),
                   ],
                 ),
