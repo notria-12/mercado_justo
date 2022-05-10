@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/app/modules/home_auth/widgets/custom_button_widget.dart';
 import 'package:mercado_justo/app/modules/login/pages/code_by_email_page.dart';
+import 'package:mercado_justo/shared/widgets/bottomsheets.dart';
 
 class ProductListPage extends StatefulWidget {
   const ProductListPage({Key? key}) : super(key: key);
@@ -102,13 +103,13 @@ class _ProductListPageState extends State<ProductListPage> {
 
   Widget OptionsListButton() {
     return InkWell(
-      onTap: selectList,
+      onTap: () => CustomBottonSheets.optionsList(context),
       child: Container(
         height: 50,
         width: 45,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5), color: Colors.lightBlue),
-        child: Center(
+        child: const Center(
             child: Icon(
           Icons.more_vert,
           color: Colors.white,
@@ -116,66 +117,5 @@ class _ProductListPageState extends State<ProductListPage> {
         )),
       ),
     );
-  }
-
-  void selectList() {
-    showModalBottomSheet(
-        context: context,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        builder: (context) {
-          return Container(
-            child: Column(children: [
-              SizedBox(
-                height: 10,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  IconButton(
-                      onPressed: () {
-                        Modular.to.pop();
-                      },
-                      icon: Icon(Icons.close))
-                ],
-              ),
-              SizedBox(
-                height: 30,
-              ),
-              Expanded(
-                  flex: 8,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        CustomButtom(
-                          label: 'Excluir Lista',
-                          onPressed: () {},
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        CustomButtom(
-                          label: 'Renomear Lista',
-                          onPressed: () {},
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        CustomButtom(
-                          label: 'Subtrair Lista',
-                          onPressed: () {},
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        CustomButtom(
-                          label: 'Duplicar Lista',
-                          onPressed: () {},
-                        ),
-                      ],
-                    ),
-                  )),
-            ]),
-          );
-        });
   }
 }

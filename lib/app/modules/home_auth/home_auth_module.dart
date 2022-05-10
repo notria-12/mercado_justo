@@ -1,6 +1,6 @@
 import 'package:mercado_justo/app/modules/home_auth/home_auth_store.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:mercado_justo/app/modules/home_auth/home_auth_page.dart';
+import 'package:mercado_justo/app/modules/home_auth/pages/home_auth_page.dart';
 import 'package:mercado_justo/shared/controllers/market_store.dart';
 import 'package:mercado_justo/shared/controllers/price_store.dart';
 import 'package:mercado_justo/shared/controllers/product_store.dart';

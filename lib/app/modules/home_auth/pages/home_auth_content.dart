@@ -8,7 +8,9 @@ import 'package:mercado_justo/shared/controllers/market_store.dart';
 import 'package:mercado_justo/shared/controllers/price_store.dart';
 import 'package:mercado_justo/shared/controllers/product_store.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
+import 'package:mercado_justo/shared/widgets/bottomsheets.dart';
 import 'package:mercado_justo/shared/widgets/custom_table_widget.dart';
+import 'package:mercado_justo/shared/widgets/dialogs.dart';
 import 'package:mercado_justo/shared/widgets/load_more_button.dart';
 
 class HomeAuthContent extends StatefulWidget {
@@ -295,7 +297,9 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                                                         color: Colors.white),
                                                   ),
                                                 ),
-                                                onPressed: selectList,
+                                                onPressed: () =>
+                                                    CustomBottonSheets
+                                                        .selectList(context),
                                                 style: ElevatedButton.styleFrom(
                                                     primary: Colors.lightBlue,
                                                     shape:
@@ -328,12 +332,12 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                                             errorBuilder:
                                                 (context, error, stackTrace) {
                                               return Container(
-                                                color: Colors.amber,
+                                                color: Colors.greenAccent,
                                                 alignment: Alignment.center,
                                                 child: const Text(
-                                                  'Whoops!',
+                                                  'Imagem indisponível!',
                                                   style:
-                                                      TextStyle(fontSize: 30),
+                                                      TextStyle(fontSize: 18),
                                                 ),
                                               );
                                             },
@@ -393,242 +397,9 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
               },
             ),
           ),
-          // Expanded(
-          //     child: Container(
-          //   height: 40,
-          //   child: Icon(Icons.add),
-          // ))
         ],
       ),
     );
-  }
-
-  // FutureBuilder<String> futureProductImage(int index) {
-  //   return FutureBuilder<String>(
-  //     builder: ((context, snapshot) {
-  //       if (snapshot.hasError) {
-  //         return Container(
-  //           color: Colors.blueGrey,
-  //         );
-  //       }
-  //       if (snapshot.hasData) {
-  //         return Image.network(snapshot.data!);
-  //       }
-  //       return Center(
-  //         child: CircularProgressIndicator(),
-  //       );
-  //     }),
-  //     future: productStore.getProductImage(
-  //         barCode: productStore.products[index].barCode.first),
-  //   );
-  // }
-
-  // Widget getProductImage(int index) {
-  //   return Observer(
-  //     builder: ((context) {
-  //       if (productStore.productState is AppStateError) {
-  //         return Container(
-  //           color: Colors.blueGrey,
-  //         );
-  //       }
-  //       if (productStore.productState is AppStateSuccess) {
-  //         return Image.network(snapshot.data!);
-  //       }
-  //       return Center(
-  //         child: CircularProgressIndicator(),
-  //       );
-  //     }),
-
-  //   );
-  // }
-
-  void selectList() {
-    showModalBottomSheet(
-        context: context,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        builder: (context) {
-          return Container(
-            child: Column(children: [
-              SizedBox(
-                height: 10,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SizedBox(
-                    width: 20,
-                  ),
-                  Text(
-                    'Selecione ou Adicione uma lista',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
-                  ),
-                  IconButton(
-                      onPressed: () {
-                        Modular.to.pop();
-                      },
-                      icon: Icon(Icons.close))
-                ],
-              ),
-              SizedBox(
-                height: 30,
-              ),
-              Expanded(
-                  flex: 8,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        CustomButtom(
-                          label: 'Compras do mês',
-                          onPressed: addToList,
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        CustomButtom(
-                          label: 'Despensa',
-                          onPressed: addToList,
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        CustomButtom(
-                          label: 'Churrasco de final de semana',
-                          onPressed: addToList,
-                        ),
-                      ],
-                    ),
-                  )),
-              Expanded(
-                flex: 2,
-                child: Column(
-                  children: [
-                    CustomButtom(
-                      label: 'Criar nova lista',
-                      onPressed: addNewList,
-                    ),
-                  ],
-                ),
-              )
-            ]),
-          );
-        });
-  }
-
-  void addNewList() {
-    Modular.to.pop();
-    // Modular.to.pop();
-    showModalBottomSheet(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        context: context,
-        builder: (context) {
-          return Container(
-            padding: EdgeInsets.all(16),
-            height: 250,
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    IconButton(
-                        padding: EdgeInsets.zero,
-                        onPressed: () {
-                          Modular.to.pop();
-                        },
-                        icon: Icon(Icons.close))
-                  ],
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  width: 300,
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Digite o nome da nova lista',
-                        hintStyle:
-                            TextStyle(color: Colors.black, fontSize: 20)),
-                  ),
-                  decoration: BoxDecoration(
-                      color: Colors.blueGrey[50],
-                      borderRadius: BorderRadius.circular(10)),
-                ),
-                SizedBox(
-                  height: 50,
-                ),
-                SizedBox(
-                  height: 50,
-                  width: 300,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Modular.to.pop();
-                      selectList();
-                    },
-                    child: Center(
-                      child: Text(
-                        'Criar nova lista',
-                        style: TextStyle(fontSize: 20),
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                        primary: Colors.lightBlue,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8))),
-                  ),
-                )
-              ],
-            ),
-          );
-        });
-  }
-
-  void addToList() {
-    Modular.to.pop();
-    Modular.to.pop();
-    showModalBottomSheet(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        context: context,
-        builder: (context) {
-          return Container(
-            padding: EdgeInsets.all(16),
-            height: 200,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const Text(
-                  'Produto adicionado com sucesso!',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                SizedBox(
-                  height: 50,
-                  width: 300,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Modular.to.pop();
-                    },
-                    child: Center(
-                      child: Text(
-                        'OK',
-                        style: TextStyle(fontSize: 20),
-                      ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                        primary: Colors.lightBlue,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8))),
-                  ),
-                )
-              ],
-            ),
-          );
-        });
   }
 }
 

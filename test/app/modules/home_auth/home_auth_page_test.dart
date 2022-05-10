@@ -1,4 +1,4 @@
-import 'package:mercado_justo/app/modules/home_auth/home_auth_page.dart';
+import 'package:mercado_justo/app/modules/home_auth/pages/home_auth_page.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:modular_test/modular_test.dart';
 
