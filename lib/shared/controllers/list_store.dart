@@ -1,4 +1,5 @@
 import 'package:mercado_justo/shared/models/list_model.dart';
+import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mobx/mobx.dart';
 
 import 'package:mercado_justo/shared/repositories/list_repository.dart';
@@ -13,11 +14,29 @@ abstract class _ListStoreBase with Store {
     this._repository,
   );
 
+  @observable
+  List<ListModel> product_list = [];
+
+  @observable
+  AppState listState = AppStateEmpty();
+
   Future createNewList(String name) async {
     try {
       ListModel listModel = ListModel(name: name);
       await _repository.createList(listModel);
+      getAllLists();
     } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future getAllLists() async {
+    try {
+      listState = AppStateLoading();
+      product_list = await _repository.getAllLists();
+      listState = AppStateSuccess();
+    } catch (e) {
+      listState = AppStateError();
       rethrow;
     }
   }

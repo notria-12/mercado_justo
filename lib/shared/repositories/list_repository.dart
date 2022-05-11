@@ -8,9 +8,22 @@ class ListRepository {
       //TODO pensar forma de injetar dependência de SQLHelper
       Database database = await SQLHelper.init();
 
-      int id = await database.insert('lists', list.toMap(),
+      await database.insert('lists', list.toMap(),
           conflictAlgorithm: ConflictAlgorithm.replace);
-      print(id);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<ListModel>> getAllLists() async {
+    try {
+      Database database = await SQLHelper.init();
+
+      final result = await database.query(
+        'lists',
+      );
+
+      return result.map((e) => ListModel.fromMap(e)).toList();
     } catch (e) {
       rethrow;
     }

@@ -68,6 +68,7 @@ class Dialogs {
                               formState.save();
                               Modular.get<ListStore>()
                                   .createNewList(_nameController.text);
+                              Modular.to.pop();
                             }
                           },
                           child: const Center(
