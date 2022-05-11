@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/app/modules/home_auth/widgets/custom_button_widget.dart';
+import 'package:mercado_justo/app/modules/lists/pages/product_list_page.dart';
+import 'package:mercado_justo/shared/controllers/list_store.dart';
+import 'package:mercado_justo/shared/controllers/product_to_list_store.dart';
+import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/widgets/dialogs.dart';
 
 class CustomBottonSheets {
-  static void selectList(BuildContext context) {
+  final store = Modular.get<ListStore>();
+  void selectList(BuildContext context) {
     showModalBottomSheet(
         context: context,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -37,37 +43,75 @@ class CustomBottonSheets {
               ),
               Expanded(
                   flex: 8,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        CustomButtom(
-                          label: 'Compras do mês',
-                          onPressed: () => addToList(context),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        CustomButtom(
-                          label: 'Despensa',
-                          onPressed: () => addToList(context),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        CustomButtom(
-                          label: 'Churrasco de final de semana',
-                          onPressed: () => addToList(context),
-                        ),
-                      ],
+                  child: Container(
+                    // color: Colors.blueGrey,
+                    child: Observer(
+                      builder: (_) {
+                        if (store.listState is AppStateLoading) {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        } else if (store.listState is AppStateError) {
+                          return Center(
+                            child: Text(
+                                'Encontramos problemas ao carregar suas listas'),
+                          );
+                        }
+                        if (store.product_list.isEmpty) {
+                          return Center(
+                            child: Text('Você ainda não criou nenhuma lista!'),
+                          );
+                        } else {
+                          return ListView.builder(
+                            itemBuilder: (context, index) {
+                              return Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      CustomButtom(
+                                        label: store.product_list[index].name,
+                                        onPressed: () {
+                                          Modular.get<ProductToListStore>()
+                                              .addToList(
+                                                  listId: store
+                                                      .product_list[index].id!);
+                                          addToList(context);
+                                          //TODO atualizando listas para atualizar a quantidade de produtos nas listas( Faz mesmo sentido usar aqui)
+                                          store.getAllLists();
+                                        },
+                                      ),
+                                      // SizedBox(
+                                      //   width: 5,
+                                      // ),
+                                      // OptionsListButton()
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  )
+                                ],
+                              );
+                            },
+                            itemCount: store.product_list.length,
+                          );
+                        }
+                      },
                     ),
                   )),
               Expanded(
                 flex: 2,
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    CustomButtom(
-                      label: 'Criar nova lista',
-                      onPressed: () => Dialogs().addNewList(context),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: CustomButtom(
+                        label: 'Criar nova lista',
+                        onPressed: () {
+                          Dialogs().addNewList(context);
+                        },
+                      ),
                     ),
                   ],
                 ),

@@ -6,10 +6,12 @@ import 'package:mercado_justo/shared/controllers/list_store.dart';
 import 'package:mercado_justo/shared/controllers/market_store.dart';
 import 'package:mercado_justo/shared/controllers/price_store.dart';
 import 'package:mercado_justo/shared/controllers/product_store.dart';
+import 'package:mercado_justo/shared/controllers/product_to_list_store.dart';
 import 'package:mercado_justo/shared/repositories/list_repository.dart';
 import 'package:mercado_justo/shared/repositories/market_repository.dart';
 import 'package:mercado_justo/shared/repositories/price_repository.dart';
 import 'package:mercado_justo/shared/repositories/product_repository.dart';
+import 'package:mercado_justo/shared/repositories/product_to_list_repository.dart';
 
 class HomeAuthModule extends Module {
   @override
@@ -22,7 +24,9 @@ class HomeAuthModule extends Module {
     Bind.lazySingleton((i) => PriceRepository(dio: i())),
     Bind((i) => PriceStore(repository: i())),
     Bind.lazySingleton((i) => ListRepository()),
-    Bind.lazySingleton((i) => ListStore(i()))
+    Bind.lazySingleton((i) => ListStore(i())),
+    Bind.lazySingleton((i) => ProductToListStore(i())),
+    Bind.lazySingleton((i) => ProductToListRepository())
   ];
 
   @override

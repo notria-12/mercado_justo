@@ -69,7 +69,22 @@ class _ProductListPageState extends ModularState<ProductListPage, ListStore> {
                               children: [
                                 CustomButtom(
                                   label: store.product_list[index].name,
-                                  subTitle: '0 Produtos',
+                                  subTitle: FutureBuilder<int>(
+                                    builder: (context, snapshot) {
+                                      if (snapshot.hasData) {
+                                        return Text(
+                                          "${snapshot.data!} Produtos",
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.white70),
+                                        );
+                                      }
+                                      return Container();
+                                    },
+                                    future: store.getProductsByList(
+                                        store.product_list[index].id!),
+                                  ),
                                   onPressed: () {},
                                 ),
                                 SizedBox(

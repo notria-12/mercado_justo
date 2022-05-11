@@ -1,16 +1,14 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:mercado_justo/app/modules/home_auth/widgets/custom_button_widget.dart';
 import 'package:mercado_justo/shared/controllers/market_store.dart';
 import 'package:mercado_justo/shared/controllers/price_store.dart';
 import 'package:mercado_justo/shared/controllers/product_store.dart';
+import 'package:mercado_justo/shared/controllers/product_to_list_store.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/widgets/bottomsheets.dart';
 import 'package:mercado_justo/shared/widgets/custom_table_widget.dart';
-import 'package:mercado_justo/shared/widgets/dialogs.dart';
 import 'package:mercado_justo/shared/widgets/load_more_button.dart';
 
 class HomeAuthContent extends StatefulWidget {
@@ -23,6 +21,10 @@ class HomeAuthContent extends StatefulWidget {
 class _HomeAuthContentState extends State<HomeAuthContent> {
   final productStore = Modular.get<ProductStore>();
   final marketStore = Modular.get<MarketStore>();
+  final TextEditingController _quantityController =
+      TextEditingController(text: '1');
+
+  final productToListStore = Modular.get<ProductToListStore>();
 
   @override
   void initState() {
@@ -207,7 +209,7 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                                               height: 8,
                                             ),
                                             Text(
-                                                "Ref: ${productStore.products[index].ref}"),
+                                                "Ref: ${productStore.products[index].barCode.first}"),
                                             SizedBox(
                                               height: 8,
                                             ),
@@ -221,68 +223,101 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                                             SizedBox(
                                               height: 120,
                                             ),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Container(
-                                                  height: 30,
-                                                  width: 30,
-                                                  decoration: BoxDecoration(
-                                                      shape: BoxShape.circle,
-                                                      color: Colors.lightBlue),
-                                                  child: Center(
-                                                      child: Icon(
-                                                    MdiIcons.minus,
-                                                    color: Colors.white,
-                                                    size: 18,
-                                                  )),
-                                                ),
-                                                SizedBox(
-                                                  width: 20,
-                                                ),
-                                                Container(
-                                                  width: 120,
-                                                  height: 50,
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 50),
-                                                  child: Center(
-                                                    child: TextFormField(
-                                                      initialValue: '1',
-                                                      decoration:
-                                                          InputDecoration(
-                                                              border:
-                                                                  InputBorder
-                                                                      .none),
-                                                      keyboardType:
-                                                          TextInputType.number,
+                                            Observer(builder: (_) {
+                                              _quantityController.text =
+                                                  productToListStore.value
+                                                      .toString();
+                                              return Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  InkWell(
+                                                    onTap: () =>
+                                                        productToListStore
+                                                                    .value >
+                                                                1
+                                                            ? productToListStore
+                                                                .decrement()
+                                                            : null,
+                                                    child: Container(
+                                                      height: 30,
+                                                      width: 30,
+                                                      decoration: BoxDecoration(
+                                                          shape:
+                                                              BoxShape.circle,
+                                                          color: productToListStore
+                                                                      .value >
+                                                                  1
+                                                              ? Colors.lightBlue
+                                                              : Colors
+                                                                  .blueGrey),
+                                                      child: const Center(
+                                                          child: Icon(
+                                                        MdiIcons.minus,
+                                                        color: Colors.white,
+                                                        size: 18,
+                                                      )),
                                                     ),
                                                   ),
-                                                  decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8),
-                                                      border: Border.all(
-                                                          color: Colors.grey)),
-                                                ),
-                                                SizedBox(
-                                                  width: 20,
-                                                ),
-                                                Container(
-                                                  height: 30,
-                                                  width: 30,
-                                                  decoration: BoxDecoration(
-                                                      shape: BoxShape.circle,
-                                                      color: Colors.lightBlue),
-                                                  child: Center(
-                                                      child: Icon(
-                                                    Icons.add,
-                                                    color: Colors.white,
-                                                    size: 18,
-                                                  )),
-                                                ),
-                                              ],
-                                            ),
+                                                  const SizedBox(
+                                                    width: 20,
+                                                  ),
+                                                  Container(
+                                                    width: 120,
+                                                    height: 50,
+                                                    padding: const EdgeInsets
+                                                            .symmetric(
+                                                        horizontal: 50),
+                                                    child: Center(
+                                                      child: TextFormField(
+                                                        // initialValue: '1',
+                                                        enabled: false,
+                                                        controller:
+                                                            _quantityController,
+                                                        decoration:
+                                                            const InputDecoration(
+                                                                border:
+                                                                    InputBorder
+                                                                        .none),
+                                                        keyboardType:
+                                                            TextInputType
+                                                                .number,
+                                                      ),
+                                                    ),
+                                                    decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8),
+                                                        border: Border.all(
+                                                            color:
+                                                                Colors.grey)),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 20,
+                                                  ),
+                                                  InkWell(
+                                                    onTap: () =>
+                                                        productToListStore
+                                                            .increment(),
+                                                    child: Container(
+                                                      height: 30,
+                                                      width: 30,
+                                                      decoration: BoxDecoration(
+                                                          shape:
+                                                              BoxShape.circle,
+                                                          color:
+                                                              Colors.lightBlue),
+                                                      child: Center(
+                                                          child: Icon(
+                                                        Icons.add,
+                                                        color: Colors.white,
+                                                        size: 18,
+                                                      )),
+                                                    ),
+                                                  ),
+                                                ],
+                                              );
+                                            }),
                                             SizedBox(
                                               height: 20,
                                             ),
@@ -290,16 +325,20 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                                               height: 50,
                                               width: 240,
                                               child: ElevatedButton(
-                                                child: Center(
+                                                child: const Center(
                                                   child: Text(
                                                     'Selecione ou Adicione uma Lista',
                                                     style: TextStyle(
                                                         color: Colors.white),
                                                   ),
                                                 ),
-                                                onPressed: () =>
-                                                    CustomBottonSheets
-                                                        .selectList(context),
+                                                onPressed: () {
+                                                  productToListStore
+                                                      .saveProduct(productStore
+                                                          .products[index]);
+                                                  CustomBottonSheets()
+                                                      .selectList(context);
+                                                },
                                                 style: ElevatedButton.styleFrom(
                                                     primary: Colors.lightBlue,
                                                     shape:

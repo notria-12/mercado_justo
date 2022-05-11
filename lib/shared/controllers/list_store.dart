@@ -1,4 +1,5 @@
 import 'package:mercado_justo/shared/models/list_model.dart';
+import 'package:mercado_justo/shared/models/product_list_model.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mobx/mobx.dart';
 
@@ -37,6 +38,16 @@ abstract class _ListStoreBase with Store {
       listState = AppStateSuccess();
     } catch (e) {
       listState = AppStateError();
+      rethrow;
+    }
+  }
+
+  Future<int> getProductsByList(int listId) async {
+    try {
+      List<ProductListModel> list_products =
+          await _repository.getProductsByList(listId);
+      return list_products.length;
+    } catch (e) {
       rethrow;
     }
   }

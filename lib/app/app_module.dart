@@ -1,3 +1,4 @@
+import 'package:mercado_justo/app/../shared/controllers/product_to_list_store.dart';
 import 'package:mercado_justo/app/../shared/controllers/list_store.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/app/modules/home_auth/home_auth_module.dart';

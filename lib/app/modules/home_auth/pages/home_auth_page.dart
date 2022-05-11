@@ -23,7 +23,7 @@ class HomeAuthPageState extends ModularState<HomeAuthPage, HomeAuthStore> {
     Container(),
   ];
   List<String> titles = ['Início', 'Minhas Listas', 'Carrinho'];
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
