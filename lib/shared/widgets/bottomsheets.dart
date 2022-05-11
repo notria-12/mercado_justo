@@ -168,7 +168,7 @@ class CustomBottonSheets {
         });
   }
 
-  static void optionsList(BuildContext context) {
+  static void optionsList(BuildContext context, {required int listId}) {
     showModalBottomSheet(
         context: context,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -198,7 +198,71 @@ class CustomBottonSheets {
                       children: [
                         CustomButtom(
                           label: 'Excluir Lista',
-                          onPressed: () {},
+                          onPressed: () {
+                            showModalBottomSheet(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12)),
+                                context: context,
+                                builder: (context) {
+                                  return Container(
+                                    padding: EdgeInsets.all(16),
+                                    height: 200,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            IconButton(
+                                                onPressed: () {
+                                                  Modular.to.pop();
+                                                },
+                                                icon: const Icon(Icons.close))
+                                          ],
+                                        ),
+                                        const Text(
+                                          'Deseja realmente excluir a lista?',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                        const SizedBox(
+                                          height: 20,
+                                        ),
+                                        SizedBox(
+                                          height: 50,
+                                          width: 300,
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              Modular.to.pop();
+                                              Modular.to.pop();
+                                              Modular.get<ListStore>()
+                                                  .deleteList(listId);
+                                            },
+                                            child: const Center(
+                                              child: Text(
+                                                'SIM',
+                                                style: TextStyle(fontSize: 20),
+                                              ),
+                                            ),
+                                            style: ElevatedButton.styleFrom(
+                                                primary: Colors.lightBlue,
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8))),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  );
+                                });
+                          },
                         ),
                         const SizedBox(
                           height: 20,

@@ -41,4 +41,14 @@ class ListRepository {
       rethrow;
     }
   }
+
+  Future deleteList(int listId) async {
+    try {
+      Database database = await SQLHelper.init();
+      await database.delete('list_products', where: '"list_id" = $listId');
+      await database.delete('lists', where: '"id" = $listId');
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

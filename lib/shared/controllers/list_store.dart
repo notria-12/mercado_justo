@@ -51,4 +51,13 @@ abstract class _ListStoreBase with Store {
       rethrow;
     }
   }
+
+  Future deleteList(int listId) async {
+    try {
+      await _repository.deleteList(listId);
+      getAllLists();
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

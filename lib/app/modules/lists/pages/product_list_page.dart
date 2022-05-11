@@ -90,7 +90,8 @@ class _ProductListPageState extends ModularState<ProductListPage, ListStore> {
                                 SizedBox(
                                   width: 5,
                                 ),
-                                OptionsListButton()
+                                OptionsListButton(
+                                    listId: store.product_list[index].id!)
                               ],
                             ),
                             SizedBox(
@@ -126,9 +127,9 @@ class _ProductListPageState extends ModularState<ProductListPage, ListStore> {
     );
   }
 
-  Widget OptionsListButton() {
+  Widget OptionsListButton({required int listId}) {
     return InkWell(
-      onTap: () => CustomBottonSheets.optionsList(context),
+      onTap: () => CustomBottonSheets.optionsList(context, listId: listId),
       child: Container(
         height: 50,
         width: 45,
