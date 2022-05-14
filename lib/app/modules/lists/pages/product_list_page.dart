@@ -85,7 +85,12 @@ class _ProductListPageState extends ModularState<ProductListPage, ListStore> {
                                     future: store.getProductsByList(
                                         store.product_list[index].id!),
                                   ),
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Modular.to.pushNamed(
+                                      '/home_auth/list/',
+                                      arguments: store.product_list[index],
+                                    );
+                                  },
                                 ),
                                 SizedBox(
                                   width: 5,

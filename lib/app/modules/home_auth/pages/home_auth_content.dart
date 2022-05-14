@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:mercado_justo/app/modules/home_auth/widgets/get_price_widget.dart';
 import 'package:mercado_justo/shared/controllers/market_store.dart';
 import 'package:mercado_justo/shared/controllers/price_store.dart';
 import 'package:mercado_justo/shared/controllers/product_store.dart';
@@ -9,6 +10,7 @@ import 'package:mercado_justo/shared/controllers/product_to_list_store.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/widgets/bottomsheets.dart';
 import 'package:mercado_justo/shared/widgets/custom_table_widget.dart';
+import 'package:mercado_justo/shared/widgets/fixed_corner_table_widget.dart';
 import 'package:mercado_justo/shared/widgets/load_more_button.dart';
 
 class HomeAuthContent extends StatefulWidget {
@@ -107,41 +109,13 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                     },
                     loadMore: true,
                     cellHeight: 135,
-                    fixedCornerCell: Row(
-                      children: [
-                        InkWell(
-                          onTap: () {},
-                          child: Container(
-                            height: 35,
-                            width: 35,
-                            child: Center(
-                                child: Text(
-                              '+ A',
-                              style: TextStyle(color: Colors.lightBlue),
-                            )),
-                            decoration: BoxDecoration(
-                                color: const Color.fromRGBO(190, 235, 199, 1),
-                                borderRadius: BorderRadius.circular(5)),
-                          ),
-                        ),
-                        IconButton(
-                          padding: EdgeInsets.zero,
-                          icon: const Icon(
-                            Icons.share_outlined,
-                            color: Colors.grey,
-                            size: 28,
-                          ),
-                          onPressed: () {},
-                        )
-                      ],
-                    ),
+                    fixedCornerCell: FixedCorner(),
                     rowsCells: [
                       ...List.generate(productStore.products.length, (index) {
                         return [
                           Text(productStore.products[index].description),
                           ...marketStore.markets
                               .map((e) => GetPrice(
-                                    productStore: productStore,
                                     marketId: e.id,
                                     productBarCode: productStore
                                         .products[index].barCode.first,
@@ -414,7 +388,7 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                           marketStore.markets.length,
                           (index) => InkWell(
                                 onTap: () {
-                                  Modular.to.pushNamed('/marketDetail/',
+                                  Modular.to.pushNamed('/home/marketDetail/',
                                       arguments: marketStore.markets[index]);
                                 },
                                 child: Container(
@@ -439,45 +413,5 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
         ],
       ),
     );
-  }
-}
-
-class GetPrice extends StatelessWidget {
-  GetPrice({
-    Key? key,
-    required this.productStore,
-    required this.marketId,
-    required this.productBarCode,
-  }) : super(key: key);
-
-  final ProductStore productStore;
-  final int marketId;
-  final String productBarCode;
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return const Text("Erro ao buscar");
-          }
-          if (snapshot.hasData) {
-            String data = snapshot.data! as String;
-            return Center(
-              child: Text(data.isEmpty
-                  ? 'Em Falta'
-                  : data == 'R\$ 0,00'
-                      ? 'Em Falta'
-                      : data),
-            );
-          }
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        },
-        future: Modular.get<PriceStore>().getProductPriceByMarket(
-          marketId: marketId,
-          barCode: productBarCode,
-        ));
   }
 }

@@ -1,5 +1,6 @@
 import 'package:mercado_justo/shared/models/list_model.dart';
 import 'package:mercado_justo/shared/models/product_list_model.dart';
+import 'package:mercado_justo/shared/models/product_model.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mobx/mobx.dart';
 
@@ -19,7 +20,13 @@ abstract class _ListStoreBase with Store {
   List<ListModel> product_list = [];
 
   @observable
+  List<Product> products = [];
+
+  @observable
   AppState listState = AppStateEmpty();
+
+  @observable
+  AppState productState = AppStateEmpty();
 
   Future createNewList(String name) async {
     try {
@@ -48,6 +55,20 @@ abstract class _ListStoreBase with Store {
           await _repository.getProductsByList(listId);
       return list_products.length;
     } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future getProducts(int listId) async {
+    try {
+      productState = AppStateLoading();
+      List<ProductListModel> list_products =
+          await _repository.getProductsByList(listId);
+      products = await _repository
+          .getProducts(list_products.map((e) => e.productId).toList());
+      productState = AppStateSuccess();
+    } catch (e) {
+      productState = AppStateError();
       rethrow;
     }
   }

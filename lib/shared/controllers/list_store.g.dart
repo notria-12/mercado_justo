@@ -24,6 +24,21 @@ mixin _$ListStore on _ListStoreBase, Store {
     });
   }
 
+  final _$productsAtom = Atom(name: '_ListStoreBase.products');
+
+  @override
+  List<Product> get products {
+    _$productsAtom.reportRead();
+    return super.products;
+  }
+
+  @override
+  set products(List<Product> value) {
+    _$productsAtom.reportWrite(value, super.products, () {
+      super.products = value;
+    });
+  }
+
   final _$listStateAtom = Atom(name: '_ListStoreBase.listState');
 
   @override
@@ -39,11 +54,28 @@ mixin _$ListStore on _ListStoreBase, Store {
     });
   }
 
+  final _$productStateAtom = Atom(name: '_ListStoreBase.productState');
+
+  @override
+  AppState get productState {
+    _$productStateAtom.reportRead();
+    return super.productState;
+  }
+
+  @override
+  set productState(AppState value) {
+    _$productStateAtom.reportWrite(value, super.productState, () {
+      super.productState = value;
+    });
+  }
+
   @override
   String toString() {
     return '''
 product_list: ${product_list},
-listState: ${listState}
+products: ${products},
+listState: ${listState},
+productState: ${productState}
     ''';
   }
 }
