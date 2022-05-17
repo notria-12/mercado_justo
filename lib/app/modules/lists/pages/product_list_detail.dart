@@ -4,7 +4,6 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/app/modules/home_auth/widgets/get_price_widget.dart';
 import 'package:mercado_justo/shared/controllers/list_store.dart';
 import 'package:mercado_justo/shared/controllers/market_store.dart';
-import 'package:mercado_justo/shared/controllers/product_to_list_store.dart';
 import 'package:mercado_justo/shared/models/list_model.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/widgets/custom_table_widget.dart';
@@ -142,6 +141,9 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
               children: [
                 ButtonOptionsListDetail(
                   label: 'Filtro',
+                  onTap: () {
+                    Modular.to.pushNamed('/home_auth/list/filters');
+                  },
                 ),
                 ButtonOptionsListDetail(
                   label: 'Meu Preço Justo',
