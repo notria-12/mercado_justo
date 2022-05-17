@@ -39,6 +39,36 @@ mixin _$ListStore on _ListStoreBase, Store {
     });
   }
 
+  final _$pricesAtom = Atom(name: '_ListStoreBase.prices');
+
+  @override
+  List<List<String>> get prices {
+    _$pricesAtom.reportRead();
+    return super.prices;
+  }
+
+  @override
+  set prices(List<List<String>> value) {
+    _$pricesAtom.reportWrite(value, super.prices, () {
+      super.prices = value;
+    });
+  }
+
+  final _$quantitiesAtom = Atom(name: '_ListStoreBase.quantities');
+
+  @override
+  List<int> get quantities {
+    _$quantitiesAtom.reportRead();
+    return super.quantities;
+  }
+
+  @override
+  set quantities(List<int> value) {
+    _$quantitiesAtom.reportWrite(value, super.quantities, () {
+      super.quantities = value;
+    });
+  }
+
   final _$listStateAtom = Atom(name: '_ListStoreBase.listState');
 
   @override
@@ -69,13 +99,31 @@ mixin _$ListStore on _ListStoreBase, Store {
     });
   }
 
+  final _$priceStateAtom = Atom(name: '_ListStoreBase.priceState');
+
+  @override
+  AppState get priceState {
+    _$priceStateAtom.reportRead();
+    return super.priceState;
+  }
+
+  @override
+  set priceState(AppState value) {
+    _$priceStateAtom.reportWrite(value, super.priceState, () {
+      super.priceState = value;
+    });
+  }
+
   @override
   String toString() {
     return '''
 product_list: ${product_list},
 products: ${products},
+prices: ${prices},
+quantities: ${quantities},
 listState: ${listState},
-productState: ${productState}
+productState: ${productState},
+priceState: ${priceState}
     ''';
   }
 }

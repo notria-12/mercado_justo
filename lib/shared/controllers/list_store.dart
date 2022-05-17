@@ -1,4 +1,7 @@
+import 'package:mercado_justo/shared/controllers/market_store.dart';
+import 'package:mercado_justo/shared/controllers/price_store.dart';
 import 'package:mercado_justo/shared/models/list_model.dart';
+import 'package:mercado_justo/shared/models/market_model.dart';
 import 'package:mercado_justo/shared/models/product_list_model.dart';
 import 'package:mercado_justo/shared/models/product_model.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
@@ -11,16 +14,20 @@ part 'list_store.g.dart';
 class ListStore = _ListStoreBase with _$ListStore;
 
 abstract class _ListStoreBase with Store {
-  ListRepository _repository;
-  _ListStoreBase(
-    this._repository,
-  );
+  final PriceStore priceStore;
+  final MarketStore marketStore;
+  final ListRepository _repository;
+  _ListStoreBase(this._repository,
+      {required this.priceStore, required this.marketStore});
 
   @observable
   List<ListModel> product_list = [];
 
   @observable
   List<Product> products = [];
+
+  @observable
+  List<List<String>> prices = [];
 
   @observable
   List<int> quantities = [];
@@ -30,6 +37,9 @@ abstract class _ListStoreBase with Store {
 
   @observable
   AppState productState = AppStateEmpty();
+
+  @observable
+  AppState priceState = AppStateEmpty();
 
   Future createNewList(String name) async {
     try {
@@ -75,9 +85,29 @@ abstract class _ListStoreBase with Store {
             .add(await _repository.getQuantity(listId, product.productId!));
       }
       quantities = auxQuantities;
+      getProductsPrices();
       productState = AppStateSuccess();
     } catch (e) {
       productState = AppStateError();
+      rethrow;
+    }
+  }
+
+  Future getProductsPrices() async {
+    List<List<String>> listPricesAux = [];
+
+    try {
+      for (int i = 0; i < products.length; i++) {
+        List<String> pricesByProducts = [];
+        for (Market market in marketStore.markets) {
+          String? price = await priceStore.getProductPriceByMarket(
+              marketId: market.id, barCode: products[i].barCode.first);
+          pricesByProducts.add(price);
+        }
+        listPricesAux.add([...pricesByProducts]);
+      }
+      prices = listPricesAux;
+    } catch (e) {
       rethrow;
     }
   }

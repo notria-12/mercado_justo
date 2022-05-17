@@ -24,6 +24,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
   @override
   void initState() {
     storeProductList.getProducts(widget.listModel.id!);
+
     super.initState();
   }
 
@@ -157,7 +158,8 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
               height: 20,
             ),
             Expanded(child: Container(child: Observer(builder: (_) {
-              if (storeProductList.productState is AppStateSuccess) {
+              if (storeProductList.productState is AppStateSuccess &&
+                  storeProductList.prices.isNotEmpty) {
                 return CustomDataTable(
                   loadMore: false,
                   fixedCornerCell: const FixedCorner(),
@@ -211,21 +213,62 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                               ),
                             ))
                   ],
-                  rowsCells: [
-                    ...List.generate(storeProductList.products.length, (index) {
-                      return [
-                        Text(storeProductList.products[index].description),
-                        ...storeMarket.markets
-                            .map((e) => GetPrice(
-                                  marketId: e.id,
-                                  productBarCode: storeProductList
-                                      .products[index].barCode.first,
-                                  quantity: storeProductList.quantities[index],
-                                ))
-                            .toList()
-                      ];
-                    })
-                  ],
+                  rowsCells: List.generate(
+                      storeProductList.prices.length,
+                      (index) => [
+                            Text(storeProductList.products[index].description),
+                            ...storeProductList.prices[index]
+                                .map((e) => Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(e.isEmpty
+                                            ? 'Em Falta'
+                                            : e == 'R\$ 0,00'
+                                                ? 'Em Falta'
+                                                : e),
+                                        const SizedBox(
+                                          height: 20,
+                                        ),
+                                        e.isEmpty || e == 'R\$ 0,00'
+                                            ? const Text(
+                                                'Sugestão?',
+                                                style: TextStyle(
+                                                    color: Colors.lightBlue,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16),
+                                              )
+                                            : Text(
+                                                'R\$ ${(double.parse(e.replaceAll(r'R$ ', '').replaceAll(r',', '.')) * storeProductList.quantities[index]).toStringAsFixed(2)}',
+                                                style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16),
+                                              )
+                                      ],
+                                    ))
+                                .toList()
+                          ]),
+
+                  // storeProductList.prices
+                  //     .map((e) => [...e.map((e) =>  Text(e)).toList()])
+                  //     .toList(),
+                  //  [
+                  //   ...List.generate(storeProductList.products.length, (index) {
+                  //     return [
+                  //       Text(storeProductList.products[index].description),
+                  //       ...storeMarket.markets
+                  //           .map((e) => Text('Em Falta')
+                  //               // GetPrice(
+                  //               //   marketId: e.id,
+                  //               //   productBarCode: storeProductList
+                  //               //       .products[index].barCode.first,
+                  //               //   quantity: storeProductList.quantities[index],
+                  //               // ),
+                  //               )
+                  //           .toList()
+                  //     ];
+                  //   })
+                  // ],
                   cellBuilder: (data) {
                     return Center(
                       child: Text(
@@ -235,7 +278,18 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                   },
                 );
               }
-              return Container();
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Aguarde um instante...'),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    CircularProgressIndicator()
+                  ],
+                ),
+              );
             })))
           ],
         ),

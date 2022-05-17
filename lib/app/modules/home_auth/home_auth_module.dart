@@ -24,7 +24,8 @@ class HomeAuthModule extends Module {
     Bind.lazySingleton((i) => PriceRepository(dio: i())),
     Bind((i) => PriceStore(repository: i())),
     Bind.lazySingleton((i) => ListRepository()),
-    Bind.lazySingleton((i) => ListStore(i())),
+    Bind.lazySingleton(
+        (i) => ListStore(i(), priceStore: i(), marketStore: i())),
     Bind.lazySingleton((i) => ProductToListStore(i())),
     Bind.lazySingleton((i) => ProductToListRepository())
   ];
