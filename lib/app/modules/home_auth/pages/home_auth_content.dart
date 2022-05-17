@@ -8,7 +8,7 @@ import 'package:mercado_justo/shared/controllers/price_store.dart';
 import 'package:mercado_justo/shared/controllers/product_store.dart';
 import 'package:mercado_justo/shared/controllers/product_to_list_store.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
-import 'package:mercado_justo/shared/widgets/bottomsheets.dart';
+import 'package:mercado_justo/shared/widgets/bottonsheets.dart';
 import 'package:mercado_justo/shared/widgets/custom_table_widget.dart';
 import 'package:mercado_justo/shared/widgets/fixed_corner_table_widget.dart';
 import 'package:mercado_justo/shared/widgets/load_more_button.dart';

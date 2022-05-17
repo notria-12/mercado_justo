@@ -52,4 +52,12 @@ abstract class _ProductToListStoreBase with Store {
       rethrow;
     }
   }
+
+  Future<int> getQuantity({required int listId, required int productId}) async {
+    try {
+      return _repository.getQuantity(listId, productId);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

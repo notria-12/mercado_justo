@@ -134,7 +134,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                 )
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             Row(
@@ -158,15 +158,40 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
               if (storeProductList.productState is AppStateSuccess) {
                 return CustomDataTable(
                   loadMore: false,
-                  fixedCornerCell: FixedCorner(),
+                  fixedCornerCell: const FixedCorner(),
                   cellHeight: 130,
                   fixedColCells: storeProductList.products
-                      .map((e) => Container(
-                            // margin: EdgeInsets.all(8),
-                            child: Image.network(e.imagePath!),
-                            height: 90,
-                            // width: 80,
-                          ))
+                      .map((e) => Stack(children: [
+                            Align(
+                              alignment: Alignment.center,
+                              child: Container(
+                                // margin: EdgeInsets.all(8),
+                                child: Image.network(e.imagePath!),
+                                height: 90,
+                                // width: 80,
+                              ),
+                            ),
+                            Align(
+                              child: Container(
+                                height: 25,
+                                width: 35,
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(5)),
+                                    border: Border.all(color: Colors.black26)),
+                                child: Center(
+                                  child: Text(
+                                    '${storeProductList.quantities[storeProductList.products.indexOf(e)]}x',
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16),
+                                  ),
+                                ),
+                              ),
+                              alignment: Alignment.topRight,
+                            ),
+                          ]))
                       .toList(),
                   fixedRowCells: [
                     Container(),
@@ -193,6 +218,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                                   marketId: e.id,
                                   productBarCode: storeProductList
                                       .products[index].barCode.first,
+                                  quantity: storeProductList.quantities[index],
                                 ))
                             .toList()
                       ];

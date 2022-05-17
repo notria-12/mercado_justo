@@ -23,6 +23,9 @@ abstract class _ListStoreBase with Store {
   List<Product> products = [];
 
   @observable
+  List<int> quantities = [];
+
+  @observable
   AppState listState = AppStateEmpty();
 
   @observable
@@ -60,12 +63,18 @@ abstract class _ListStoreBase with Store {
   }
 
   Future getProducts(int listId) async {
+    List<int> auxQuantities = [];
     try {
       productState = AppStateLoading();
       List<ProductListModel> list_products =
           await _repository.getProductsByList(listId);
       products = await _repository
           .getProducts(list_products.map((e) => e.productId).toList());
+      for (Product product in products) {
+        auxQuantities
+            .add(await _repository.getQuantity(listId, product.productId!));
+      }
+      quantities = auxQuantities;
       productState = AppStateSuccess();
     } catch (e) {
       productState = AppStateError();

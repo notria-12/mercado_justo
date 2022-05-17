@@ -35,6 +35,17 @@ class ProductToListRepository {
     }
   }
 
+  Future<int> getQuantity(int listId, int productId) async {
+    try {
+      Database database = await SQLHelper.init();
+      final result = await database.query('list_products',
+          where: '"product_id" = $productId and "list_id" = $listId');
+      return ProductListModel.fromMap(result.first).quantity;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future addToList(
       {required int productId,
       required int listId,

@@ -5,7 +5,7 @@ import 'package:mercado_justo/app/modules/home_auth/widgets/custom_button_widget
 import 'package:mercado_justo/app/modules/login/pages/code_by_email_page.dart';
 import 'package:mercado_justo/shared/controllers/list_store.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
-import 'package:mercado_justo/shared/widgets/bottomsheets.dart';
+import 'package:mercado_justo/shared/widgets/bottonsheets.dart';
 import 'package:mercado_justo/shared/widgets/dialogs.dart';
 import 'package:mobx/mobx.dart';
 

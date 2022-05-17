@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/shared/controllers/list_store.dart';
-import 'package:mercado_justo/shared/widgets/bottomsheets.dart';
+import 'package:mercado_justo/shared/widgets/bottonsheets.dart';
 
 class Dialogs {
   final TextEditingController _nameController = TextEditingController();
