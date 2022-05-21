@@ -33,6 +33,9 @@ abstract class _ListStoreBase with Store {
   List<int> quantities = [];
 
   @observable
+  int marketSelected = 0;
+
+  @observable
   AppState listState = AppStateEmpty();
 
   @observable
@@ -40,6 +43,16 @@ abstract class _ListStoreBase with Store {
 
   @observable
   AppState priceState = AppStateEmpty();
+
+  @action
+  void setMarketSelected(int value) {
+    if (value == -1 && marketSelected > 0) {
+      marketSelected--;
+    }
+    if (value == 1 && marketSelected < (marketStore.markets.length - 1)) {
+      marketSelected++;
+    }
+  }
 
   Future createNewList(String name) async {
     try {
@@ -50,6 +63,39 @@ abstract class _ListStoreBase with Store {
       rethrow;
     }
   }
+
+  @computed
+  double get totalPrice {
+    double total = 0;
+    for (var i = 0; i < prices.length; i++) {
+      total += (_parseToDouble(prices[i][marketSelected]) * quantities[i]);
+    }
+    return total;
+  }
+
+  @computed
+  Map<String, dynamic> get missingProducts {
+    int missingItens = 0;
+    double average = 0;
+    for (var i = 0; i < prices.length; i++) {
+      if (prices[i][marketSelected].isEmpty ||
+          prices[i][marketSelected] == 'R\$ 0,00') {
+        missingItens++;
+        average += (prices[i]
+                .map((e) => _parseToDouble(e))
+                .reduce((value, element) => value + element)) /
+            marketStore.markets.length;
+      }
+    }
+
+    return {
+      'missingItens': missingItens,
+      'average': average.toStringAsFixed(2)
+    };
+  }
+
+  double _parseToDouble(String value) =>
+      double.parse(value.replaceAll(r'R$ ', '').replaceAll(r',', '.'));
 
   Future getAllLists() async {
     try {

@@ -9,6 +9,21 @@ part of 'list_store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$ListStore on _ListStoreBase, Store {
+  Computed<double>? _$totalPriceComputed;
+
+  @override
+  double get totalPrice =>
+      (_$totalPriceComputed ??= Computed<double>(() => super.totalPrice,
+              name: '_ListStoreBase.totalPrice'))
+          .value;
+  Computed<Map<String, dynamic>>? _$missingProductsComputed;
+
+  @override
+  Map<String, dynamic> get missingProducts => (_$missingProductsComputed ??=
+          Computed<Map<String, dynamic>>(() => super.missingProducts,
+              name: '_ListStoreBase.missingProducts'))
+      .value;
+
   final _$product_listAtom = Atom(name: '_ListStoreBase.product_list');
 
   @override
@@ -69,6 +84,21 @@ mixin _$ListStore on _ListStoreBase, Store {
     });
   }
 
+  final _$marketSelectedAtom = Atom(name: '_ListStoreBase.marketSelected');
+
+  @override
+  int get marketSelected {
+    _$marketSelectedAtom.reportRead();
+    return super.marketSelected;
+  }
+
+  @override
+  set marketSelected(int value) {
+    _$marketSelectedAtom.reportWrite(value, super.marketSelected, () {
+      super.marketSelected = value;
+    });
+  }
+
   final _$listStateAtom = Atom(name: '_ListStoreBase.listState');
 
   @override
@@ -114,6 +144,20 @@ mixin _$ListStore on _ListStoreBase, Store {
     });
   }
 
+  final _$_ListStoreBaseActionController =
+      ActionController(name: '_ListStoreBase');
+
+  @override
+  void setMarketSelected(int value) {
+    final _$actionInfo = _$_ListStoreBaseActionController.startAction(
+        name: '_ListStoreBase.setMarketSelected');
+    try {
+      return super.setMarketSelected(value);
+    } finally {
+      _$_ListStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
   @override
   String toString() {
     return '''
@@ -121,9 +165,12 @@ product_list: ${product_list},
 products: ${products},
 prices: ${prices},
 quantities: ${quantities},
+marketSelected: ${marketSelected},
 listState: ${listState},
 productState: ${productState},
-priceState: ${priceState}
+priceState: ${priceState},
+totalPrice: ${totalPrice},
+missingProducts: ${missingProducts}
     ''';
   }
 }

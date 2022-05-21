@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:mercado_justo/app/modules/home_auth/widgets/get_price_widget.dart';
 import 'package:mercado_justo/shared/controllers/list_store.dart';
 import 'package:mercado_justo/shared/controllers/market_store.dart';
 import 'package:mercado_justo/shared/models/list_model.dart';
@@ -29,6 +28,12 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
   }
 
   @override
+  void dispose() {
+    storeProductList.prices = [];
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -39,6 +44,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
         centerTitle: true,
         backgroundColor: Colors.green,
       ),
+      backgroundColor: Colors.white,
       body: Container(
         padding: EdgeInsets.all(16),
         child: Column(
@@ -52,30 +58,40 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                   style: TextStyle(
                       color: Colors.black54, fontWeight: FontWeight.w500),
                 ),
-                Column(
-                  children: [
-                    RichText(
-                        text: TextSpan(
-                            children: [
-                          TextSpan(text: ' 1 '),
-                          TextSpan(text: 'item')
-                        ],
-                            text: 'Falta',
-                            style: TextStyle(
-                                color: Colors.red,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16))),
-                    RichText(
-                        text: TextSpan(
-                            children: [
-                          TextSpan(text: ' R\$ 3,87 '),
-                        ],
-                            text: 'Valor médio',
-                            style: TextStyle(
-                                color: Colors.red,
-                                fontWeight: FontWeight.bold)))
-                  ],
-                )
+                Observer(builder: (_) {
+                  return Visibility(
+                    visible:
+                        storeProductList.missingProducts['missingItens'] != 0,
+                    child: Column(
+                      children: [
+                        RichText(
+                            text: TextSpan(
+                                children: [
+                              TextSpan(
+                                  text:
+                                      ' ${storeProductList.missingProducts['missingItens']} '),
+                              TextSpan(text: 'item')
+                            ],
+                                text: 'Falta',
+                                style: TextStyle(
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16))),
+                        RichText(
+                            text: TextSpan(
+                                children: [
+                              TextSpan(
+                                  text:
+                                      ' R\$ ${storeProductList.missingProducts['average']} '),
+                            ],
+                                text: 'Valor médio',
+                                style: TextStyle(
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold)))
+                      ],
+                    ),
+                  );
+                })
               ],
             ),
             Row(
@@ -85,12 +101,14 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'R\$ 25,90',
-                      style:
-                          TextStyle(fontSize: 38, fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(height: 5),
+                    Observer(builder: (_) {
+                      return Text(
+                        'R\$ ${storeProductList.totalPrice.toStringAsFixed(2)}',
+                        style: const TextStyle(
+                            fontSize: 38, fontWeight: FontWeight.bold),
+                      );
+                    }),
+                    const SizedBox(height: 5),
                     InkWell(
                       onTap: () {},
                       child: Row(
@@ -98,10 +116,10 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                           Container(
                             height: 20,
                             width: 20,
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: Colors.lightBlue),
-                            child: Center(
+                            child: const Center(
                                 child: Icon(
                               Icons.add,
                               color: Colors.white,
@@ -124,12 +142,32 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                 ),
                 Row(
                   children: [
-                    Icon(Icons.chevron_left),
-                    Container(
-                      height: 60,
-                      child: Image.network(storeMarket.markets[1].imagePath!),
+                    InkWell(
+                      child: Icon(Icons.chevron_left),
+                      onTap: () {
+                        storeProductList.setMarketSelected(-1);
+                      },
                     ),
-                    Icon(Icons.chevron_right),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    Observer(builder: (_) {
+                      return Container(
+                        height: 60,
+                        width: 100,
+                        child: Image.network(storeMarket
+                            .markets[storeProductList.marketSelected]
+                            .imagePath!),
+                      );
+                    }),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    InkWell(
+                        child: Icon(Icons.chevron_right),
+                        onTap: () {
+                          storeProductList.setMarketSelected(1);
+                        }),
                   ],
                 )
               ],
