@@ -189,6 +189,10 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                 ),
                 ButtonOptionsListDetail(
                   label: 'Editar',
+                  onTap: () {
+                    Modular.to.pushNamed(
+                        '/home_auth/list/edit/${widget.listModel.id!}');
+                  },
                 )
               ],
             ),

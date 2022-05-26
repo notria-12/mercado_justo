@@ -42,80 +42,78 @@ class CustomBottonSheets {
                 height: 30,
               ),
               Expanded(
-                  flex: 8,
+                  // flex: 8,
                   child: Container(
-                    // color: Colors.blueGrey,
-                    child: Observer(
-                      builder: (_) {
-                        if (store.listState is AppStateLoading) {
-                          return Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        } else if (store.listState is AppStateError) {
-                          return Center(
-                            child: Text(
-                                'Encontramos problemas ao carregar suas listas'),
-                          );
-                        }
-                        if (store.product_list.isEmpty) {
-                          return Center(
-                            child: Text('Você ainda não criou nenhuma lista!'),
-                          );
-                        } else {
-                          return ListView.builder(
-                            itemBuilder: (context, index) {
-                              return Column(
+                // color: Colors.blueGrey,
+                child: Observer(
+                  builder: (_) {
+                    if (store.listState is AppStateLoading) {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else if (store.listState is AppStateError) {
+                      return Center(
+                        child: Text(
+                            'Encontramos problemas ao carregar suas listas'),
+                      );
+                    }
+                    if (store.product_list.isEmpty) {
+                      return Center(
+                        child: Text('Você ainda não criou nenhuma lista!'),
+                      );
+                    } else {
+                      return ListView.builder(
+                        itemBuilder: (context, index) {
+                          return Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      CustomButtom(
-                                        label: store.product_list[index].name,
-                                        onPressed: () {
-                                          Modular.get<ProductToListStore>()
-                                              .addToList(
-                                                  listId: store
-                                                      .product_list[index].id!);
-                                          addToList(context);
-                                          //TODO atualizando listas para atualizar a quantidade de produtos nas listas( Faz mesmo sentido usar aqui)
-                                          store.getAllLists();
-                                        },
-                                      ),
-                                      // SizedBox(
-                                      //   width: 5,
-                                      // ),
-                                      // OptionsListButton()
-                                    ],
+                                  CustomButtom(
+                                    label: store.product_list[index].name,
+                                    onPressed: () {
+                                      Modular.get<ProductToListStore>()
+                                          .addToList(
+                                              listId: store
+                                                  .product_list[index].id!);
+                                      addToList(context);
+                                      //TODO atualizando listas para atualizar a quantidade de produtos nas listas( Faz mesmo sentido usar aqui)
+                                      store.getAllLists();
+                                    },
                                   ),
-                                  SizedBox(
-                                    height: 20,
-                                  )
+                                  // SizedBox(
+                                  //   width: 5,
+                                  // ),
+                                  // OptionsListButton()
                                 ],
-                              );
-                            },
-                            itemCount: store.product_list.length,
+                              ),
+                              SizedBox(
+                                height: 20,
+                              )
+                            ],
                           );
-                        }
-                      },
-                    ),
-                  )),
-              Expanded(
-                flex: 2,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: CustomButtom(
-                        label: 'Criar nova lista',
-                        onPressed: () {
-                          Dialogs().addNewList(context);
                         },
-                      ),
-                    ),
-                  ],
+                        itemCount: store.product_list.length,
+                      );
+                    }
+                  },
                 ),
-              )
+              )),
+              SizedBox(
+                height: 5,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: CustomButtom(
+                  label: 'Criar nova lista',
+                  onPressed: () {
+                    Dialogs().addNewList(context);
+                  },
+                ),
+              ),
+              SizedBox(
+                height: 5,
+              ),
             ]),
           );
         });

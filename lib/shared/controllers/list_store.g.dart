@@ -144,6 +144,23 @@ mixin _$ListStore on _ListStoreBase, Store {
     });
   }
 
+  final _$updateQuantityStatusAtom =
+      Atom(name: '_ListStoreBase.updateQuantityStatus');
+
+  @override
+  AppState get updateQuantityStatus {
+    _$updateQuantityStatusAtom.reportRead();
+    return super.updateQuantityStatus;
+  }
+
+  @override
+  set updateQuantityStatus(AppState value) {
+    _$updateQuantityStatusAtom.reportWrite(value, super.updateQuantityStatus,
+        () {
+      super.updateQuantityStatus = value;
+    });
+  }
+
   final _$_ListStoreBaseActionController =
       ActionController(name: '_ListStoreBase');
 
@@ -169,6 +186,7 @@ marketSelected: ${marketSelected},
 listState: ${listState},
 productState: ${productState},
 priceState: ${priceState},
+updateQuantityStatus: ${updateQuantityStatus},
 totalPrice: ${totalPrice},
 missingProducts: ${missingProducts}
     ''';

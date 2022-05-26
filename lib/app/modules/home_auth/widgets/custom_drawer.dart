@@ -144,19 +144,6 @@ class CustomDrawer extends StatelessWidget {
                           const SizedBox(
                             height: 10,
                           ),
-                          // Row(
-                          //   mainAxisAlignment: MainAxisAlignment.end,
-                          //   children: [
-                          //     IconButton(
-                          //         onPressed: () {
-                          //           Modular.to.pop();
-                          //         },
-                          //         icon: Icon(Icons.close))
-                          //   ],
-                          // ),
-                          // const SizedBox(
-                          //   height: 10,
-                          // ),
                           const Text(
                             "Tem Certeza que deseja sair?",
                             style: TextStyle(

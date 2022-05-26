@@ -1,3 +1,4 @@
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/shared/controllers/market_store.dart';
 import 'package:mercado_justo/shared/controllers/price_store.dart';
 import 'package:mercado_justo/shared/models/list_model.dart';
@@ -43,6 +44,9 @@ abstract class _ListStoreBase with Store {
 
   @observable
   AppState priceState = AppStateEmpty();
+
+  @observable
+  AppState updateQuantityStatus = AppStateEmpty();
 
   @action
   void setMarketSelected(int value) {
@@ -94,8 +98,9 @@ abstract class _ListStoreBase with Store {
     };
   }
 
-  double _parseToDouble(String value) =>
-      double.parse(value.replaceAll(r'R$ ', '').replaceAll(r',', '.'));
+  double _parseToDouble(String value) => value.isEmpty
+      ? 0
+      : double.parse(value.replaceAll(r'R$ ', '').replaceAll(r',', '.'));
 
   Future getAllLists() async {
     try {
@@ -104,6 +109,37 @@ abstract class _ListStoreBase with Store {
       listState = AppStateSuccess();
     } catch (e) {
       listState = AppStateError();
+      rethrow;
+    }
+  }
+
+  Future deleteProductOfList(
+      {required int listId, required int productId}) async {
+    try {
+      await _repository.deleteProductOfList(listId, productId);
+      prices = [];
+
+      getProducts(listId);
+      getAllLists();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future updateQuantity(int listId) async {
+    updateQuantityStatus = AppStateLoading();
+    try {
+      for (var i = 0; i < products.length; i++) {
+        await _repository.updateQuantity(
+            listId, products[i].productId!, quantities[i]);
+      }
+      prices = [];
+      getProducts(listId);
+      updateQuantityStatus = AppStateSuccess();
+      Modular.to.pop();
+      prices = [];
+    } catch (e) {
+      updateQuantityStatus = AppStateError();
       rethrow;
     }
   }

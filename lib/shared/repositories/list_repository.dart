@@ -65,6 +65,26 @@ class ListRepository {
     }
   }
 
+  Future deleteProductOfList(int listId, int productId) async {
+    try {
+      Database database = await SQLHelper.init();
+      await database.delete('list_products',
+          where: '"list_id" = $listId and "product_id" = $productId');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future updateQuantity(int listId, int productId, int newQuantity) async {
+    try {
+      Database database = await SQLHelper.init();
+      await database.update('list_products', {'quantity': newQuantity},
+          where: '"list_id" = $listId and "product_id" = $productId');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<int> getQuantity(int listId, int productId) async {
     try {
       Database database = await SQLHelper.init();
