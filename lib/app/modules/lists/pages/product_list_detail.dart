@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:mercado_justo/shared/controllers/fair_price_store.dart';
 import 'package:mercado_justo/shared/controllers/list_store.dart';
+import 'package:mercado_justo/shared/controllers/market_name_store.dart';
 import 'package:mercado_justo/shared/controllers/market_store.dart';
 import 'package:mercado_justo/shared/models/list_model.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/widgets/custom_table_widget.dart';
+import 'package:mercado_justo/shared/widgets/dialogs.dart';
 import 'package:mercado_justo/shared/widgets/fixed_corner_table_widget.dart';
 
 class ProductListDetailsPage extends StatefulWidget {
@@ -19,7 +22,7 @@ class ProductListDetailsPage extends StatefulWidget {
 class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
   final storeMarket = Modular.get<MarketStore>();
   final storeProductList = Modular.get<ListStore>();
-
+  double price = 0.0;
   @override
   void initState() {
     storeProductList.getProducts(widget.listModel.id!);
@@ -39,14 +42,14 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
       appBar: AppBar(
         title: Text(
           widget.listModel.name,
-          style: TextStyle(fontSize: 18),
+          style: const TextStyle(fontSize: 18),
         ),
         centerTitle: true,
         backgroundColor: Colors.green,
       ),
       backgroundColor: Colors.white,
       body: Container(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           children: [
             Row(
@@ -70,10 +73,10 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                               TextSpan(
                                   text:
                                       ' ${storeProductList.missingProducts['missingItens']} '),
-                              TextSpan(text: 'item')
+                              const TextSpan(text: 'item')
                             ],
                                 text: 'Falta',
-                                style: TextStyle(
+                                style: const TextStyle(
                                     color: Colors.red,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16))),
@@ -85,7 +88,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                                       ' R\$ ${storeProductList.missingProducts['average']} '),
                             ],
                                 text: 'Valor médio',
-                                style: TextStyle(
+                                style: const TextStyle(
                                     color: Colors.red,
                                     fontWeight: FontWeight.bold)))
                       ],
@@ -126,7 +129,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                               size: 18,
                             )),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 5,
                           ),
                           const Text(
@@ -143,24 +146,96 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                 Row(
                   children: [
                     InkWell(
-                      child: Icon(Icons.chevron_left),
+                      child: const Icon(Icons.chevron_left),
                       onTap: () {
                         storeProductList.setMarketSelected(-1);
                       },
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 5,
                     ),
                     Observer(builder: (_) {
-                      return Container(
-                        height: 60,
-                        width: 100,
-                        child: Image.network(storeMarket
-                            .markets[storeProductList.marketSelected]
-                            .imagePath!),
-                      );
+                      if (storeProductList.marketSelected == -1) {
+                        return FutureBuilder<String?>(
+                            future: Modular.get<MarketNameStore>()
+                                .getMarketName(listId: widget.listModel.id!),
+                            builder: (context, snapshot) {
+                              switch (snapshot.connectionState) {
+                                case ConnectionState.none:
+                                case ConnectionState.waiting:
+                                  return Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                case ConnectionState.done:
+                                  if (snapshot.hasError) {
+                                    return Container();
+                                  }
+                                  if (snapshot.hasData) {
+                                    return InkWell(
+                                      onTap: () {
+                                        Dialogs()
+                                            .addNewMarketName(context,
+                                                listId: widget.listModel.id!,
+                                                name: snapshot.data!)
+                                            .then((value) {
+                                          setState(() {});
+                                        });
+                                      },
+                                      child: Container(
+                                        width: 100,
+                                        height: 60,
+                                        child: Center(
+                                          child: Text(
+                                            snapshot.data!,
+                                            textAlign: TextAlign.center,
+                                            style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w700),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  } else {
+                                    return InkWell(
+                                      onTap: () {
+                                        Dialogs()
+                                            .addNewMarketName(context,
+                                                listId: widget.listModel.id!)
+                                            .then((value) {
+                                          setState(() {});
+                                        });
+                                      },
+                                      child: Container(
+                                        width: 100,
+                                        height: 60,
+                                        child: const Center(
+                                          child: Text(
+                                            'Inserir nome do Mercado',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w700),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }
+
+                                default:
+                                  return Container();
+                              }
+                            });
+                      } else {
+                        return Container(
+                          height: 60,
+                          width: 100,
+                          child: Image.network(storeMarket
+                              .markets[storeProductList.marketSelected]
+                              .imagePath!),
+                        );
+                      }
                     }),
-                    SizedBox(
+                    const SizedBox(
                       width: 5,
                     ),
                     InkWell(
@@ -186,6 +261,15 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                 ),
                 ButtonOptionsListDetail(
                   label: 'Meu Preço Justo',
+                  onTap: () {
+                    storeProductList.isFairPrice =
+                        !storeProductList.isFairPrice;
+                    if (storeProductList.isFairPrice) {
+                      storeProductList.marketSelected = -1;
+                    } else {
+                      storeProductList.marketSelected = 0;
+                    }
+                  },
                 ),
                 ButtonOptionsListDetail(
                   label: 'Editar',
@@ -241,6 +325,60 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                       .toList(),
                   fixedRowCells: [
                     Container(),
+                    if (storeProductList.isFairPrice)
+                      FutureBuilder<String?>(
+                          future: Modular.get<MarketNameStore>()
+                              .getMarketName(listId: widget.listModel.id!),
+                          builder: (context, snapshot) {
+                            switch (snapshot.connectionState) {
+                              case ConnectionState.none:
+                              case ConnectionState.waiting:
+                                return Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              case ConnectionState.done:
+                                if (snapshot.hasError) {
+                                  return Container();
+                                }
+                                if (snapshot.hasData) {
+                                  return Container(
+                                    width: 100,
+                                    height: 60,
+                                    child: Center(
+                                      child: Text(
+                                        snapshot.data!,
+                                        textAlign: TextAlign.center,
+                                        softWrap: true,
+                                        maxLines: 3,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                } else {
+                                  return Container(
+                                    width: 100,
+                                    child: const Center(
+                                      child: Text('Nome do mercado ',
+                                          textAlign: TextAlign.center,
+                                          softWrap: true,
+                                          maxLines: 3,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          )),
+                                    ),
+                                  );
+                                }
+
+                              default:
+                                return Container();
+                            }
+                          }),
                     ...List.generate(
                         storeMarket.markets.length,
                         (index) => InkWell(
@@ -259,6 +397,90 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                       storeProductList.prices.length,
                       (index) => [
                             Text(storeProductList.products[index].description),
+                            if (storeProductList.isFairPrice)
+                              FutureBuilder<double?>(
+                                  future: Modular.get<FairPriceStore>()
+                                      .getFairPrice(
+                                          listId: widget.listModel.id!,
+                                          productId: storeProductList
+                                              .products[index].productId!),
+                                  builder: (context, snapshot) {
+                                    switch (snapshot.connectionState) {
+                                      case ConnectionState.none:
+                                      case ConnectionState.waiting:
+                                        return Center(
+                                          child: CircularProgressIndicator(),
+                                        );
+
+                                      case ConnectionState.done:
+                                        if (snapshot.hasError) {
+                                          return Container();
+                                        }
+                                        if (snapshot.hasData) {
+                                          price = snapshot.data!;
+                                          return InkWell(
+                                            onTap: () {
+                                              Dialogs()
+                                                  .addNewFairPrice(context,
+                                                      listId:
+                                                          widget.listModel.id!,
+                                                      productId:
+                                                          storeProductList
+                                                              .products[index]
+                                                              .productId!,
+                                                      value: snapshot.data)
+                                                  .then((value) {
+                                                setState(() {});
+                                              });
+                                            },
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Text("R\$ " +
+                                                    snapshot.data.toString()),
+                                                const SizedBox(
+                                                  height: 20,
+                                                ),
+                                                Text(
+                                                  'R\$ ${(snapshot.data! * storeProductList.quantities[index]).toStringAsFixed(2)}',
+                                                  style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 16),
+                                                )
+                                              ],
+                                            ),
+                                          );
+                                        } else {
+                                          return InkWell(
+                                            onTap: () {
+                                              Dialogs()
+                                                  .addNewFairPrice(context,
+                                                      listId:
+                                                          widget.listModel.id!,
+                                                      productId:
+                                                          storeProductList
+                                                              .products[index]
+                                                              .productId!)
+                                                  .then((value) {
+                                                setState(() {});
+                                              });
+                                            },
+                                            child: const Text(
+                                              'Inserir Preço ',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          );
+                                        }
+
+                                      default:
+                                        return Container();
+                                    }
+                                  }),
                             ...storeProductList.prices[index]
                                 .map((e) => Column(
                                       mainAxisAlignment:

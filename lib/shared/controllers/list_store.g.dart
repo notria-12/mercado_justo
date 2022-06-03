@@ -39,6 +39,21 @@ mixin _$ListStore on _ListStoreBase, Store {
     });
   }
 
+  final _$isFairPriceAtom = Atom(name: '_ListStoreBase.isFairPrice');
+
+  @override
+  bool get isFairPrice {
+    _$isFairPriceAtom.reportRead();
+    return super.isFairPrice;
+  }
+
+  @override
+  set isFairPrice(bool value) {
+    _$isFairPriceAtom.reportWrite(value, super.isFairPrice, () {
+      super.isFairPrice = value;
+    });
+  }
+
   final _$productsAtom = Atom(name: '_ListStoreBase.products');
 
   @override
@@ -179,6 +194,7 @@ mixin _$ListStore on _ListStoreBase, Store {
   String toString() {
     return '''
 product_list: ${product_list},
+isFairPrice: ${isFairPrice},
 products: ${products},
 prices: ${prices},
 quantities: ${quantities},

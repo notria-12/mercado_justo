@@ -1,11 +1,213 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:mercado_justo/shared/controllers/fair_price_store.dart';
 import 'package:mercado_justo/shared/controllers/list_store.dart';
+import 'package:mercado_justo/shared/controllers/market_name_store.dart';
+import 'package:mercado_justo/shared/repositories/market_name_repository.dart';
 import 'package:mercado_justo/shared/widgets/bottonsheets.dart';
 
 class Dialogs {
   final TextEditingController _nameController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+
+  Future addNewMarketName(BuildContext context,
+      {required int listId, String? name}) {
+    final _formValuekey = GlobalKey<FormState>();
+    final _valueController = TextEditingController();
+    if (name != null) {
+      _valueController.text = name.toString();
+    }
+    return showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Container(
+                      child: const Text('Insira o nome para o mercado'),
+                    ),
+                  ),
+                  IconButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: () {
+                        Modular.to.pop();
+                      },
+                      icon: const Icon(Icons.close))
+                ],
+              ),
+              content: Container(
+                child: Form(
+                  key: _formValuekey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Container(
+                          decoration: BoxDecoration(
+                              color: Color.fromARGB(255, 240, 241, 241),
+                              borderRadius: BorderRadius.circular(10)),
+                          child: TextFormField(
+                            controller: _valueController,
+                            textAlign: TextAlign.center,
+                            keyboardType: TextInputType.name,
+                            decoration: const InputDecoration(
+                                hintText: 'Insira o nome',
+                                border: InputBorder.none),
+                          )),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Container(
+                        height: 50,
+                        width: double.maxFinite,
+                        child: ElevatedButton(
+                          child: Text('Excluir Nome Salvo'),
+                          onPressed: () {
+                            Modular.get<MarketNameStore>()
+                                .deleteMarketName(listId: listId)
+                                .then((value) => Modular.to.pop());
+                          },
+                          style: ElevatedButton.styleFrom(primary: Colors.red),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Container(
+                        height: 50,
+                        width: double.maxFinite,
+                        child: ElevatedButton(
+                          child: Text('Salvar'),
+                          onPressed: () {
+                            if (name != null) {
+                              Modular.get<MarketNameStore>()
+                                  .updateMarketName(
+                                      name: _valueController.text,
+                                      listId: listId)
+                                  .then((value) => Modular.to.pop());
+                            } else {
+                              Modular.get<MarketNameStore>()
+                                  .saveMarketName(
+                                      name: _valueController.text,
+                                      listId: listId)
+                                  .then((value) => Modular.to.pop());
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                              primary: Colors.lightBlue),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ));
+  }
+
+  Future addNewFairPrice(BuildContext context,
+      {required int listId, required int productId, double? value}) {
+    final _formValuekey = GlobalKey<FormState>();
+    final _valueController = TextEditingController();
+    if (value != null) {
+      _valueController.text = value.toString();
+    }
+    return showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Container(
+                      child: const Text('Insira o valor unitário do produto'),
+                    ),
+                  ),
+                  IconButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: () {
+                        Modular.to.pop();
+                      },
+                      icon: const Icon(Icons.close))
+                ],
+              ),
+              content: Container(
+                child: Form(
+                  key: _formValuekey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Container(
+                          decoration: BoxDecoration(
+                              color: Color.fromARGB(255, 240, 241, 241),
+                              borderRadius: BorderRadius.circular(10)),
+                          child: TextFormField(
+                            controller: _valueController,
+                            textAlign: TextAlign.center,
+                            keyboardType: TextInputType.number,
+                            decoration: const InputDecoration(
+                                hintText: 'Insira o valor',
+                                border: InputBorder.none),
+                          )),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Container(
+                        height: 50,
+                        width: double.maxFinite,
+                        child: ElevatedButton(
+                          child: Text('Excluir Preço Salvo'),
+                          onPressed: () {
+                            Modular.get<FairPriceStore>()
+                                .deleteFairPrice(
+                                    listId: listId, productId: productId)
+                                .then((value) => Modular.to.pop());
+                          },
+                          style: ElevatedButton.styleFrom(primary: Colors.red),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Container(
+                        height: 50,
+                        width: double.maxFinite,
+                        child: ElevatedButton(
+                          child: Text('Salvar'),
+                          onPressed: () {
+                            String newValue =
+                                _valueController.text.replaceAll(r',', '.');
+                            if (value != null) {
+                              Modular.get<FairPriceStore>()
+                                  .updateFairPrice(
+                                      value: double.parse(newValue),
+                                      listId: listId,
+                                      productId: productId)
+                                  .then((value) => Modular.to.pop());
+                            } else {
+                              Modular.get<FairPriceStore>()
+                                  .saveFairPrice(
+                                      value: double.parse(newValue),
+                                      listId: listId,
+                                      productId: productId)
+                                  .then((value) => Modular.to.pop());
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                              primary: Colors.lightBlue),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ));
+  }
 
   void addNewList(BuildContext context) {
     showDialog(

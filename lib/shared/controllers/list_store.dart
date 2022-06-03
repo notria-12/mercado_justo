@@ -25,6 +25,9 @@ abstract class _ListStoreBase with Store {
   List<ListModel> product_list = [];
 
   @observable
+  bool isFairPrice = false;
+
+  @observable
   List<Product> products = [];
 
   @observable
@@ -50,7 +53,8 @@ abstract class _ListStoreBase with Store {
 
   @action
   void setMarketSelected(int value) {
-    if (value == -1 && marketSelected > 0) {
+    if (value == -1 && marketSelected > 0 ||
+        (value == -1 && marketSelected >= 0 && isFairPrice)) {
       marketSelected--;
     }
     if (value == 1 && marketSelected < (marketStore.markets.length - 1)) {
@@ -71,8 +75,10 @@ abstract class _ListStoreBase with Store {
   @computed
   double get totalPrice {
     double total = 0;
-    for (var i = 0; i < prices.length; i++) {
-      total += (_parseToDouble(prices[i][marketSelected]) * quantities[i]);
+    if (marketSelected >= 0) {
+      for (var i = 0; i < prices.length; i++) {
+        total += (_parseToDouble(prices[i][marketSelected]) * quantities[i]);
+      }
     }
     return total;
   }
@@ -81,14 +87,16 @@ abstract class _ListStoreBase with Store {
   Map<String, dynamic> get missingProducts {
     int missingItens = 0;
     double average = 0;
-    for (var i = 0; i < prices.length; i++) {
-      if (prices[i][marketSelected].isEmpty ||
-          prices[i][marketSelected] == 'R\$ 0,00') {
-        missingItens++;
-        average += (prices[i]
-                .map((e) => _parseToDouble(e))
-                .reduce((value, element) => value + element)) /
-            marketStore.markets.length;
+    if (marketSelected >= 0) {
+      for (var i = 0; i < prices.length; i++) {
+        if (prices[i][marketSelected].isEmpty ||
+            prices[i][marketSelected] == 'R\$ 0,00') {
+          missingItens++;
+          average += (prices[i]
+                  .map((e) => _parseToDouble(e))
+                  .reduce((value, element) => value + element)) /
+              marketStore.markets.length;
+        }
       }
     }
 

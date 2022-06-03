@@ -43,6 +43,24 @@ class SQLHelper {
         createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
       )
       """);
+    await database.execute("""CREATE TABLE names_markets(
+        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        name TEXT,
+        list_id INTEGER NOT NULL,
+        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (list_id) REFERENCES lists (id)
+      )
+      """);
+    await database.execute("""CREATE TABLE prices(
+        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        price REAL,
+        list_id INTEGER NOT NULL,
+        product_id INTEGER NOT NULL,
+        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (list_id) REFERENCES lists (id),
+        FOREIGN KEY (product_id) REFERENCES products (id)
+      )
+      """);
 
     await database.execute("""CREATE TABLE list_products(
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -54,19 +72,5 @@ class SQLHelper {
         FOREIGN KEY (product_id) REFERENCES products (id)
       )
       """);
-    // await database.execute("""CREATE TABLE markets(
-    //   id INTEGER PRIMARY KEY NOT NULL,
-    //   image_path TEXT,
-    //   site TEXT,
-    //   name TEXT,
-    //   latitude REAL,
-    //   longitude REAL,
-    //   order INTEGER,
-    //   cnpj TEXT,
-    //   phone_number TEXT,
-    //   address TEXT,
-    //   createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-    // )
-    // """);
   }
 }
