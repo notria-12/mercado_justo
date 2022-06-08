@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:mercado_justo/app/modules/compare/pages/compare_page.dart';
 import 'package:mercado_justo/app/modules/home_auth/home_auth_store.dart';
 import 'package:mercado_justo/app/modules/home_auth/pages/home_auth_content.dart';
 import 'package:mercado_justo/app/modules/lists/pages/product_list_page.dart';
@@ -20,9 +21,9 @@ class HomeAuthPageState extends ModularState<HomeAuthPage, HomeAuthStore> {
   List<Widget> pages = [
     const HomeAuthContent(),
     const ProductListPage(),
-    Container(),
+    const ComparePage(),
   ];
-  List<String> titles = ['Início', 'Minhas Listas', 'Carrinho'];
+  List<String> titles = ['Início', 'Minhas Listas', 'Comparativo'];
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
