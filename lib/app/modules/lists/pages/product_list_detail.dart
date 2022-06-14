@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:mercado_justo/app/modules/compare/compare_store.dart';
 import 'package:mercado_justo/shared/controllers/fair_price_store.dart';
 import 'package:mercado_justo/shared/controllers/list_store.dart';
 import 'package:mercado_justo/shared/controllers/market_name_store.dart';
@@ -113,7 +114,11 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                     }),
                     const SizedBox(height: 5),
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        Modular.get<CompareStore>()
+                            .addToComparePage(widget.listModel.id!);
+                        Modular.to.pop();
+                      },
                       child: Row(
                         children: [
                           Container(
@@ -133,7 +138,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                             width: 5,
                           ),
                           const Text(
-                            'add carrinho',
+                            'add a comparação',
                             style: TextStyle(
                                 color: Colors.black54,
                                 fontWeight: FontWeight.w500),

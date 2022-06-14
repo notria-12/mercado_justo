@@ -1,3 +1,4 @@
+import 'package:mercado_justo/app/modules/compare/compare_store.dart';
 import 'package:mercado_justo/app/../shared/controllers/market_name_store.dart';
 import 'package:mercado_justo/app/../shared/controllers/fair_price_store.dart';
 import 'package:mercado_justo/app/../shared/controllers/product_to_list_store.dart';

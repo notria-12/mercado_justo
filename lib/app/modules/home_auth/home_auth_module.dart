@@ -1,3 +1,4 @@
+import 'package:mercado_justo/app/modules/compare/compare_store.dart';
 import 'package:mercado_justo/app/modules/home_auth/home_auth_store.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/app/modules/home_auth/pages/home_auth_page.dart';
@@ -16,6 +17,7 @@ import 'package:mercado_justo/shared/repositories/product_to_list_repository.dar
 class HomeAuthModule extends Module {
   @override
   final List<Bind> binds = [
+    Bind.lazySingleton((i) => CompareStore()),
     Bind.lazySingleton((i) => HomeAuthStore()),
     Bind.singleton((i) => ProductStore(repository: i())),
     Bind.singleton((i) => ProductRepository(dio: i())),
