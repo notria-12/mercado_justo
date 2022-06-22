@@ -23,6 +23,13 @@ mixin _$ListStore on _ListStoreBase, Store {
           Computed<Map<String, dynamic>>(() => super.missingProducts,
               name: '_ListStoreBase.missingProducts'))
       .value;
+  Computed<List<List<Product>>>? _$groupProductsComputed;
+
+  @override
+  List<List<Product>> get groupProducts => (_$groupProductsComputed ??=
+          Computed<List<List<Product>>>(() => super.groupProducts,
+              name: '_ListStoreBase.groupProducts'))
+      .value;
 
   final _$product_listAtom = Atom(name: '_ListStoreBase.product_list');
 
@@ -204,7 +211,8 @@ productState: ${productState},
 priceState: ${priceState},
 updateQuantityStatus: ${updateQuantityStatus},
 totalPrice: ${totalPrice},
-missingProducts: ${missingProducts}
+missingProducts: ${missingProducts},
+groupProducts: ${groupProducts}
     ''';
   }
 }

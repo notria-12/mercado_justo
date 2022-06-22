@@ -183,6 +183,23 @@ abstract class _ListStoreBase with Store {
     }
   }
 
+  @computed
+  List<List<Product>> get groupProducts {
+    List<List<Product>> groupProducts = [];
+    for (int i = 0; i < products.length; i++) {
+      String category = products[i].category2!;
+      if (!products
+          .map((product) => product.category2)
+          .toList()
+          .sublist(0, i)
+          .contains(category)) {
+        groupProducts
+            .add(products.where((item) => item.category2 == category).toList());
+      }
+    }
+    return groupProducts;
+  }
+
   Future getProductsPrices() async {
     List<List<String>> listPricesAux = [];
 

@@ -9,6 +9,14 @@ part of 'market_store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$MarketStore on _MarketStoreBase, Store {
+  Computed<List<Market>>? _$filteredMarketsComputed;
+
+  @override
+  List<Market> get filteredMarkets => (_$filteredMarketsComputed ??=
+          Computed<List<Market>>(() => super.filteredMarkets,
+              name: '_MarketStoreBase.filteredMarkets'))
+      .value;
+
   final _$marketsAtom = Atom(name: '_MarketStoreBase.markets');
 
   @override
@@ -54,12 +62,29 @@ mixin _$MarketStore on _MarketStoreBase, Store {
     });
   }
 
+  final _$marketIdAtom = Atom(name: '_MarketStoreBase.marketId');
+
+  @override
+  String? get marketId {
+    _$marketIdAtom.reportRead();
+    return super.marketId;
+  }
+
+  @override
+  set marketId(String? value) {
+    _$marketIdAtom.reportWrite(value, super.marketId, () {
+      super.marketId = value;
+    });
+  }
+
   @override
   String toString() {
     return '''
 markets: ${markets},
 groupMarkets: ${groupMarkets},
-page: ${page}
+page: ${page},
+marketId: ${marketId},
+filteredMarkets: ${filteredMarkets}
     ''';
   }
 }

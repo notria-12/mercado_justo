@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/shared/controllers/market_store.dart';
 
@@ -105,29 +106,38 @@ class _FilterListPageState extends State<FilterListPage> {
                 return Column(
                   children: [
                     const Divider(),
-                    SwitchListTile(
-                      contentPadding: EdgeInsets.zero,
-                      value: true,
-                      onChanged: (onChanged) {},
-                      controlAffinity: ListTileControlAffinity.leading,
-                      title: Row(
-                        children: [
-                          Container(
-                            height: 45,
-                            child: Image.network(Modular.get<MarketStore>()
-                                .markets[index]
-                                .imagePath!),
-                          ),
-                          Text(
-                            '9Km de distância',
-                            style: const TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 13,
-                                color: Colors.black54),
-                          )
-                        ],
-                      ),
-                    ),
+                    Observer(builder: (_) {
+                      return SwitchListTile(
+                        contentPadding: EdgeInsets.zero,
+                        value: Modular.get<MarketStore>()
+                            .filteredMarkets[index]
+                            .isSelectable,
+                        onChanged: (onChanged) {
+                          Modular.get<MarketStore>().marketId =
+                              Modular.get<MarketStore>()
+                                  .filteredMarkets[index]
+                                  .hashId;
+                        },
+                        controlAffinity: ListTileControlAffinity.leading,
+                        title: Row(
+                          children: [
+                            Container(
+                              height: 45,
+                              child: Image.network(Modular.get<MarketStore>()
+                                  .filteredMarkets[index]
+                                  .imagePath!),
+                            ),
+                            Text(
+                              '9Km de distância',
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 13,
+                                  color: Colors.black54),
+                            )
+                          ],
+                        ),
+                      );
+                    }),
                     const Divider(),
                   ],
                 );

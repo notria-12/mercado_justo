@@ -24,6 +24,9 @@ abstract class _MarketStoreBase with Store {
   @observable
   int page = 1;
 
+  @observable
+  String? marketId;
+
   Future getAllMarkets() async {
     try {
       List<Market> auxMarkets = await repository.getAllMarkets(page: page);
@@ -42,6 +45,24 @@ abstract class _MarketStoreBase with Store {
     } catch (e) {
       rethrow;
     }
+  }
+
+  @computed
+  List<Market> get filteredMarkets {
+    List<Market> newMarkets = markets;
+    if (marketId != null && marketId != '') {
+      newMarkets = newMarkets.map((e) {
+        if (e.hashId == marketId) {
+          return e.copyWith(isSelectable: !e.isSelectable);
+        }
+        return e;
+      }).toList();
+      int index = markets.indexWhere((element) => element.hashId == marketId);
+      markets[index] = markets
+          .elementAt(index)
+          .copyWith(isSelectable: !markets.elementAt(index).isSelectable);
+    }
+    return newMarkets;
   }
 
   Future<String> getMarketImage({required int id}) async {

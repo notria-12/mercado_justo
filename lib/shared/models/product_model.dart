@@ -52,14 +52,14 @@ class Product {
 
   Map<String, dynamic> toMap() {
     return {
-      'image_path': imagePath,
-      'description': description,
-      'product_order': order,
-      'bar_code': barCode.first,
-      'hash_id': id,
-      'category': category,
-      'category_2': category2,
-      'category_3': category3,
+      'image': imagePath,
+      'descricao': description,
+      // 'ordem': order,
+      // 'codigo_barras': barCode.first,
+      '_id': id,
+      'categoria_1': category,
+      'categoria_2': category2,
+      // 'categoria_3': category3,
     };
   }
 
@@ -69,7 +69,9 @@ class Product {
       description: map['descricao'] ?? '',
       ref: map['referencia'] ?? '',
       order: map['ordem']?.toInt(),
-      barCode: List<String>.from(map['codigo_barras']),
+      barCode: map['codigo_barras'] != null
+          ? List<String>.from(map['codigo_barras'])
+          : [],
       id: map['_id'] ?? '',
       category: map['categoria_1'],
       category2: map['categoria_2'],

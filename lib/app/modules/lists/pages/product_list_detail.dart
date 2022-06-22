@@ -261,6 +261,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                 ButtonOptionsListDetail(
                   label: 'Filtro',
                   onTap: () {
+                    Modular.get<MarketStore>().marketId = '';
                     Modular.to.pushNamed('/home_auth/list/filters');
                   },
                 ),
@@ -385,16 +386,17 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                             }
                           }),
                     ...List.generate(
-                        storeMarket.markets.length,
+                        storeMarket.filteredMarkets.length,
                         (index) => InkWell(
                               onTap: () {
                                 Modular.to.pushNamed('/home/marketDetail/',
-                                    arguments: storeMarket.markets[index]);
+                                    arguments:
+                                        storeMarket.filteredMarkets[index]);
                               },
                               child: Container(
                                 width: 100,
-                                child: Image.network(
-                                    storeMarket.markets[index].imagePath!),
+                                child: Image.network(storeMarket
+                                    .filteredMarkets[index].imagePath!),
                               ),
                             ))
                   ],
