@@ -56,8 +56,11 @@ abstract class _CompareStoreBase with Store {
                   'product_id': e['product_id'],
                   'value': _parseToDouble(e['value']!)
                 })
-            .reduce((value, element) =>
-                value['value']! < element['value']! ? value : element);
+            .reduce((value, element) => (value['value']! > element['value']! &&
+                        element['value'] != 0) ||
+                    value['value'] == 0
+                ? element
+                : value);
         fairPrices.add(map);
       }
 

@@ -122,8 +122,10 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                                             ...store
                                                 .groupProducts(store
                                                     .getFairPrice[index]
-                                                    .map((e) => Product.fromMap(
-                                                        e['product_id']))
+                                                    .map((fairPrice) =>
+                                                        Product.fromMap(
+                                                            fairPrice[
+                                                                'product_id']))
                                                     .toList())
                                                 .map((e) => ExpansionTile(
                                                       title:
@@ -175,11 +177,22 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                                                                       Container(
                                                                     // width: double.maxFinite,
                                                                     height: 80,
-                                                                    child: Text(
-                                                                      e[i].description,
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                              Colors.black),
+                                                                    child:
+                                                                        Column(
+                                                                      children: [
+                                                                        Text(
+                                                                          e[i].description,
+                                                                          style:
+                                                                              TextStyle(color: Colors.black),
+                                                                        ),
+                                                                        Text(store
+                                                                            .getFairPrice[
+                                                                                index]
+                                                                            .firstWhere((element) =>
+                                                                                element['product_id']['_id'] ==
+                                                                                e[i].id)['value']
+                                                                            .toString())
+                                                                      ],
                                                                     ),
                                                                   )),
                                                                   DataCell(
