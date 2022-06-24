@@ -9,7 +9,7 @@ class ProductToListRepository {
       //TODO pensar forma de injetar dependência de SQLHelper
       Database database = await SQLHelper.init();
 
-      int id = await database.insert('products', product.toMap(),
+      int id = await database.insert('products', product.toMapSQL(),
           conflictAlgorithm: ConflictAlgorithm.replace);
 
       return id;

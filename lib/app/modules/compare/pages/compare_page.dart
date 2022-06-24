@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/app/modules/compare/compare_store.dart';
 import 'package:mercado_justo/app/modules/lists/pages/product_list_detail.dart';
@@ -9,7 +10,9 @@ import 'package:mercado_justo/shared/models/market_model.dart';
 import 'package:mercado_justo/shared/models/product_model.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/widgets/button_share.dart';
-import 'package:mercado_justo/shared/widgets/increment_font.dart';
+import 'package:mobx/mobx.dart';
+// import 'package:mercado_justo/shared/widgets/increment_font.dart';
+// import 'package:mobx/mobx.dart';
 
 class ComparePage extends StatefulWidget {
   const ComparePage({Key? key}) : super(key: key);
@@ -23,6 +26,10 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
   @override
   void initState() {
     super.initState();
+
+    reaction((event) => store.total, (value) {
+      print(value);
+    });
   }
 
   @override
@@ -36,44 +43,45 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
             style:
                 TextStyle(color: Colors.black54, fontWeight: FontWeight.w600),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'R\$ 0,00',
-                style:
-                    const TextStyle(fontSize: 38, fontWeight: FontWeight.bold),
-              ),
-              Row(
-                children: [
-                  ButtonOptionsListDetail(
-                    label: 'Filtro',
-                    onTap: () {
-                      Modular.get<MarketStore>().marketId = '';
-                      Modular.to.pushNamed('/home_auth/list/filters');
-                    },
-                  ),
-                  ButtonShare(),
-                  Icon(
-                    Icons.delete_outline_outlined,
-                    size: 28,
-                  )
-                ],
-              )
-            ],
-          ),
+          Observer(builder: (context) {
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'R\$ ${store.total.toStringAsFixed(2).replaceAll(r'.', ',')}',
+                  style: TextStyle(fontSize: 38, fontWeight: FontWeight.bold),
+                ),
+                Row(
+                  children: [
+                    ButtonOptionsListDetail(
+                      label: 'Filtro',
+                      onTap: () {
+                        Modular.get<MarketStore>().marketId = '';
+                        Modular.to.pushNamed('/home_auth/list/filters');
+                      },
+                    ),
+                    ButtonShare(),
+                    Icon(
+                      Icons.delete_outline_outlined,
+                      size: 28,
+                    )
+                  ],
+                )
+              ],
+            );
+          }),
           Expanded(
               child: FutureBuilder<int?>(
-            builder: (context, snapshot) {
-              switch (snapshot.connectionState) {
+            builder: (context, snap) {
+              switch (snap.connectionState) {
                 case ConnectionState.none:
                 case ConnectionState.waiting:
                   return Container(
                     child: Center(child: CircularProgressIndicator()),
                   );
                 case ConnectionState.done:
-                  if (snapshot.hasData) {
-                    listStore.getProducts(snapshot.data!);
+                  if (snap.hasData) {
+                    listStore.getProducts(snap.data!);
                     return Observer(
                       builder: (_) {
                         if (listStore.productState is AppStateLoading) {
@@ -94,8 +102,10 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
 
                                 case ConnectionState.done:
                                   if (snapshot.hasError) {
-                                    return Text('Deu erro meu parceiro');
+                                    return Text(
+                                        'Obtivemos problemas ao montar a lista de comparação');
                                   }
+
                                   return Container(
                                     child: ListView.builder(
                                       itemBuilder: (context, index) {
@@ -108,16 +118,69 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                                                     market.hashId);
                                         return Column(
                                           children: [
-                                            Row(
-                                              children: [
-                                                Container(
-                                                  height: 80,
-                                                  child: Image.network(
-                                                      market.imagePath!),
-                                                ),
-                                                Expanded(
-                                                    child: Text(market.address))
-                                              ],
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      const BorderRadius.all(
+                                                          Radius.circular(12)),
+                                                  border: Border.all(
+                                                      color: Color.fromARGB(
+                                                          255, 240, 241, 241))),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 8,
+                                                      horizontal: 4),
+                                              child: Row(
+                                                children: [
+                                                  Container(
+                                                    height: 80,
+                                                    width: 70,
+                                                    child: Image.network(
+                                                        market.imagePath!),
+                                                  ),
+                                                  Expanded(
+                                                      child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        market.address,
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                      const SizedBox(
+                                                        height: 2,
+                                                      ),
+                                                      Text('Distância: 1,5km'),
+                                                      const SizedBox(
+                                                        height: 2,
+                                                      ),
+                                                      Text(
+                                                        'R\$ ${store.getFairPrice[index].where((element) => element['market_id'] == market.hashId).map((e) {
+                                                              return e['value'] *
+                                                                      e['quantity']
+                                                                  as double;
+                                                            }).reduce((value, element) => value + element).toStringAsFixed(2).replaceAll(r'.', ',')}',
+                                                        style: TextStyle(
+                                                            fontSize: 20,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: Colors
+                                                                .green[700]),
+                                                      )
+                                                    ],
+                                                  ))
+                                                ],
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              height: 15,
                                             ),
                                             ...store
                                                 .groupProducts(store
@@ -127,106 +190,183 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                                                             fairPrice[
                                                                 'product_id']))
                                                     .toList())
-                                                .map((e) => ExpansionTile(
-                                                      title:
-                                                          Text(e[0].category2!),
-                                                      children: [
-                                                        DataTable(
-                                                          border:
-                                                              const TableBorder(
-                                                            verticalInside:
-                                                                BorderSide(
-                                                                    color: Colors
-                                                                        .grey,
-                                                                    width: 0.2),
-                                                          ),
-                                                          dataRowHeight: 110,
-                                                          headingRowHeight: 0,
-                                                          horizontalMargin: 8,
-                                                          columnSpacing: 0,
-                                                          columns: const [
-                                                            DataColumn(
-                                                                label:
-                                                                    Text('')),
-                                                            DataColumn(
-                                                                label:
-                                                                    Text('')),
-                                                            DataColumn(
-                                                                label: Text(''))
+                                                .map((e) => Container(
+                                                      decoration: const BoxDecoration(
+                                                          border: Border(
+                                                              top: BorderSide(
+                                                                  width: 0.3,
+                                                                  color: Colors
+                                                                      .black54))),
+                                                      child: ExpansionTile(
+                                                        collapsedBackgroundColor:
+                                                            Color.fromARGB(255,
+                                                                240, 241, 241),
+                                                        title: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          children: [
+                                                            Text(e[0]
+                                                                .category2!),
+                                                            Text(
+                                                                ' R\$ ${store.getFairPrice[index].where((element) => element['product_id']['categoria_2'] == e[0].category2).map((e) => e['quantity'] * e['value'] as double).reduce((value, element) => value + element).toStringAsFixed(2).replaceAll(r'.', ',')}'),
                                                           ],
-                                                          rows: List.generate(
-                                                            e.length,
-                                                            (i) => DataRow(
-                                                                cells: [
-                                                                  DataCell(
-                                                                    Container(
+                                                        ),
+                                                        children: [
+                                                          DataTable(
+                                                            border:
+                                                                const TableBorder(
+                                                              verticalInside:
+                                                                  BorderSide(
+                                                                      color: Colors
+                                                                          .grey,
                                                                       width:
-                                                                          100,
-                                                                      height:
-                                                                          80,
-                                                                      child:
-                                                                          Row(
+                                                                          0.2),
+                                                            ),
+                                                            dataRowHeight: 110,
+                                                            headingRowHeight: 0,
+                                                            horizontalMargin: 8,
+                                                            columnSpacing: 0,
+                                                            columns: const [
+                                                              DataColumn(
+                                                                  label:
+                                                                      Text('')),
+                                                              DataColumn(
+                                                                  label:
+                                                                      Text('')),
+                                                              DataColumn(
+                                                                  label:
+                                                                      Text(''))
+                                                            ],
+                                                            rows: List.generate(
+                                                                e.length, (i) {
+                                                              var row = store
+                                                                  .getFairPrice[
+                                                                      index]
+                                                                  .firstWhere((element) =>
+                                                                      element['product_id']
+                                                                          [
+                                                                          '_id'] ==
+                                                                      e[i].id);
+                                                              return DataRow(
+                                                                  cells: [
+                                                                    DataCell(
+                                                                      Stack(
                                                                         children: [
-                                                                          Image.network(
-                                                                              e[i].imagePath!)
+                                                                          Align(
+                                                                            alignment:
+                                                                                Alignment.center,
+                                                                            child:
+                                                                                Container(
+                                                                              width: 100,
+                                                                              height: 80,
+                                                                              child: Image.network(e[i].imagePath!),
+                                                                            ),
+                                                                          ),
+                                                                          Align(
+                                                                            child:
+                                                                                Container(
+                                                                              height: 25,
+                                                                              width: 35,
+                                                                              decoration: BoxDecoration(color: Colors.white, borderRadius: const BorderRadius.all(Radius.circular(5)), border: Border.all(color: Colors.black26)),
+                                                                              child: Center(
+                                                                                child: Text(
+                                                                                  '${row['quantity']}x',
+                                                                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                            alignment:
+                                                                                Alignment.topRight,
+                                                                          ),
                                                                         ],
                                                                       ),
                                                                     ),
-                                                                  ),
-                                                                  DataCell(
-                                                                      Container(
-                                                                    // width: double.maxFinite,
-                                                                    height: 80,
-                                                                    child:
-                                                                        Column(
-                                                                      children: [
-                                                                        Text(
-                                                                          e[i].description,
-                                                                          style:
-                                                                              TextStyle(color: Colors.black),
-                                                                        ),
-                                                                        Text(store
-                                                                            .getFairPrice[
-                                                                                index]
-                                                                            .firstWhere((element) =>
-                                                                                element['product_id']['_id'] ==
-                                                                                e[i].id)['value']
-                                                                            .toString())
-                                                                      ],
-                                                                    ),
-                                                                  )),
-                                                                  DataCell(
-                                                                      Container(
-                                                                    width: 120,
-                                                                    child:
-                                                                        Column(
-                                                                      children: [
-                                                                        Row(
-                                                                            children: [
-                                                                              Icon(Icons.edit_outlined),
-                                                                              Text('editar item')
-                                                                            ]),
-                                                                      ],
-                                                                    ),
-                                                                  ))
-                                                                ]),
+                                                                    DataCell(
+                                                                        Container(
+                                                                      padding: const EdgeInsets
+                                                                              .symmetric(
+                                                                          horizontal:
+                                                                              4,
+                                                                          vertical:
+                                                                              2),
+                                                                      child:
+                                                                          Column(
+                                                                        crossAxisAlignment:
+                                                                            CrossAxisAlignment.start,
+                                                                        children: [
+                                                                          Text(
+                                                                            e[i].description,
+                                                                            style:
+                                                                                TextStyle(color: Colors.black54, fontWeight: FontWeight.w500),
+                                                                            overflow:
+                                                                                TextOverflow.ellipsis,
+                                                                            maxLines:
+                                                                                3,
+                                                                          ),
+                                                                          const SizedBox(
+                                                                            height:
+                                                                                2,
+                                                                          ),
+                                                                          Text(
+                                                                            'R\$ ${row['value']}',
+                                                                            style:
+                                                                                TextStyle(color: Colors.black54, fontWeight: FontWeight.w500),
+                                                                          ),
+                                                                          const SizedBox(
+                                                                            height:
+                                                                                2,
+                                                                          ),
+                                                                          Text(
+                                                                            'R\$ ${(row['value'] * row['quantity']).toString().replaceAll(r'.', ',')}',
+                                                                            style:
+                                                                                TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                                                          )
+                                                                        ],
+                                                                      ),
+                                                                    )),
+                                                                    DataCell(
+                                                                        Container(
+                                                                      width:
+                                                                          120,
+                                                                      child:
+                                                                          Column(
+                                                                        crossAxisAlignment:
+                                                                            CrossAxisAlignment.center,
+                                                                        children: [
+                                                                          const SizedBox(
+                                                                            height:
+                                                                                20,
+                                                                          ),
+                                                                          Row(
+                                                                              mainAxisAlignment: MainAxisAlignment.center,
+                                                                              children: const [
+                                                                                Icon(
+                                                                                  Icons.edit_outlined,
+                                                                                  size: 15,
+                                                                                  color: Colors.lightBlue,
+                                                                                ),
+                                                                                Text('editar item'),
+                                                                              ]),
+                                                                          const SizedBox(
+                                                                            height:
+                                                                                5,
+                                                                          ),
+                                                                          Align(
+                                                                            alignment:
+                                                                                Alignment.topRight,
+                                                                            child:
+                                                                                Checkbox(value: true, onChanged: (value) {}),
+                                                                          )
+                                                                        ],
+                                                                      ),
+                                                                    ))
+                                                                  ]);
+                                                            }),
                                                           ),
-                                                        ),
-                                                      ],
+                                                        ],
+                                                      ),
                                                     ))
-                                            // ...List.generate(
-                                            //     store.getFairPrice[index]
-                                            //         .length, (i) {
-                                            //   var map =
-                                            //       store.getFairPrice[index][i]
-                                            //           ['product_id'];
-                                            //   Product product =
-                                            //       Product.fromMap(map);
-
-                                            //   return ExpansionTile(
-                                            //       title:
-                                            //           Text(product.category2!));
-                                            // })
                                           ],
                                         );
                                       },
@@ -239,70 +379,6 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                             },
                             future: store.getProductsPrices(listStore.products),
                           );
-                          // return ListView.builder(
-                          //     itemCount: listStore.groupProducts.length,
-                          //     itemBuilder: (context, index) {
-                          //       return ExpansionTile(
-                          //           title: Text(listStore
-                          //               .groupProducts[index][0].category2!),
-                          //           children: [
-                          //             DataTable(
-                          //               border: const TableBorder(
-                          //                 verticalInside: BorderSide(
-                          //                     color: Colors.grey, width: 0.2),
-                          //               ),
-                          //               dataRowHeight: 110,
-                          //               headingRowHeight: 0,
-                          //               horizontalMargin: 8,
-                          //               columnSpacing: 0,
-                          //               columns: const [
-                          //                 DataColumn(label: Text('')),
-                          //                 DataColumn(label: Text('')),
-                          //                 DataColumn(label: Text(''))
-                          //               ],
-                          //               rows: List.generate(
-                          //                 listStore.groupProducts[index].length,
-                          //                 (i) => DataRow(cells: [
-                          //                   DataCell(
-                          //                     Container(
-                          //                       width: 100,
-                          //                       height: 80,
-                          //                       child: Row(
-                          //                         children: [
-                          //                           Image.network(listStore
-                          //                               .groupProducts[index][i]
-                          //                               .imagePath!)
-                          //                         ],
-                          //                       ),
-                          //                     ),
-                          //                   ),
-                          //                   DataCell(Container(
-                          //                     // width: double.maxFinite,
-                          //                     height: 80,
-                          //                     child: Text(
-                          //                       listStore
-                          //                           .groupProducts[index][i]
-                          //                           .description,
-                          //                       style: TextStyle(
-                          //                           color: Colors.black),
-                          //                     ),
-                          //                   )),
-                          //                   DataCell(Container(
-                          //                     width: 120,
-                          //                     child: Column(
-                          //                       children: [
-                          //                         Row(children: [
-                          //                           Icon(Icons.edit_outlined),
-                          //                           Text('editar item')
-                          //                         ]),
-                          //                       ],
-                          //                     ),
-                          //                   ))
-                          //                 ]),
-                          //               ),
-                          //             ),
-                          //           ]);
-                          //     });
                         }
                         return Container();
                       },

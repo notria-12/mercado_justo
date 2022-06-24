@@ -17,7 +17,8 @@ import 'package:mercado_justo/shared/repositories/product_to_list_repository.dar
 class HomeAuthModule extends Module {
   @override
   final List<Bind> binds = [
-    Bind.lazySingleton((i) => CompareStore(marketStore: i(), priceStore: i())),
+    Bind.lazySingleton((i) =>
+        CompareStore(marketStore: i(), priceStore: i(), repository: i())),
     Bind.lazySingleton((i) => HomeAuthStore()),
     Bind.singleton((i) => ProductStore(repository: i())),
     Bind.singleton((i) => ProductRepository(dio: i())),

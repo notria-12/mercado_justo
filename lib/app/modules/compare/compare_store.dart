@@ -1,25 +1,46 @@
-import 'package:mercado_justo/shared/models/market_model.dart';
-import 'package:mercado_justo/shared/models/product_model.dart';
-import 'package:mobx/mobx.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:mercado_justo/shared/controllers/market_store.dart';
 import 'package:mercado_justo/shared/controllers/price_store.dart';
+import 'package:mercado_justo/shared/models/market_model.dart';
+import 'package:mercado_justo/shared/models/product_model.dart';
+import 'package:mercado_justo/shared/repositories/list_repository.dart';
+import 'package:mobx/mobx.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'compare_store.g.dart';
 
 class CompareStore = _CompareStoreBase with _$CompareStore;
 
 abstract class _CompareStoreBase with Store {
+  ListRepository repository;
   final PriceStore priceStore;
   final MarketStore marketStore;
   _CompareStoreBase({
+    required this.repository,
     required this.priceStore,
     required this.marketStore,
   });
 
   @observable
   List<List<Map<String, dynamic>>> prices = [];
+
+  @observable
+  int? listId;
+
+  @observable
+  double total = 0;
+
+  @observable
+  List<Map<String, dynamic>> listTotal = [];
+
+  @action
+  setTotal(double value) => total = value;
+
+  Future<int> getQuantity(int listId, int productId) async {
+    return repository.getQuantity(listId, productId);
+  }
+
+  @action
+  setListTotal(Map<String, dynamic> value) => listTotal = [...listTotal, value];
 
   Future getProductsPrices(List<Product> products) async {
     List<List<Map<String, dynamic>>> listPricesAux = [];
@@ -30,10 +51,12 @@ abstract class _CompareStoreBase with Store {
         for (Market market in marketStore.markets) {
           String? price = await priceStore.getProductPriceByMarket(
               marketId: market.id, barCode: products[i].barCode.first);
+          int quantity = await getQuantity(listId!, products[i].productId!);
           pricesByProducts.add({
             "market_id": market.hashId,
             "value": price,
-            "product_id": products[i].toMap()
+            "product_id": products[i].toMap(),
+            "quantity": quantity
           });
         }
         listPricesAux.add([...pricesByProducts]);
@@ -54,13 +77,15 @@ abstract class _CompareStoreBase with Store {
             .map((e) => <String, dynamic>{
                   'market_id': e['market_id'],
                   'product_id': e['product_id'],
-                  'value': _parseToDouble(e['value']!)
+                  'value': _parseToDouble(e['value']!),
+                  'quantity': e['quantity']
                 })
             .reduce((value, element) => (value['value']! > element['value']! &&
                         element['value'] != 0) ||
                     value['value'] == 0
                 ? element
                 : value);
+
         fairPrices.add(map);
       }
 
@@ -93,6 +118,13 @@ abstract class _CompareStoreBase with Store {
             .add(products.where((item) => item.category2 == category).toList());
       }
     }
+    double sum = 0;
+    getFairPrice.forEach((element) {
+      sum += element.map((e) {
+        return e['value'] * e['quantity'] as double;
+      }).reduce((value, element) => value + element);
+    });
+    setTotal(sum);
     return groupProducts;
   }
 
@@ -109,7 +141,9 @@ abstract class _CompareStoreBase with Store {
   Future<int?> getCurrentList() async {
     final sharedPrefences = await SharedPreferences.getInstance();
     if (sharedPrefences.containsKey('current_list')) {
-      return sharedPrefences.getInt('current_list')!;
+      int id = sharedPrefences.getInt('current_list')!;
+      listId = id;
+      return id;
     }
   }
 }

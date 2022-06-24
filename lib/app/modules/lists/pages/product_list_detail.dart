@@ -519,27 +519,6 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                                     ))
                                 .toList()
                           ]),
-
-                  // storeProductList.prices
-                  //     .map((e) => [...e.map((e) =>  Text(e)).toList()])
-                  //     .toList(),
-                  //  [
-                  //   ...List.generate(storeProductList.products.length, (index) {
-                  //     return [
-                  //       Text(storeProductList.products[index].description),
-                  //       ...storeMarket.markets
-                  //           .map((e) => Text('Em Falta')
-                  //               // GetPrice(
-                  //               //   marketId: e.id,
-                  //               //   productBarCode: storeProductList
-                  //               //       .products[index].barCode.first,
-                  //               //   quantity: storeProductList.quantities[index],
-                  //               // ),
-                  //               )
-                  //           .toList()
-                  //     ];
-                  //   })
-                  // ],
                   cellBuilder: (data) {
                     return Center(
                       child: Text(

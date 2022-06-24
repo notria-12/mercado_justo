@@ -33,10 +33,83 @@ mixin _$CompareStore on _CompareStoreBase, Store {
     });
   }
 
+  final _$listIdAtom = Atom(name: '_CompareStoreBase.listId');
+
+  @override
+  int? get listId {
+    _$listIdAtom.reportRead();
+    return super.listId;
+  }
+
+  @override
+  set listId(int? value) {
+    _$listIdAtom.reportWrite(value, super.listId, () {
+      super.listId = value;
+    });
+  }
+
+  final _$totalAtom = Atom(name: '_CompareStoreBase.total');
+
+  @override
+  double get total {
+    _$totalAtom.reportRead();
+    return super.total;
+  }
+
+  @override
+  set total(double value) {
+    _$totalAtom.reportWrite(value, super.total, () {
+      super.total = value;
+    });
+  }
+
+  final _$listTotalAtom = Atom(name: '_CompareStoreBase.listTotal');
+
+  @override
+  List<Map<String, dynamic>> get listTotal {
+    _$listTotalAtom.reportRead();
+    return super.listTotal;
+  }
+
+  @override
+  set listTotal(List<Map<String, dynamic>> value) {
+    _$listTotalAtom.reportWrite(value, super.listTotal, () {
+      super.listTotal = value;
+    });
+  }
+
+  final _$_CompareStoreBaseActionController =
+      ActionController(name: '_CompareStoreBase');
+
+  @override
+  dynamic setTotal(double value) {
+    final _$actionInfo = _$_CompareStoreBaseActionController.startAction(
+        name: '_CompareStoreBase.setTotal');
+    try {
+      return super.setTotal(value);
+    } finally {
+      _$_CompareStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  dynamic setListTotal(Map<String, dynamic> value) {
+    final _$actionInfo = _$_CompareStoreBaseActionController.startAction(
+        name: '_CompareStoreBase.setListTotal');
+    try {
+      return super.setListTotal(value);
+    } finally {
+      _$_CompareStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
   @override
   String toString() {
     return '''
 prices: ${prices},
+listId: ${listId},
+total: ${total},
+listTotal: ${listTotal},
 getFairPrice: ${getFairPrice}
     ''';
   }

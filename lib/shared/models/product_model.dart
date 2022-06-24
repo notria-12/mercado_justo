@@ -54,29 +54,44 @@ class Product {
     return {
       'image': imagePath,
       'descricao': description,
-      // 'ordem': order,
+      'ordem': order,
       // 'codigo_barras': barCode.first,
       '_id': id,
       'categoria_1': category,
       'categoria_2': category2,
-      // 'categoria_3': category3,
+      'categoria_3': category3,
+      'id': productId
+    };
+  }
+
+  Map<String, dynamic> toMapSQL() {
+    return {
+      'image_path': imagePath,
+      'description': description,
+      'product_order': order,
+      'bar_code': barCode.first,
+      'hash_id': id,
+      'category': category,
+      'category_2': category2,
+      'category_3': category3,
+      'id': productId
     };
   }
 
   factory Product.fromMap(Map<String, dynamic> map) {
     return Product(
-      imagePath: map['image'] ?? '',
-      description: map['descricao'] ?? '',
-      ref: map['referencia'] ?? '',
-      order: map['ordem']?.toInt(),
-      barCode: map['codigo_barras'] != null
-          ? List<String>.from(map['codigo_barras'])
-          : [],
-      id: map['_id'] ?? '',
-      category: map['categoria_1'],
-      category2: map['categoria_2'],
-      category3: map['categoria_3'],
-    );
+        imagePath: map['image'] ?? '',
+        description: map['descricao'] ?? '',
+        ref: map['referencia'] ?? '',
+        order: map['ordem']?.toInt(),
+        barCode: map['codigo_barras'] != null
+            ? List<String>.from(map['codigo_barras'])
+            : [],
+        id: map['_id'] ?? '',
+        category: map['categoria_1'],
+        category2: map['categoria_2'],
+        category3: map['categoria_3'],
+        productId: map['id']);
   }
 
   factory Product.fromMapSQL(Map<String, dynamic> map) {
@@ -88,8 +103,8 @@ class Product {
         id: map['hash_id'] ?? '',
         category: map['category'],
         category2: map['category_2'],
-        category3: map['category_3'],
-        productId: map['id']);
+        category3: map['category_3'] ?? '',
+        productId: map['id'] ?? '');
   }
 
   String toJson() => json.encode(toMap());
