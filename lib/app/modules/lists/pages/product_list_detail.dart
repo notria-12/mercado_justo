@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/app/modules/compare/compare_store.dart';
+import 'package:mercado_justo/app/modules/home_auth/home_auth_store.dart';
 import 'package:mercado_justo/shared/controllers/fair_price_store.dart';
 import 'package:mercado_justo/shared/controllers/list_store.dart';
 import 'package:mercado_justo/shared/controllers/market_name_store.dart';
@@ -117,6 +118,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                       onTap: () {
                         Modular.get<CompareStore>()
                             .addToComparePage(widget.listModel.id!);
+                        Modular.get<HomeAuthStore>().currentIndex = 2;
                         Modular.to.pop();
                       },
                       child: Row(

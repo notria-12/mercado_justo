@@ -101,6 +101,8 @@ abstract class _CompareStoreBase with Store {
               .toList());
         }
       }
+    } else {
+      groupFairPrices = [];
     }
     return groupFairPrices;
   }
@@ -108,14 +110,14 @@ abstract class _CompareStoreBase with Store {
   List<List<Product>> groupProducts(List<Product> products) {
     List<List<Product>> groupProducts = [];
     for (int i = 0; i < products.length; i++) {
-      String category = products[i].category2!;
+      String category = products[i].category!;
       if (!products
-          .map((product) => product.category2)
+          .map((product) => product.category)
           .toList()
           .sublist(0, i)
           .contains(category)) {
         groupProducts
-            .add(products.where((item) => item.category2 == category).toList());
+            .add(products.where((item) => item.category == category).toList());
       }
     }
     double sum = 0;
@@ -136,6 +138,7 @@ abstract class _CompareStoreBase with Store {
     final sharedPrefences = await SharedPreferences.getInstance();
 
     sharedPrefences.setInt('current_list', listId);
+    this.listId = listId;
   }
 
   Future<int?> getCurrentList() async {
@@ -145,5 +148,13 @@ abstract class _CompareStoreBase with Store {
       listId = id;
       return id;
     }
+  }
+
+  Future removeListInComparePage() async {
+    final sharedPrefences = await SharedPreferences.getInstance();
+    listId = null;
+    total = 0.0;
+    prices = [];
+    sharedPrefences.remove('current_list');
   }
 }
