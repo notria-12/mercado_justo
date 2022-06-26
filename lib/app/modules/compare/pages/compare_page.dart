@@ -171,8 +171,17 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                 return Observer(
                   builder: (_) {
                     if (listStore.productState is AppStateLoading) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Text('Carregando produtos...'),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            CircularProgressIndicator(),
+                          ],
+                        ),
                       );
                     }
                     if (listStore.productState is AppStateSuccess &&
@@ -182,9 +191,17 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                           switch (snapshot.connectionState) {
                             case ConnectionState.none:
                             case ConnectionState.waiting:
-                              return const Center(
-                                child: CircularProgressIndicator(),
-                              );
+                              return Center(
+                                  child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const [
+                                  Text('Calculando preço justo...'),
+                                  SizedBox(
+                                    height: 8,
+                                  ),
+                                  CircularProgressIndicator(),
+                                ],
+                              ));
 
                             case ConnectionState.done:
                               if (snapshot.hasError) {
@@ -278,6 +295,7 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                                                               color: Colors
                                                                   .black54))),
                                                   child: ExpansionTile(
+                                                    maintainState: true,
                                                     collapsedBackgroundColor:
                                                         Color.fromARGB(
                                                             255, 240, 241, 241),
@@ -632,11 +650,8 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                                                                       Align(
                                                                         alignment:
                                                                             Alignment.topRight,
-                                                                        child: Checkbox(
-                                                                            value:
-                                                                                true,
-                                                                            onChanged:
-                                                                                (value) {}),
+                                                                        child:
+                                                                            ProductCheckBox(),
                                                                       )
                                                                     ],
                                                                   ),
@@ -690,5 +705,29 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
         ],
       ),
     );
+  }
+}
+
+class ProductCheckBox extends StatefulWidget {
+  ProductCheckBox({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<ProductCheckBox> createState() => _ProductCheckBoxState();
+}
+
+class _ProductCheckBoxState extends State<ProductCheckBox> {
+  bool isChecked = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Checkbox(
+        value: isChecked,
+        onChanged: (value) {
+          setState(() {
+            isChecked = value!;
+          });
+        });
   }
 }
