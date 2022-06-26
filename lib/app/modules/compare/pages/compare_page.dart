@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/app/modules/compare/compare_store.dart';
 import 'package:mercado_justo/app/modules/lists/pages/product_list_detail.dart';
@@ -10,9 +9,6 @@ import 'package:mercado_justo/shared/models/market_model.dart';
 import 'package:mercado_justo/shared/models/product_model.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/widgets/button_share.dart';
-import 'package:mobx/mobx.dart';
-// import 'package:mercado_justo/shared/widgets/increment_font.dart';
-// import 'package:mobx/mobx.dart';
 
 class ComparePage extends StatefulWidget {
   const ComparePage({Key? key}) : super(key: key);
@@ -432,17 +428,203 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                                                                         height:
                                                                             20,
                                                                       ),
-                                                                      Row(
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.center,
-                                                                          children: const [
-                                                                            Icon(
-                                                                              Icons.edit_outlined,
-                                                                              size: 15,
-                                                                              color: Colors.lightBlue,
-                                                                            ),
-                                                                            Text('editar item'),
-                                                                          ]),
+                                                                      InkWell(
+                                                                        onTap:
+                                                                            () {
+                                                                          showDialog(
+                                                                              context: context,
+                                                                              builder: (context) {
+                                                                                return AlertDialog(
+                                                                                  insetPadding: EdgeInsets.symmetric(horizontal: 4),
+                                                                                  content: Container(
+                                                                                    child: Column(
+                                                                                      mainAxisSize: MainAxisSize.min,
+                                                                                      children: [
+                                                                                        DataTable(
+                                                                                          border: TableBorder(verticalInside: BorderSide(color: Colors.grey, width: 0.2)),
+                                                                                          dataRowHeight: 110,
+                                                                                          headingRowHeight: 0,
+                                                                                          horizontalMargin: 8,
+                                                                                          columnSpacing: 0,
+                                                                                          columns: const [
+                                                                                            DataColumn(label: Text('')),
+                                                                                            DataColumn(label: Text('')),
+                                                                                            DataColumn(label: Text(''))
+                                                                                          ],
+                                                                                          rows: [
+                                                                                            DataRow(cells: [
+                                                                                              DataCell(Container(
+                                                                                                // width: 120,
+                                                                                                child: Row(
+                                                                                                  children: [
+                                                                                                    InkWell(
+                                                                                                      onTap: () {
+                                                                                                        showModalBottomSheet(
+                                                                                                            context: context,
+                                                                                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                                                                                            builder: (context) {
+                                                                                                              return Container(
+                                                                                                                padding: EdgeInsets.all(16),
+                                                                                                                child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
+                                                                                                                  const SizedBox(
+                                                                                                                    height: 10,
+                                                                                                                  ),
+                                                                                                                  const Text(
+                                                                                                                    "Tem Certeza que deseja remover?",
+                                                                                                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                                                                                                  ),
+                                                                                                                  const SizedBox(
+                                                                                                                    height: 4,
+                                                                                                                  ),
+                                                                                                                  const SizedBox(
+                                                                                                                    height: 8,
+                                                                                                                  ),
+                                                                                                                  Row(
+                                                                                                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                                                                                                    children: [
+                                                                                                                      InkWell(
+                                                                                                                        onTap: () {
+                                                                                                                          store.removeProductFromList(e[i].productId!);
+
+                                                                                                                          Modular.to.pop();
+                                                                                                                          Modular.to.pop();
+                                                                                                                        },
+                                                                                                                        child: Container(
+                                                                                                                          width: 170,
+                                                                                                                          padding: EdgeInsets.all(16),
+                                                                                                                          decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.all(Radius.circular(5))),
+                                                                                                                          child: Center(
+                                                                                                                            child: Text(
+                                                                                                                              'Remover',
+                                                                                                                              style: TextStyle(color: Colors.white, fontSize: 18),
+                                                                                                                            ),
+                                                                                                                          ),
+                                                                                                                        ),
+                                                                                                                      ),
+                                                                                                                      InkWell(
+                                                                                                                        onTap: () {
+                                                                                                                          Modular.to.pop();
+                                                                                                                        },
+                                                                                                                        child: Container(
+                                                                                                                          width: 170,
+                                                                                                                          padding: EdgeInsets.all(16),
+                                                                                                                          decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.grey), borderRadius: BorderRadius.all(Radius.circular(5))),
+                                                                                                                          child: Center(
+                                                                                                                            child: Text(
+                                                                                                                              'Cancelar',
+                                                                                                                              style: TextStyle(fontSize: 18),
+                                                                                                                            ),
+                                                                                                                          ),
+                                                                                                                        ),
+                                                                                                                      )
+                                                                                                                    ],
+                                                                                                                  )
+                                                                                                                ]),
+                                                                                                              );
+                                                                                                            });
+                                                                                                      },
+                                                                                                      child: const Icon(
+                                                                                                        Icons.delete_outline,
+                                                                                                        size: 40,
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                    const SizedBox(
+                                                                                                      width: 2,
+                                                                                                    ),
+                                                                                                    Column(
+                                                                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                                                                      children: [
+                                                                                                        const Text(
+                                                                                                          'Quantidade',
+                                                                                                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+                                                                                                        ),
+                                                                                                        const SizedBox(
+                                                                                                          height: 3,
+                                                                                                        ),
+                                                                                                        Container(
+                                                                                                          height: 35,
+                                                                                                          width: 70,
+                                                                                                          child: Center(
+                                                                                                            child: TextFormField(
+                                                                                                              keyboardType: TextInputType.number,
+                                                                                                              textAlign: TextAlign.center,
+                                                                                                              textAlignVertical: TextAlignVertical.center,
+                                                                                                              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+                                                                                                              decoration: const InputDecoration(
+                                                                                                                border: OutlineInputBorder(),
+                                                                                                                contentPadding: EdgeInsets.symmetric(vertical: 2),
+                                                                                                              ),
+                                                                                                              initialValue: row['quantity'].toString(),
+                                                                                                              onChanged: (value) {
+                                                                                                                store.newQuantity = int.parse(value);
+                                                                                                              },
+                                                                                                            ),
+                                                                                                          ),
+                                                                                                        )
+                                                                                                      ],
+                                                                                                    ),
+                                                                                                    const SizedBox(
+                                                                                                      width: 3,
+                                                                                                    ),
+                                                                                                  ],
+                                                                                                ),
+                                                                                              )),
+                                                                                              DataCell(Container(
+                                                                                                height: 100,
+                                                                                                // width: 130,
+                                                                                                // padding: const EdgeInsets.all(8),
+                                                                                                child: Center(
+                                                                                                  child: Image.network(e[i].imagePath!),
+                                                                                                ),
+                                                                                              )),
+                                                                                              DataCell(Container(
+                                                                                                padding: EdgeInsets.all(8),
+                                                                                                child: Text(
+                                                                                                  e[i].description,
+                                                                                                  textAlign: TextAlign.center,
+                                                                                                  overflow: TextOverflow.ellipsis,
+                                                                                                  maxLines: 5,
+                                                                                                ),
+                                                                                                width: 100,
+                                                                                              ))
+                                                                                            ])
+                                                                                          ],
+                                                                                        ),
+                                                                                        Observer(builder: (_) {
+                                                                                          return Container(
+                                                                                            padding: EdgeInsets.all(4),
+                                                                                            child: ElevatedButton(
+                                                                                              onPressed: store.newQuantity == null
+                                                                                                  ? null
+                                                                                                  : () {
+                                                                                                      store.updateQuantity(e[i].productId!);
+                                                                                                      Modular.to.pop();
+                                                                                                    },
+                                                                                              child: Text('SALVAR'),
+                                                                                              style: ElevatedButton.styleFrom(primary: Colors.lightBlue),
+                                                                                            ),
+                                                                                            height: 50,
+                                                                                            width: 300,
+                                                                                          );
+                                                                                        })
+                                                                                      ],
+                                                                                    ),
+                                                                                  ),
+                                                                                );
+                                                                              }).then((value) => store.newQuantity = null);
+                                                                        },
+                                                                        child: Row(
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.center,
+                                                                            children: const [
+                                                                              Icon(
+                                                                                Icons.edit_outlined,
+                                                                                size: 15,
+                                                                                color: Colors.lightBlue,
+                                                                              ),
+                                                                              Text('editar item'),
+                                                                            ]),
+                                                                      ),
                                                                       const SizedBox(
                                                                         height:
                                                                             5,

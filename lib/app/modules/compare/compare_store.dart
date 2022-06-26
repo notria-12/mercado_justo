@@ -21,6 +21,9 @@ abstract class _CompareStoreBase with Store {
   });
 
   @observable
+  int? newQuantity;
+
+  @observable
   List<List<Map<String, dynamic>>> prices = [];
 
   @observable
@@ -37,6 +40,23 @@ abstract class _CompareStoreBase with Store {
 
   Future<int> getQuantity(int listId, int productId) async {
     return repository.getQuantity(listId, productId);
+  }
+
+  Future updateQuantity(int productId) async {
+    await repository.updateQuantity(listId!, productId, newQuantity!);
+    reloadList();
+  }
+
+  Future removeProductFromList(int productId) async {
+    await repository.deleteProductOfList(listId!, productId);
+    reloadList();
+  }
+
+  reloadList() {
+    int auxListId = listId!;
+    listId = null;
+    prices = [];
+    listId = auxListId;
   }
 
   @action

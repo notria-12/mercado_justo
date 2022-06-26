@@ -18,6 +18,21 @@ mixin _$CompareStore on _CompareStoreBase, Store {
               name: '_CompareStoreBase.getFairPrice'))
           .value;
 
+  final _$newQuantityAtom = Atom(name: '_CompareStoreBase.newQuantity');
+
+  @override
+  int? get newQuantity {
+    _$newQuantityAtom.reportRead();
+    return super.newQuantity;
+  }
+
+  @override
+  set newQuantity(int? value) {
+    _$newQuantityAtom.reportWrite(value, super.newQuantity, () {
+      super.newQuantity = value;
+    });
+  }
+
   final _$pricesAtom = Atom(name: '_CompareStoreBase.prices');
 
   @override
@@ -106,6 +121,7 @@ mixin _$CompareStore on _CompareStoreBase, Store {
   @override
   String toString() {
     return '''
+newQuantity: ${newQuantity},
 prices: ${prices},
 listId: ${listId},
 total: ${total},
