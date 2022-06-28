@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mercado_justo/shared/auth/auth_controller.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginRepository {
   Dio dio;
@@ -15,6 +16,9 @@ class LoginRepository {
           data: {"cpf": cpf, "senha": password},
           options: Options(headers: {"X-App-Origem": "SWAGGER_MERCADO_JUSTO"}));
       authController.updateToken(result.data['dados']['access_token']);
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      preferences.setString('token', authController.token);
+      authController.update(AuthState.authenticated);
     } catch (e) {
       rethrow;
     }
@@ -48,19 +52,18 @@ class LoginRepository {
   Future<String?> verifyPhoneNumber(String phoneNumber) async {
     String? verificationId;
     await FirebaseAuth.instance.verifyPhoneNumber(
-      phoneNumber: "+55 " + phoneNumber,
-      verificationCompleted: (PhoneAuthCredential credential) {},
-      verificationFailed: (FirebaseAuthException e) {
-        if (e.code == 'invalid-phone-number') {
-          print('The provided phone number is not valid.');
-        }
-      },
-      codeSent: (String verificationId, int? resendToken) async {
-        verificationId = verificationId;
-      },
-      codeAutoRetrievalTimeout: (String verificationId) {},
-    );
-
+        phoneNumber: "+55 " + phoneNumber,
+        verificationCompleted: (PhoneAuthCredential credential) {},
+        verificationFailed: (FirebaseAuthException e) {
+          if (e.code == 'invalid-phone-number') {
+            print('The provided phone number is not valid.');
+          }
+        },
+        codeSent: (String verificationId, int? resendToken) async {
+          verificationId = verificationId;
+        },
+        codeAutoRetrievalTimeout: (String verificationId) {},
+        timeout: Duration(seconds: 60));
     return verificationId;
   }
 

@@ -6,6 +6,7 @@ class Market {
   int id;
   String hashId;
   int? order;
+  bool isSelectable;
   bool isVisible;
   double latitude;
   double longitude;
@@ -15,49 +16,49 @@ class Market {
   String? imagePath;
   String siteAddress;
   String address;
-  Market({
-    required this.id,
-    required this.hashId,
-    this.order,
-    required this.isVisible,
-    required this.latitude,
-    required this.longitude,
-    required this.cnpj,
-    required this.phoneNumber,
-    required this.name,
-    this.imagePath,
-    required this.siteAddress,
-    required this.address,
-  });
+  Market(
+      {required this.id,
+      required this.hashId,
+      this.order,
+      required this.isVisible,
+      required this.latitude,
+      required this.longitude,
+      required this.cnpj,
+      required this.phoneNumber,
+      required this.name,
+      this.imagePath,
+      required this.siteAddress,
+      required this.address,
+      this.isSelectable = true});
 
-  Market copyWith({
-    int? id,
-    String? hashId,
-    int? order,
-    bool? isVisible,
-    double? latitude,
-    double? longitude,
-    String? cnpj,
-    String? phoneNumber,
-    String? name,
-    String? imagePath,
-    String? siteAddress,
-    String? address,
-  }) {
+  Market copyWith(
+      {int? id,
+      String? hashId,
+      int? order,
+      bool? isVisible,
+      double? latitude,
+      double? longitude,
+      String? cnpj,
+      String? phoneNumber,
+      String? name,
+      String? imagePath,
+      String? siteAddress,
+      String? address,
+      bool? isSelectable}) {
     return Market(
-      id: id ?? this.id,
-      hashId: hashId ?? this.hashId,
-      order: order ?? this.order,
-      isVisible: isVisible ?? this.isVisible,
-      latitude: latitude ?? this.latitude,
-      longitude: longitude ?? this.longitude,
-      cnpj: cnpj ?? this.cnpj,
-      phoneNumber: phoneNumber ?? this.phoneNumber,
-      name: name ?? this.name,
-      imagePath: imagePath ?? this.imagePath,
-      siteAddress: siteAddress ?? this.siteAddress,
-      address: address ?? this.address,
-    );
+        id: id ?? this.id,
+        hashId: hashId ?? this.hashId,
+        order: order ?? this.order,
+        isVisible: isVisible ?? this.isVisible,
+        latitude: latitude ?? this.latitude,
+        longitude: longitude ?? this.longitude,
+        cnpj: cnpj ?? this.cnpj,
+        phoneNumber: phoneNumber ?? this.phoneNumber,
+        name: name ?? this.name,
+        imagePath: imagePath ?? this.imagePath,
+        siteAddress: siteAddress ?? this.siteAddress,
+        address: address ?? this.address,
+        isSelectable: isSelectable ?? this.isSelectable);
   }
 
   Map<String, dynamic> toMap() {
@@ -82,7 +83,7 @@ class Market {
       id: map['id']?.toInt() ?? 0,
       hashId: map['_id'] ?? '',
       order: map['ordem']?.toInt(),
-      isVisible: map['visivel'] ?? false,
+      isVisible: map['visivel'] ?? true,
       latitude: map['latitude']?.toDouble() ?? 0.0,
       longitude: map['longitude']?.toDouble() ?? 0.0,
       cnpj: map['cnpj'] ?? '',

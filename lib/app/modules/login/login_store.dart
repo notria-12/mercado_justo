@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/app/modules/login/login_repository.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
@@ -51,8 +52,21 @@ abstract class _LoginStoreBase with Store {
   Future verifyPhoneNumber() async {
     try {
       loginState = AppStateLoading();
-      var id = await repository.verifyPhoneNumber(phoneNumber!);
-      print(id);
+      await FirebaseAuth.instance.verifyPhoneNumber(
+          phoneNumber: "+55 " + phoneNumber!,
+          verificationCompleted: (PhoneAuthCredential credential) {},
+          verificationFailed: (FirebaseAuthException e) {
+            if (e.code == 'invalid-phone-number') {
+              print('The provided phone number is not valid.');
+            }
+          },
+          codeSent: (String verificationId, int? resendToken) async {
+            this.verificationId = verificationId;
+          },
+          codeAutoRetrievalTimeout: (String verificationId) {
+            this.verificationId = verificationId;
+          },
+          timeout: const Duration(seconds: 90));
       print(verificationId);
       loginState = AppStateSuccess();
     } catch (e) {
@@ -65,7 +79,11 @@ abstract class _LoginStoreBase with Store {
     try {
       loginState = AppStateLoading();
       await repository.verifyCode(verificationId!, code!);
+      await repository.signInWithEmail('609.163.593-01', '12345678');
       loginState = AppStateSuccess();
+      Modular.to.pushReplacementNamed(
+        '/home_auth/',
+      );
     } catch (e) {
       loginState = AppStateError();
       rethrow;

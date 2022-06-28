@@ -50,7 +50,11 @@ class CustomDataTableState<T> extends State<CustomDataTable<T>> {
               width: width,
               child: data as Widget,
             )
-          : SizedBox(width: width, child: data as Widget);
+          : SizedBox(
+              width: width,
+              child: Row(
+                children: [Expanded(child: data as Widget)],
+              ));
 
   Widget _buildFixedCol() => widget.fixedColCells == null
       ? SizedBox.shrink()
@@ -122,8 +126,6 @@ class CustomDataTableState<T> extends State<CustomDataTable<T>> {
           : Material(
               color: Colors.white,
               child: DataTable(
-                  // border: TableBorder(
-                  //     right: BorderSide(color: Colors.grey, width: 1)),
                   horizontalMargin: widget.cellMargin,
                   columnSpacing: widget.cellSpacing,
                   headingRowHeight: widget.headingHeight,
@@ -146,17 +148,6 @@ class CustomDataTableState<T> extends State<CustomDataTable<T>> {
     _subTableYController.addListener(() {
       _columnController.jumpTo(_subTableYController.position.pixels);
     });
-
-    // _rowController.addListener(() {
-    //   if (_rowController.position.atEdge) {
-    //     bool isTop = _rowController.position.pixels == 0;
-    //     if (!isTop) {
-    //       if (widget.loadMore) {
-    //         widget.loadMoreColumns!();
-    //       }
-    //     }
-    //   } else {}
-    // });
   }
 
   @override
@@ -172,19 +163,13 @@ class CustomDataTableState<T> extends State<CustomDataTable<T>> {
                   SingleChildScrollView(
                     controller: _columnController,
                     scrollDirection: Axis.vertical,
-                    // controller: _subTableYController,
-                    // physics: NeverScrollableScrollPhysics(),
                     child: _buildFixedCol(),
                   ),
                   Flexible(
                     child: SingleChildScrollView(
                       controller: _subTableXController,
                       scrollDirection: Axis.horizontal,
-                      // child: SingleChildScrollView(
-                      //   controller: _subTableYController,
-                      //   scrollDirection: Axis.vertical,
                       child: _buildSubTable(),
-                      // ),
                     ),
                   ),
                 ],
@@ -207,22 +192,6 @@ class CustomDataTableState<T> extends State<CustomDataTable<T>> {
                 child: _buildFixedRow(),
               ),
             ),
-            // Visibility(
-            //   visible: widget.loadMore,
-            //   child: InkWell(
-            //     onTap: widget.loadMoreColumns,
-            //     child: Container(
-            //       decoration: BoxDecoration(
-            //           shape: BoxShape.circle,
-            //           border: Border.all(color: Colors.blueAccent)),
-            //       height: 40,
-            //       child: Icon(
-            //         Icons.add,
-            //         color: Colors.blueAccent,
-            //       ),
-            //     ),
-            //   ),
-            // )
           ],
         ),
       ],

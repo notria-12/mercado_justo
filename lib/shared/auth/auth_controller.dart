@@ -1,5 +1,6 @@
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'auth_controller.g.dart';
 
@@ -10,14 +11,14 @@ enum AuthState { authenticated, unauthenticated }
 abstract class _AuthControllerBase extends Disposable with Store {
   late ReactionDisposer disposer;
   _AuthControllerBase() {
-    // init();
-    // disposer = autorun((_) {
-    //   if (state == AuthState.authenticated) {
-    //     Modular.to.pushReplacementNamed('/home/');
-    //   } else if (state == AuthState.unauthenticated) {
-    //     Modular.to.pushReplacementNamed('/login/');
-    //   }
-    // });
+    init();
+    disposer = autorun((_) {
+      if (state == AuthState.authenticated) {
+        Modular.to.pushReplacementNamed('/home_auth/');
+      } else if (state == AuthState.unauthenticated) {
+        Modular.to.pushReplacementNamed('/home/');
+      }
+    });
   }
 
   String token = "";
@@ -36,9 +37,8 @@ abstract class _AuthControllerBase extends Disposable with Store {
   // }
 
   void logoutUser() async {
-    // setUser(null);
-    // SharedPreferences preferences = await SharedPreferences.getInstance();
-    // preferences.remove('user');
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.remove('token');
     update(AuthState.unauthenticated);
   }
 
@@ -51,20 +51,16 @@ abstract class _AuthControllerBase extends Disposable with Store {
   @action
   update(AuthState value) => state = value;
 
-  // Future<void> init() async {
-  //   SharedPreferences preferences = await SharedPreferences.getInstance();
-  //   print(preferences.getString('user'));
+  Future<void> init() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
 
-  //   if (preferences.containsKey("user")) {
-  //     setUser(UserModel.fromJson(preferences.getString("user")!));
-  //     updateToken(user!.token!);
-  //     update(AuthState.authenticated);
-  //     // Modular.to.pushReplacementNamed('/home/');
-  //   } else {
-  //     update(AuthState.unauthenticated);
-  //     // Modular.to.pushReplacementNamed('/login/');
-  //   }
-  // }
+    if (preferences.containsKey("token")) {
+      updateToken(preferences.getString("token")!);
+      update(AuthState.authenticated);
+    } else {
+      update(AuthState.unauthenticated);
+    }
+  }
 
   @override
   void dispose() {

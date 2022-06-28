@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class CustomButtom extends StatelessWidget {
   String label;
-  String? subTitle;
+  Widget? subTitle;
   VoidCallback onPressed;
 
   CustomButtom({
@@ -27,11 +27,7 @@ class CustomButtom extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 18, color: Colors.white70),
                   ),
-                  Text(
-                    subTitle!,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 14, color: Colors.white70),
-                  ),
+                  subTitle!
                 ],
               )
             : Center(

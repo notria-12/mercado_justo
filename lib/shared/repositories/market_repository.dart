@@ -25,6 +25,33 @@ class MarketRepository {
     }
   }
 
+  Future<List<List<Market>>> getGroupMarkets() async {
+    try {
+      List<List<Market>> listMarkets = [];
+      final result;
+
+      result = await dio.get('/mercados/listar');
+      List list = result.data['dados'] as List;
+      for (var item in list) {
+        var response = await dio.get(
+            'mercados?itens_pagina=20&pagina=1&ordernar=_id,1&procurar=%5B%7B%22termo%22%3A%22nome%22%2C%22valor%22%3A%22${item['value']}%22%7D%5D');
+        List mapMarkets = response.data['dados'] as List;
+        List<Market> markets =
+            mapMarkets.map((e) => Market.fromMap(e)).toList();
+        listMarkets.add(markets);
+      }
+      for (var i = 0; i < listMarkets.length; i++) {
+        String imagePath = await getMarketLogo(listMarkets[i][0].id);
+        listMarkets[i] = listMarkets[i]
+            .map((e) => e.copyWith(imagePath: imagePath))
+            .toList();
+      }
+      return listMarkets;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<String> getMarketLogo(int id) async {
     try {
       final result = await dio.get('/imagens/logo/${id}');

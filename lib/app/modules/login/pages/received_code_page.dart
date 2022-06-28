@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/app/modules/login/login_store.dart';
+import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/widgets/custom_text_input_widget.dart';
 
 class ReceivedCodePage extends StatefulWidget {
@@ -63,23 +65,27 @@ class _ReceivedCodePageState
               Container(
                 height: 50,
                 width: double.maxFinite,
-                child: ElevatedButton(
-                  child: const Text(
-                    'Entrar',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  style: ElevatedButton.styleFrom(primary: Colors.lightBlue),
-                  onPressed: () {
-                    var formState = _formKey.currentState!;
-                    if (formState.validate()) {
-                      formState.save();
-                      print(store.code);
-                      store.verifyCode();
-                    }
-                    // Modular.to.pushNamedAndRemoveUntil(
-                    //     '/home_auth/', ModalRoute.withName('/'));
-                  },
-                ),
+                child: Observer(builder: (_) {
+                  return ElevatedButton(
+                    child: store.loginState is AppStateLoading
+                        ? const CircularProgressIndicator(
+                            color: Colors.white,
+                          )
+                        : const Text(
+                            'Entrar',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                    style: ElevatedButton.styleFrom(primary: Colors.lightBlue),
+                    onPressed: () {
+                      var formState = _formKey.currentState!;
+                      if (formState.validate()) {
+                        formState.save();
+                        print(store.code);
+                        store.verifyCode();
+                      }
+                    },
+                  );
+                }),
               ),
               const SizedBox(
                 height: 30,
