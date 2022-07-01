@@ -24,6 +24,39 @@ mixin _$ProductStore on _ProductStoreBase, Store {
     });
   }
 
+  final _$searchProductsResultAtom =
+      Atom(name: '_ProductStoreBase.searchProductsResult');
+
+  @override
+  List<Product> get searchProductsResult {
+    _$searchProductsResultAtom.reportRead();
+    return super.searchProductsResult;
+  }
+
+  @override
+  set searchProductsResult(List<Product> value) {
+    _$searchProductsResultAtom.reportWrite(value, super.searchProductsResult,
+        () {
+      super.searchProductsResult = value;
+    });
+  }
+
+  final _$searchProductsStateAtom =
+      Atom(name: '_ProductStoreBase.searchProductsState');
+
+  @override
+  AppState get searchProductsState {
+    _$searchProductsStateAtom.reportRead();
+    return super.searchProductsState;
+  }
+
+  @override
+  set searchProductsState(AppState value) {
+    _$searchProductsStateAtom.reportWrite(value, super.searchProductsState, () {
+      super.searchProductsState = value;
+    });
+  }
+
   final _$productStateAtom = Atom(name: '_ProductStoreBase.productState');
 
   @override
@@ -58,6 +91,8 @@ mixin _$ProductStore on _ProductStoreBase, Store {
   String toString() {
     return '''
 products: ${products},
+searchProductsResult: ${searchProductsResult},
+searchProductsState: ${searchProductsState},
 productState: ${productState},
 page: ${page}
     ''';

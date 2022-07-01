@@ -12,8 +12,15 @@ abstract class _ProductStoreBase with Store {
   _ProductStoreBase({
     required this.repository,
   });
+
   @observable
   List<Product> products = [];
+
+  @observable
+  List<Product> searchProductsResult = [];
+
+  @observable
+  AppState searchProductsState = AppStateEmpty();
 
   @observable
   AppState productState = AppStateEmpty();
@@ -24,11 +31,24 @@ abstract class _ProductStoreBase with Store {
   Future getAllProducts() async {
     try {
       productState = AppStateLoading();
-      products = [...products, ...await repository.getAllProducts(page: page)];
+      var productsResult = await repository.getAllProducts(page: page);
+      products = [...products, ...productsResult];
       page++;
       productState = AppStateSuccess();
     } catch (e) {
       productState = AppStateError();
+      rethrow;
+    }
+  }
+
+  Future getProductsByDescription({required String description}) async {
+    try {
+      searchProductsState = AppStateLoading();
+      searchProductsResult =
+          await repository.getProductsByDescription(description: description);
+      searchProductsState = AppStateSuccess();
+    } catch (e) {
+      searchProductsState = AppStateError();
       rethrow;
     }
   }

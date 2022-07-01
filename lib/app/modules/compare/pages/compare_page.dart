@@ -413,7 +413,7 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                                                                             2,
                                                                       ),
                                                                       Text(
-                                                                        'R\$ ${row['value']}',
+                                                                        'R\$ ${(row['value'] as double).toStringAsFixed(2)}',
                                                                         style: TextStyle(
                                                                             color:
                                                                                 Colors.black54,
@@ -424,7 +424,7 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                                                                             2,
                                                                       ),
                                                                       Text(
-                                                                        'R\$ ${(row['value'] * row['quantity']).toString().replaceAll(r'.', ',')}',
+                                                                        'R\$ ${(row['value'] * row['quantity'] as double).toStringAsFixed(2).replaceAll(r'.', ',')}',
                                                                         style: TextStyle(
                                                                             fontSize:
                                                                                 18,

@@ -5,10 +5,8 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:mercado_justo/app/modules/compare/pages/compare_page.dart';
 import 'package:mercado_justo/app/modules/home_auth/home_auth_store.dart';
 import 'package:mercado_justo/app/modules/home_auth/pages/home_auth_content.dart';
-import 'package:mercado_justo/app/modules/lists/pages/product_list_page.dart';
 import 'package:mercado_justo/app/modules/home_auth/widgets/custom_drawer.dart';
-import 'package:mercado_justo/app/modules/home_auth/widgets/drawer_item.dart';
-import 'package:mercado_justo/shared/auth/auth_controller.dart';
+import 'package:mercado_justo/app/modules/lists/pages/product_list_page.dart';
 
 class HomeAuthPage extends StatefulWidget {
   final String title;
