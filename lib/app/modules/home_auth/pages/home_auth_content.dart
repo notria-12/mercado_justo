@@ -29,7 +29,7 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
 
   final productToListStore = Modular.get<ProductToListStore>();
   final TextEditingController _searchController = TextEditingController();
-
+  final _formKey = GlobalKey<FormState>();
   @override
   void initState() {
     productStore.getAllProducts();
@@ -48,41 +48,56 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      border: Border.all(
-                        color: Colors.grey,
-                      )),
-                  child: TextFormField(
-                    controller: _searchController,
-                    onFieldSubmitted: (value) {
-                      productStore.getProductsByDescription(description: value);
-                      dialogResultSearchProducts(context);
-                    },
-                    decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Buscar por algo...',
-                        suffixIcon: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                productStore.getProductsByDescription(
-                                    description: _searchController.text);
-                                dialogResultSearchProducts(context);
-                              },
-                              child: Icon(
-                                Icons.search,
-                                size: 30,
-                              ),
-                            ),
-                            IconButton(
-                                onPressed: () {},
-                                icon: Icon(MdiIcons.barcodeScan)),
-                          ],
+                Form(
+                  key: _formKey,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 8),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        border: Border.all(
+                          color: Colors.grey,
                         )),
+                    child: TextFormField(
+                      controller: _searchController,
+                      onFieldSubmitted: (value) {
+                        if (_formKey.currentState!.validate()) {
+                          productStore.onlyButtonLoadMore = false;
+                          productStore.getProductsByDescription(
+                              description: value);
+                          // dialogResultSearchProducts(context);
+                        }
+                      },
+                      validator: (input) {
+                        if (input!.isEmpty) {
+                          return 'Informe o nome do produto';
+                        }
+                      },
+                      decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Buscar por algo...',
+                          suffixIcon: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  if (_formKey.currentState!.validate()) {
+                                    productStore.onlyButtonLoadMore = false;
+                                    productStore.getProductsByDescription(
+                                        description: _searchController.text);
+                                    // dialogResultSearchProducts(context);
+                                  }
+                                },
+                                child: Icon(
+                                  Icons.search,
+                                  size: 30,
+                                ),
+                              ),
+                              IconButton(
+                                  onPressed: () {},
+                                  icon: Icon(MdiIcons.barcodeScan)),
+                            ],
+                          )),
+                    ),
                   ),
                 ),
                 SizedBox(
@@ -98,7 +113,8 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
           Expanded(
             child: Observer(
               builder: (_) {
-                if (productStore.products.isEmpty) {
+                if (productStore.productState is AppStateLoading &&
+                    !productStore.onlyButtonLoadMore) {
                   return Center(
                     child: Column(
                       children: [
@@ -112,119 +128,141 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                     ),
                   );
                 } else {
-                  return CustomDataTable(
-                    loadMoreWidget: productStore.productState is AppStateLoading
-                        ? Container(
-                            height: 40,
-                            child: Center(
-                              child: CircularProgressIndicator(),
-                            ),
-                          )
-                        : LoadMoreButton(loadMoreItens: (() {
-                            productStore.getAllProducts();
-                          })),
-                    loadMoreColumns: () {
-                      marketStore.getAllMarkets();
-                    },
-                    loadMore: true,
-                    cellHeight: 135,
-                    fixedCornerCell: FixedCorner(),
-                    rowsCells: [
-                      ...List.generate(productStore.products.length, (index) {
-                        return [
-                          Text(productStore.products[index].description),
-                          ...marketStore.markets
-                              .map((e) => GetPrice(
-                                    marketId: e.id,
-                                    productBarCode: productStore
-                                        .products[index].barCode.first,
-                                  ))
-                              .toList()
-                        ];
-                      })
-                    ],
-                    fixedColCells: List.generate(
-                        productStore.products.length,
-                        (index) => InkWell(
-                              onTap: () {
-                                showDialogProductDetail(
-                                    context, productStore.products[index]);
-                              },
-                              child: Container(
-                                  width: 80,
-                                  child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Container(
-                                          height: 90,
-                                          child: Image.network(
-                                            productStore
-                                                .products[index].imagePath!,
-                                            errorBuilder:
-                                                (context, error, stackTrace) {
-                                              return Container(
-                                                color: Colors.greenAccent,
-                                                alignment: Alignment.center,
-                                                child: const Text(
-                                                  'Imagem indisponível!',
-                                                  style:
-                                                      TextStyle(fontSize: 18),
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: 12,
-                                        ),
-                                        Row(
-                                          children: [
-                                            Container(
-                                              height: 20,
-                                              width: 20,
-                                              decoration: BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  color: Colors.lightBlue),
-                                              child: Center(
-                                                  child: Icon(
-                                                Icons.add,
-                                                color: Colors.white,
-                                                size: 18,
-                                              )),
-                                            ),
-                                            SizedBox(
-                                              width: 4,
-                                            ),
-                                            Text('Add Lista')
-                                          ],
-                                        )
-                                      ])),
-                            )),
-                    fixedRowCells: [
-                      Container(),
-                      ...List.generate(
-                          marketStore.markets.length,
+                  if (productStore.products.isNotEmpty) {
+                    return CustomDataTable(
+                      loadMoreWidget:
+                          productStore.productState is AppStateLoading
+                              ? Container(
+                                  height: 40,
+                                  child: Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                )
+                              : LoadMoreButton(loadMoreItens: (() {
+                                  productStore.onlyButtonLoadMore = true;
+                                  if (productStore.isSearch) {
+                                    productStore.getProductsByDescription(
+                                        description: _searchController.text,
+                                        isNewSearch: false);
+                                  } else {
+                                    productStore.getAllProducts();
+                                  }
+                                })),
+                      loadMoreColumns: () {
+                        marketStore.getAllMarkets();
+                      },
+                      loadMore: productStore.canLoadMore,
+                      cellHeight: 135,
+                      fixedCornerCell: FixedCorner(),
+                      rowsCells: [
+                        ...List.generate(productStore.products.length, (index) {
+                          return [
+                            Text(productStore.products[index].description),
+                            ...marketStore.markets
+                                .map((e) => GetPrice(
+                                      marketId: e.id,
+                                      productBarCode: productStore
+                                          .products[index].barCode.first,
+                                    ))
+                                .toList()
+                          ];
+                        })
+                      ],
+                      fixedColCells: List.generate(
+                          productStore.products.length,
                           (index) => InkWell(
                                 onTap: () {
-                                  Modular.to.pushNamed('/home/marketDetail/',
-                                      arguments: marketStore.markets[index]);
+                                  showDialogProductDetail(
+                                      context, productStore.products[index]);
                                 },
                                 child: Container(
-                                  width: 100,
-                                  child: Image.network(
-                                      marketStore.markets[index].imagePath!),
-                                ),
-                              ))
-                    ],
-                    cellBuilder: (data) {
-                      return Center(
-                        child: Text(
-                          '$data',
-                        ),
-                      );
-                    },
-                  );
+                                    width: 80,
+                                    child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                            height: 90,
+                                            child: Image.network(
+                                              productStore
+                                                  .products[index].imagePath!,
+                                              errorBuilder:
+                                                  (context, error, stackTrace) {
+                                                return Container(
+                                                  color: Colors.greenAccent,
+                                                  alignment: Alignment.center,
+                                                  child: const Text(
+                                                    'Imagem indisponível!',
+                                                    style:
+                                                        TextStyle(fontSize: 18),
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 12,
+                                          ),
+                                          Row(
+                                            children: [
+                                              Container(
+                                                height: 20,
+                                                width: 20,
+                                                decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    color: Colors.lightBlue),
+                                                child: Center(
+                                                    child: Icon(
+                                                  Icons.add,
+                                                  color: Colors.white,
+                                                  size: 18,
+                                                )),
+                                              ),
+                                              SizedBox(
+                                                width: 4,
+                                              ),
+                                              Text('Add Lista')
+                                            ],
+                                          )
+                                        ])),
+                              )),
+                      fixedRowCells: [
+                        Container(),
+                        ...List.generate(
+                            marketStore.markets.length,
+                            (index) => InkWell(
+                                  onTap: () {
+                                    Modular.to.pushNamed('/home/marketDetail/',
+                                        arguments: marketStore.markets[index]);
+                                  },
+                                  child: Container(
+                                    width: 100,
+                                    child: Image.network(
+                                        marketStore.markets[index].imagePath!),
+                                  ),
+                                ))
+                      ],
+                      cellBuilder: (data) {
+                        return Center(
+                          child: Text(
+                            '$data',
+                          ),
+                        );
+                      },
+                    );
+                  } else {
+                    return Center(
+                      child: Column(
+                        children: [
+                          Text("Nenhum produto encontrado!"),
+                          SizedBox(
+                            height: 8,
+                          ),
+                        ],
+                        mainAxisAlignment: MainAxisAlignment.center,
+                      ),
+                    );
+                  }
                 }
               },
             ),
@@ -393,88 +431,88 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
         });
   }
 
-  Future<dynamic> dialogResultSearchProducts(BuildContext context) {
-    return showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Container(
-                    child: const Text('Resultados da pesquisa'),
-                  ),
-                ),
-                InkWell(
-                  child: const Icon(Icons.close),
-                  onTap: () {
-                    Modular.to.pop();
-                  },
-                )
-              ],
-            ),
-            content: Observer(
-              builder: (_) {
-                if (productStore.searchProductsState is AppStateLoading) {
-                  return Container(
-                    height: 300,
-                    child: Center(child: CircularProgressIndicator()),
-                  );
-                }
+  // Future<dynamic> dialogResultSearchProducts(BuildContext context) {
+  //   return showDialog(
+  //       context: context,
+  //       builder: (context) {
+  //         return AlertDialog(
+  //           title: Row(
+  //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //             children: [
+  //               Expanded(
+  //                 child: Container(
+  //                   child: const Text('Resultados da pesquisa'),
+  //                 ),
+  //               ),
+  //               InkWell(
+  //                 child: const Icon(Icons.close),
+  //                 onTap: () {
+  //                   Modular.to.pop();
+  //                 },
+  //               )
+  //             ],
+  //           ),
+  //           content: Observer(
+  //             builder: (_) {
+  //               if (productStore.searchProductsState is AppStateLoading) {
+  //                 return Container(
+  //                   height: 300,
+  //                   child: Center(child: CircularProgressIndicator()),
+  //                 );
+  //               }
 
-                if (productStore.searchProductsState is AppStateError) {
-                  return Center(
-                      child: Text(
-                          'Infelizmente não foi possível completar a busca'));
-                }
-                return Container(
-                  height: 300,
-                  width: double.maxFinite,
-                  child: productStore.searchProductsResult.isEmpty
-                      ? Container(
-                          child: Center(
-                              child: Text(
-                            'Ops, nenhum produto correspondente encontrado.',
-                            textAlign: TextAlign.center,
-                          )),
-                        )
-                      : ListView.builder(
-                          itemBuilder: (context, index) {
-                            return InkWell(
-                              onTap: () {
-                                showDialogProductDetail(context,
-                                    productStore.searchProductsResult[index]);
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(
-                                      color: Colors.black12,
-                                    )),
-                                padding: EdgeInsets.symmetric(vertical: 5),
-                                margin: const EdgeInsets.only(bottom: 5),
-                                child: ListTile(
-                                  leading: Container(
-                                      height: 50,
-                                      child: Image.network(productStore
-                                          .searchProductsResult[index]
-                                          .imagePath!)),
-                                  title: Text(
-                                    '${productStore.searchProductsResult[index].description}',
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 2,
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                          itemCount: productStore.searchProductsResult.length,
-                        ),
-                );
-              },
-            ),
-          );
-        });
-  }
+  //               if (productStore.searchProductsState is AppStateError) {
+  //                 return Center(
+  //                     child: Text(
+  //                         'Infelizmente não foi possível completar a busca'));
+  //               }
+  //               return Container(
+  //                 height: 300,
+  //                 width: double.maxFinite,
+  //                 child: productStore.searchProductsResult.isEmpty
+  //                     ? Container(
+  //                         child: Center(
+  //                             child: Text(
+  //                           'Ops, nenhum produto correspondente encontrado.',
+  //                           textAlign: TextAlign.center,
+  //                         )),
+  //                       )
+  //                     : ListView.builder(
+  //                         itemBuilder: (context, index) {
+  //                           return InkWell(
+  //                             onTap: () {
+  //                               showDialogProductDetail(context,
+  //                                   productStore.searchProductsResult[index]);
+  //                             },
+  //                             child: Container(
+  //                               decoration: BoxDecoration(
+  //                                   borderRadius: BorderRadius.circular(10),
+  //                                   border: Border.all(
+  //                                     color: Colors.black12,
+  //                                   )),
+  //                               padding: EdgeInsets.symmetric(vertical: 5),
+  //                               margin: const EdgeInsets.only(bottom: 5),
+  //                               child: ListTile(
+  //                                 leading: Container(
+  //                                     height: 50,
+  //                                     child: Image.network(productStore
+  //                                         .searchProductsResult[index]
+  //                                         .imagePath!)),
+  //                                 title: Text(
+  //                                   '${productStore.searchProductsResult[index].description}',
+  //                                   overflow: TextOverflow.ellipsis,
+  //                                   maxLines: 2,
+  //                                 ),
+  //                               ),
+  //                             ),
+  //                           );
+  //                         },
+  //                         itemCount: productStore.searchProductsResult.length,
+  //                       ),
+  //               );
+  //             },
+  //           ),
+  //         );
+  //       });
+  // }
 }

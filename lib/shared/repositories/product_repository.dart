@@ -29,11 +29,11 @@ class ProductRepository {
   }
 
   Future<List<Product>> getProductsByDescription(
-      {required String description}) async {
+      {required String description, required int page}) async {
     try {
       final result;
       result = await dio.get(
-          "produtos?itens_pagina=20&pagina=1&ordernar=_id,1&procurar=%5B%7B%22termo%22%3A%22descricao%22%2C%22valor%22%3A%22${description}%22%7D%5D");
+          "produtos?itens_pagina=15&pagina=$page&ordernar=_id,1&procurar=%5B%7B%22termo%22%3A%22descricao%22%2C%22valor%22%3A%22${description}%22%7D%5D");
       List list = result.data['dados'] as List;
       List<Product> products = list.map((e) => Product.fromMap(e)).toList();
       for (int i = 0; i < products.length; i++) {

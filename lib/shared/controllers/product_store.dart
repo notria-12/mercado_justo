@@ -17,21 +17,30 @@ abstract class _ProductStoreBase with Store {
   List<Product> products = [];
 
   @observable
-  List<Product> searchProductsResult = [];
-
-  @observable
-  AppState searchProductsState = AppStateEmpty();
+  bool isSearch = false;
 
   @observable
   AppState productState = AppStateEmpty();
+
+  @observable
+  bool canLoadMore = true;
+
+  @observable
+  bool onlyButtonLoadMore = false;
 
   @observable
   int page = 1;
 
   Future getAllProducts() async {
     try {
+      isSearch = false;
       productState = AppStateLoading();
       var productsResult = await repository.getAllProducts(page: page);
+      if (productsResult.length < 15) {
+        canLoadMore = false;
+      } else {
+        canLoadMore = true;
+      }
       products = [...products, ...productsResult];
       page++;
       productState = AppStateSuccess();
@@ -41,14 +50,38 @@ abstract class _ProductStoreBase with Store {
     }
   }
 
-  Future getProductsByDescription({required String description}) async {
+  Future getProductsByDescription(
+      {required String description, bool isNewSearch = true}) async {
     try {
-      searchProductsState = AppStateLoading();
-      searchProductsResult =
-          await repository.getProductsByDescription(description: description);
-      searchProductsState = AppStateSuccess();
+      if (isSearch) {
+        if (isNewSearch) {
+          page = 1;
+        } else {
+          page++;
+        }
+      } else {
+        page = 1;
+      }
+
+      productState = AppStateLoading();
+      var productsResult = await repository.getProductsByDescription(
+          description: description, page: page);
+      if (productsResult.length < 15) {
+        canLoadMore = false;
+      } else {
+        canLoadMore = true;
+      }
+      if (isNewSearch) {
+        products = productsResult;
+
+        isSearch = true;
+      } else {
+        products = [...products, ...productsResult];
+      }
+
+      productState = AppStateSuccess();
     } catch (e) {
-      searchProductsState = AppStateError();
+      productState = AppStateError();
       rethrow;
     }
   }

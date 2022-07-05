@@ -24,36 +24,18 @@ mixin _$ProductStore on _ProductStoreBase, Store {
     });
   }
 
-  final _$searchProductsResultAtom =
-      Atom(name: '_ProductStoreBase.searchProductsResult');
+  final _$isSearchAtom = Atom(name: '_ProductStoreBase.isSearch');
 
   @override
-  List<Product> get searchProductsResult {
-    _$searchProductsResultAtom.reportRead();
-    return super.searchProductsResult;
+  bool get isSearch {
+    _$isSearchAtom.reportRead();
+    return super.isSearch;
   }
 
   @override
-  set searchProductsResult(List<Product> value) {
-    _$searchProductsResultAtom.reportWrite(value, super.searchProductsResult,
-        () {
-      super.searchProductsResult = value;
-    });
-  }
-
-  final _$searchProductsStateAtom =
-      Atom(name: '_ProductStoreBase.searchProductsState');
-
-  @override
-  AppState get searchProductsState {
-    _$searchProductsStateAtom.reportRead();
-    return super.searchProductsState;
-  }
-
-  @override
-  set searchProductsState(AppState value) {
-    _$searchProductsStateAtom.reportWrite(value, super.searchProductsState, () {
-      super.searchProductsState = value;
+  set isSearch(bool value) {
+    _$isSearchAtom.reportWrite(value, super.isSearch, () {
+      super.isSearch = value;
     });
   }
 
@@ -69,6 +51,37 @@ mixin _$ProductStore on _ProductStoreBase, Store {
   set productState(AppState value) {
     _$productStateAtom.reportWrite(value, super.productState, () {
       super.productState = value;
+    });
+  }
+
+  final _$canLoadMoreAtom = Atom(name: '_ProductStoreBase.canLoadMore');
+
+  @override
+  bool get canLoadMore {
+    _$canLoadMoreAtom.reportRead();
+    return super.canLoadMore;
+  }
+
+  @override
+  set canLoadMore(bool value) {
+    _$canLoadMoreAtom.reportWrite(value, super.canLoadMore, () {
+      super.canLoadMore = value;
+    });
+  }
+
+  final _$onlyButtonLoadMoreAtom =
+      Atom(name: '_ProductStoreBase.onlyButtonLoadMore');
+
+  @override
+  bool get onlyButtonLoadMore {
+    _$onlyButtonLoadMoreAtom.reportRead();
+    return super.onlyButtonLoadMore;
+  }
+
+  @override
+  set onlyButtonLoadMore(bool value) {
+    _$onlyButtonLoadMoreAtom.reportWrite(value, super.onlyButtonLoadMore, () {
+      super.onlyButtonLoadMore = value;
     });
   }
 
@@ -91,9 +104,10 @@ mixin _$ProductStore on _ProductStoreBase, Store {
   String toString() {
     return '''
 products: ${products},
-searchProductsResult: ${searchProductsResult},
-searchProductsState: ${searchProductsState},
+isSearch: ${isSearch},
 productState: ${productState},
+canLoadMore: ${canLoadMore},
+onlyButtonLoadMore: ${onlyButtonLoadMore},
 page: ${page}
     ''';
   }
