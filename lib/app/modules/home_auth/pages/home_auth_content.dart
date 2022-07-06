@@ -13,6 +13,7 @@ import 'package:mercado_justo/shared/widgets/bottonsheets.dart';
 import 'package:mercado_justo/shared/widgets/custom_table_widget.dart';
 import 'package:mercado_justo/shared/widgets/fixed_corner_table_widget.dart';
 import 'package:mercado_justo/shared/widgets/load_more_button.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 class HomeAuthContent extends StatefulWidget {
   const HomeAuthContent({Key? key}) : super(key: key);
@@ -93,7 +94,20 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                                 ),
                               ),
                               IconButton(
-                                  onPressed: () {},
+                                  onPressed: () async {
+                                    String barcodeScanRes =
+                                        await FlutterBarcodeScanner.scanBarcode(
+                                            '#FFFFFF',
+                                            'Cancelar',
+                                            false,
+                                            ScanMode.BARCODE);
+                                    productStore
+                                        .getProductByBarcode(
+                                            barcode: barcodeScanRes)
+                                        .then((value) =>
+                                            showDialogProductDetail(
+                                                context, value));
+                                  },
                                   icon: Icon(MdiIcons.barcodeScan)),
                             ],
                           )),

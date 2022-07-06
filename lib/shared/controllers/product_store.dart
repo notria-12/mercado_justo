@@ -50,6 +50,14 @@ abstract class _ProductStoreBase with Store {
     }
   }
 
+  Future<Product> getProductByBarcode({required String barcode}) async {
+    try {
+      return repository.getProductByBarcode(barcode: barcode);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future getProductsByDescription(
       {required String description, bool isNewSearch = true}) async {
     try {

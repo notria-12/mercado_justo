@@ -47,6 +47,20 @@ class ProductRepository {
     }
   }
 
+  Future<Product> getProductByBarcode({required String barcode}) async {
+    try {
+      final result;
+      result = await dio.get(
+          "https://mercado-justo-api.herokuapp.com/mercado-justo/api/v1/produtos?itens_pagina=20&pagina=1&ordernar=_id,1&procurar=%5B%7B%22termo%22%3A%22codigo_barras%22%2C%22valor%22%3A%22$barcode%22%7D%5D");
+      List list = result.data['dados'] as List;
+      Product product = Product.fromMap(list.first);
+      String imagePath = await getProductImage(barcode);
+      return product.copyWith(imagePath: imagePath);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<String> getProductImage(String barCode) async {
     try {
       final result = await dio.get('/imagens/produto/${barCode}');
