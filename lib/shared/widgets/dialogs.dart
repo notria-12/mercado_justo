@@ -4,6 +4,7 @@ import 'package:mercado_justo/shared/controllers/fair_price_store.dart';
 import 'package:mercado_justo/shared/controllers/list_store.dart';
 import 'package:mercado_justo/shared/controllers/market_name_store.dart';
 import 'package:mercado_justo/shared/repositories/market_name_repository.dart';
+import 'package:mercado_justo/shared/utils/input_formaters.dart';
 import 'package:mercado_justo/shared/widgets/bottonsheets.dart';
 
 class Dialogs {
@@ -147,12 +148,12 @@ class Dialogs {
                               color: Color.fromARGB(255, 240, 241, 241),
                               borderRadius: BorderRadius.circular(10)),
                           child: TextFormField(
+                            inputFormatters: [InputFormater.valueMask],
                             controller: _valueController,
                             textAlign: TextAlign.center,
                             keyboardType: TextInputType.number,
                             decoration: const InputDecoration(
-                                hintText: 'Insira o valor',
-                                border: InputBorder.none),
+                                hintText: '00,00', border: InputBorder.none),
                           )),
                       const SizedBox(
                         height: 10,

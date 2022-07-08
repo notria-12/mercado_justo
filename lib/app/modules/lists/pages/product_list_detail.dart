@@ -24,6 +24,7 @@ class ProductListDetailsPage extends StatefulWidget {
 class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
   final storeMarket = Modular.get<MarketStore>();
   final storeProductList = Modular.get<ListStore>();
+  final storeFairPrice = Modular.get<FairPriceStore>();
   double price = 0.0;
   @override
   void initState() {
@@ -64,6 +65,46 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                       color: Colors.black54, fontWeight: FontWeight.w500),
                 ),
                 Observer(builder: (_) {
+                  if (storeProductList.isFairPrice &&
+                      storeProductList.marketSelected == -1) {
+                    return FutureBuilder(
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done) {
+                          return Column(
+                            children: [
+                              RichText(
+                                  text: TextSpan(
+                                      children: [
+                                    TextSpan(
+                                        text:
+                                            ' ${storeProductList.products.length - storeFairPrice.fairPricesFromList.length} '),
+                                    const TextSpan(text: 'item')
+                                  ],
+                                      text: 'Falta',
+                                      style: const TextStyle(
+                                          color: Colors.red,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16))),
+                              RichText(
+                                  text: TextSpan(
+                                      children: [
+                                    TextSpan(
+                                        text:
+                                            ' R\$ ${storeProductList.missingProducts['average']} '),
+                                  ],
+                                      text: 'Valor médio',
+                                      style: const TextStyle(
+                                          color: Colors.red,
+                                          fontWeight: FontWeight.bold)))
+                            ],
+                          );
+                        }
+                        return Container();
+                      },
+                      future: storeFairPrice.getFairPricesFromList(
+                          listId: widget.listModel.id!),
+                    );
+                  }
                   return Visibility(
                     visible:
                         storeProductList.missingProducts['missingItens'] != 0,
@@ -108,7 +149,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                   children: [
                     Observer(builder: (_) {
                       return Text(
-                        'R\$ ${storeProductList.totalPrice.toStringAsFixed(2)}',
+                        'R\$ ${storeProductList.totalPrice.toStringAsFixed(2).replaceAll(r'.', ',')}',
                         style: const TextStyle(
                             fontSize: 38, fontWeight: FontWeight.bold),
                       );
@@ -267,18 +308,21 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                     Modular.to.pushNamed('/home_auth/list/filters');
                   },
                 ),
-                ButtonOptionsListDetail(
-                  label: 'Meu Preço Justo',
-                  onTap: () {
-                    storeProductList.isFairPrice =
-                        !storeProductList.isFairPrice;
-                    if (storeProductList.isFairPrice) {
-                      storeProductList.marketSelected = -1;
-                    } else {
-                      storeProductList.marketSelected = 0;
-                    }
-                  },
-                ),
+                Observer(builder: (_) {
+                  return ButtonOptionsListDetail(
+                    label: 'Meu Preço Justo',
+                    tapped: storeProductList.isFairPrice,
+                    onTap: () {
+                      storeProductList.isFairPrice =
+                          !storeProductList.isFairPrice;
+                      if (storeProductList.isFairPrice) {
+                        storeProductList.marketSelected = -1;
+                      } else {
+                        storeProductList.marketSelected = 0;
+                      }
+                    },
+                  );
+                }),
                 ButtonOptionsListDetail(
                   label: 'Editar',
                   onTap: () {
@@ -408,11 +452,10 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                             Text(storeProductList.products[index].description),
                             if (storeProductList.isFairPrice)
                               FutureBuilder<double?>(
-                                  future: Modular.get<FairPriceStore>()
-                                      .getFairPrice(
-                                          listId: widget.listModel.id!,
-                                          productId: storeProductList
-                                              .products[index].productId!),
+                                  future: storeFairPrice.getFairPrice(
+                                      listId: widget.listModel.id!,
+                                      productId: storeProductList
+                                          .products[index].productId!),
                                   builder: (context, snapshot) {
                                     switch (snapshot.connectionState) {
                                       case ConnectionState.none:
@@ -447,12 +490,14 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                                                   MainAxisAlignment.center,
                                               children: [
                                                 Text("R\$ " +
-                                                    snapshot.data.toString()),
+                                                    snapshot.data
+                                                        .toString()
+                                                        .replaceAll(r'.', ',')),
                                                 const SizedBox(
                                                   height: 20,
                                                 ),
                                                 Text(
-                                                  'R\$ ${(snapshot.data! * storeProductList.quantities[index]).toStringAsFixed(2)}',
+                                                  'R\$ ${(snapshot.data! * storeProductList.quantities[index]).toStringAsFixed(2).replaceAll(r'.', ',')}',
                                                   style: const TextStyle(
                                                       fontWeight:
                                                           FontWeight.bold,
@@ -553,10 +598,12 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
 class ButtonOptionsListDetail extends StatelessWidget {
   final String label;
   final VoidCallback? onTap;
+  final bool? tapped;
   ButtonOptionsListDetail({
     Key? key,
     required this.label,
     this.onTap,
+    this.tapped = false,
   }) : super(key: key);
 
   @override
@@ -565,12 +612,14 @@ class ButtonOptionsListDetail extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-            color: Color.fromARGB(255, 240, 241, 241),
+            color: tapped! ? Colors.green : Color.fromARGB(255, 240, 241, 241),
             borderRadius: BorderRadius.circular(10)),
         padding: EdgeInsets.symmetric(vertical: 8, horizontal: 20),
         child: Text(
           label,
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: tapped! ? Colors.white : Colors.black),
         ),
       ),
     );
