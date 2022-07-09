@@ -90,7 +90,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                                       children: [
                                     TextSpan(
                                         text:
-                                            ' R\$ ${storeProductList.missingProducts['average']} '),
+                                            ' R\$ ${storeProductList.getAverageMissingProducts(storeFairPrice.fairPricesFromList.map((e) => e['product_id'] as int).toList()).toStringAsFixed(2)} '),
                                   ],
                                       text: 'Valor médio',
                                       style: const TextStyle(

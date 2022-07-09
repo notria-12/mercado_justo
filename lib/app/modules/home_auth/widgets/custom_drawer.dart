@@ -88,13 +88,16 @@ class CustomDrawer extends StatelessWidget {
               color: Colors.black87),
         )),
         DrawerItem(
+            onTap: () {
+              Modular.to.pushNamed('/home_auth/faq/');
+            },
             child: const Text(
-          'Perguntas Frequentes',
-          style: TextStyle(
-              fontSize: 15,
-              // fontWeight: FontWeight.w400,
-              color: Colors.black87),
-        )),
+              'Perguntas Frequentes',
+              style: TextStyle(
+                  fontSize: 15,
+                  // fontWeight: FontWeight.w400,
+                  color: Colors.black87),
+            )),
         DrawerItem(
             child: const Text(
           'Compartilhar o App com Amigos',

@@ -83,6 +83,25 @@ abstract class _ListStoreBase with Store {
     return total;
   }
 
+  double getAverageMissingProducts(List<int> productIds) {
+    double average = 0;
+    List<int> idsByProducts = products.map((e) => e.productId!).toList();
+    List<int> newList = productIds.isEmpty
+        ? idsByProducts
+        : idsByProducts.where((element) {
+            return !(productIds.contains(element));
+          }).toList();
+    for (var i = 0; i < newList.length; i++) {
+      average += prices[products.indexOf(products
+                  .firstWhere((element) => element.productId! == newList[i]))]
+              .map((e) => _parseToDouble(e))
+              .reduce((value, element) => value + element) /
+          marketStore.markets.length;
+    }
+
+    return average;
+  }
+
   @computed
   Map<String, dynamic> get missingProducts {
     int missingItens = 0;
