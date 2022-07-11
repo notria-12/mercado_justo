@@ -91,15 +91,33 @@ abstract class _ListStoreBase with Store {
         : idsByProducts.where((element) {
             return !(productIds.contains(element));
           }).toList();
-    for (var i = 0; i < newList.length; i++) {
-      average += prices[products.indexOf(products
-                  .firstWhere((element) => element.productId! == newList[i]))]
-              .map((e) => _parseToDouble(e))
-              .reduce((value, element) => value + element) /
-          marketStore.markets.length;
+    if (prices.isNotEmpty) {
+      for (var i = 0; i < newList.length; i++) {
+        average += prices[products.indexOf(products
+                    .firstWhere((element) => element.productId! == newList[i]))]
+                .map((e) => _parseToDouble(e))
+                .reduce((value, element) => value + element) /
+            marketStore.markets.length;
+      }
     }
 
     return average;
+  }
+
+  double getTotalPriceForMyFairPrice(List<Map> productsMap) {
+    double total = 0;
+
+    List<int> productIds =
+        productsMap.map((e) => e['product_id'] as int).toList();
+
+    if (productIds.isNotEmpty) {
+      for (var i = 0; i < productIds.length; i++) {
+        int productIndex = products.indexOf(products
+            .firstWhere((element) => element.productId! == productIds[i]));
+        total += quantities[productIndex] * productsMap[i]['price'] as double;
+      }
+    }
+    return total;
   }
 
   @computed

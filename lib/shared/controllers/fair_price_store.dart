@@ -26,7 +26,7 @@ abstract class _FairPriceStoreBase with Store {
 
   Future deleteFairPrice({required int listId, required productId}) async {
     try {
-      return _repository.deleteFairPrice(listId, productId);
+      await _repository.deleteFairPrice(listId, productId);
     } catch (e) {
       rethrow;
     }
@@ -37,6 +37,8 @@ abstract class _FairPriceStoreBase with Store {
       var list = await _repository.getFairPricesFromList(listId);
       if (list != null) {
         fairPricesFromList = list;
+      } else {
+        fairPricesFromList = [];
       }
     } catch (e) {
       rethrow;
