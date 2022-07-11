@@ -35,6 +35,7 @@ dependencies:
   sqflite: ^2.0.2+1
   path_provider: ^2.0.9
   flutter_barcode_scanner: ^2.0.0
+  google_maps_flutter: ^2.1.8
 
 dev_dependencies:
   flutter_test:

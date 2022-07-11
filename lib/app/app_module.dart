@@ -1,3 +1,4 @@
+import 'package:mercado_justo/app/../shared/controllers/position_store.dart';
 import 'package:mercado_justo/app/modules/compare/compare_store.dart';
 import 'package:mercado_justo/app/../shared/controllers/market_name_store.dart';
 import 'package:mercado_justo/app/../shared/controllers/fair_price_store.dart';
@@ -19,6 +20,7 @@ import 'modules/home/home_module.dart';
 class AppModule extends Module {
   @override
   final List<Bind> binds = [
+    Bind.lazySingleton((i) => PositionStore()),
     Bind.singleton((i) => getDioInstance()),
     Bind.singleton((i) => AuthController()),
   ];
