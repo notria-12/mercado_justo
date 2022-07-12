@@ -57,7 +57,8 @@ abstract class _ListStoreBase with Store {
         (value == -1 && marketSelected >= 0 && isFairPrice)) {
       marketSelected--;
     }
-    if (value == 1 && marketSelected < (marketStore.markets.length - 1)) {
+    if (value == 1 &&
+        marketSelected < (marketStore.filteredMarkets.length - 1)) {
       marketSelected++;
     }
   }
@@ -97,7 +98,7 @@ abstract class _ListStoreBase with Store {
                     .firstWhere((element) => element.productId! == newList[i]))]
                 .map((e) => _parseToDouble(e))
                 .reduce((value, element) => value + element) /
-            marketStore.markets.length;
+            marketStore.filteredMarkets.length;
       }
     }
 
@@ -132,7 +133,7 @@ abstract class _ListStoreBase with Store {
           average += (prices[i]
                   .map((e) => _parseToDouble(e))
                   .reduce((value, element) => value + element)) /
-              marketStore.markets.length;
+              marketStore.filteredMarkets.length;
         }
       }
     }
@@ -243,7 +244,7 @@ abstract class _ListStoreBase with Store {
     try {
       for (int i = 0; i < products.length; i++) {
         List<String> pricesByProducts = [];
-        for (Market market in marketStore.markets) {
+        for (Market market in marketStore.filteredMarkets) {
           String? price = await priceStore.getProductPriceByMarket(
               marketId: market.id, barCode: products[i].barCode.first);
           pricesByProducts.add(price);

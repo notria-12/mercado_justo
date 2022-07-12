@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:mercado_justo/app/modules/lists/filter_store.dart';
 import 'package:mercado_justo/shared/controllers/market_store.dart';
+import 'package:mercado_justo/shared/controllers/position_store.dart';
 
 class FilterListPage extends StatefulWidget {
   const FilterListPage({Key? key}) : super(key: key);
@@ -11,7 +14,10 @@ class FilterListPage extends StatefulWidget {
 }
 
 class _FilterListPageState extends State<FilterListPage> {
-  double rating = 10;
+  final positionStore = Modular.get<PositionStore>();
+  final marketStore = Modular.get<MarketStore>();
+  final filterStore = Modular.get<FilterStore>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,34 +60,36 @@ class _FilterListPageState extends State<FilterListPage> {
           const SizedBox(
             height: 8,
           ),
-          SliderTheme(
-            data: SliderTheme.of(context).copyWith(
-                trackShape: CustomTrackShape(),
-                trackHeight: 8.0,
-                inactiveTrackColor: const Color.fromARGB(255, 240, 241, 241),
-                overlayShape: SliderComponentShape.noThumb),
-            child: Slider(
-                label: '${rating.truncate()}',
-                value: rating,
-                divisions: 100,
-                min: 0,
-                max: 100,
-                onChanged: (newRating) {
-                  setState(() {
-                    rating = newRating;
-                  });
-                }),
-          ),
+          Observer(builder: (_) {
+            return SliderTheme(
+              data: SliderTheme.of(context).copyWith(
+                  trackShape: CustomTrackShape(),
+                  trackHeight: 8.0,
+                  inactiveTrackColor: const Color.fromARGB(255, 240, 241, 241),
+                  overlayShape: SliderComponentShape.noThumb),
+              child: Slider(
+                  label: '${filterStore.rating.truncate()}',
+                  value: filterStore.rating,
+                  divisions: 100,
+                  min: 0,
+                  max: 100,
+                  onChanged: (newRating) {
+                    filterStore.rating = newRating;
+                  }),
+            );
+          }),
           const SizedBox(
             height: 8,
           ),
-          Text(
-            'Somente dentro de ${rating.truncate()}Km',
-            style: const TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 16,
-                color: Colors.black54),
-          ),
+          Observer(builder: (_) {
+            return Text(
+              'Somente dentro de ${filterStore.rating.truncate()}Km',
+              style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                  color: Colors.black54),
+            );
+          }),
           const SizedBox(
             height: 25,
           ),
@@ -99,51 +107,65 @@ class _FilterListPageState extends State<FilterListPage> {
           const SizedBox(
             height: 15,
           ),
-          Expanded(
-              child: Container(
-            child: ListView.builder(
-              itemBuilder: (context, index) {
-                return Column(
-                  children: [
-                    const Divider(),
-                    Observer(builder: (_) {
-                      return SwitchListTile(
-                        contentPadding: EdgeInsets.zero,
-                        value: Modular.get<MarketStore>()
-                            .filteredMarkets[index]
-                            .isSelectable,
-                        onChanged: (onChanged) {
-                          Modular.get<MarketStore>().marketId =
-                              Modular.get<MarketStore>()
-                                  .filteredMarkets[index]
-                                  .hashId;
-                        },
-                        controlAffinity: ListTileControlAffinity.leading,
-                        title: Row(
-                          children: [
-                            Container(
-                              height: 45,
-                              child: Image.network(Modular.get<MarketStore>()
-                                  .filteredMarkets[index]
-                                  .imagePath!),
-                            ),
-                            Text(
-                              '9Km de distância',
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 13,
-                                  color: Colors.black54),
-                            )
-                          ],
+          Expanded(child: Container(
+            child: Observer(builder: (_) {
+              return marketStore.filteredMarkets.isEmpty
+                  ? Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset('assets/img/not_found.png'),
+                        SizedBox(
+                          height: 10,
                         ),
-                      );
-                    }),
-                    const Divider(),
-                  ],
-                );
-              },
-              itemCount: Modular.get<MarketStore>().markets.length,
-            ),
+                        Text('Nenhum mercado encontrado no raio',
+                            style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
+                                color: Colors.black54))
+                      ],
+                    )
+                  : ListView.builder(
+                      itemBuilder: (context, index) {
+                        return Column(
+                          children: [
+                            const Divider(),
+                            Observer(builder: (_) {
+                              return SwitchListTile(
+                                contentPadding: EdgeInsets.zero,
+                                value: Modular.get<MarketStore>()
+                                    .filteredMarkets[index]
+                                    .isSelectable,
+                                onChanged: (onChanged) {
+                                  marketStore.marketId =
+                                      marketStore.filteredMarkets[index].hashId;
+                                },
+                                controlAffinity:
+                                    ListTileControlAffinity.leading,
+                                title: Row(
+                                  children: [
+                                    Container(
+                                      height: 45,
+                                      child: Image.network(marketStore
+                                          .filteredMarkets[index].imagePath!),
+                                    ),
+                                    Text(
+                                      ' ${(Geolocator.distanceBetween(positionStore.position!.latitude, positionStore.position!.longitude, marketStore.filteredMarkets[index].latitude, marketStore.filteredMarkets[index].longitude) / 1000).toStringAsFixed(2).replaceAll(r'.', ',')} Km de distância',
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 13,
+                                          color: Colors.black54),
+                                    )
+                                  ],
+                                ),
+                              );
+                            }),
+                            const Divider(),
+                          ],
+                        );
+                      },
+                      itemCount: marketStore.filteredMarkets.length,
+                    );
+            }),
           ))
         ]),
       ),

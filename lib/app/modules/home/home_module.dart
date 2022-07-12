@@ -13,7 +13,8 @@ class HomeModule extends Module {
       (i) => HomeStore(),
     ),
     Bind.lazySingleton((i) => MarketRepository(i())),
-    Bind.lazySingleton((i) => MarketStore(repository: i())),
+    Bind.lazySingleton((i) =>
+        MarketStore(repository: i(), filterStore: i(), positionStore: i())),
   ];
 
   @override

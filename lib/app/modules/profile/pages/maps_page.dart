@@ -110,7 +110,7 @@ class _MapsEditLocationState extends State<MapsEditLocation> {
           width: MediaQuery.of(context).size.width,
           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
           child: const Text(
-            'Deixe a sua localização dentro do círculo e clique em ok!',
+            'Deixe a sua localização dentro do círculo e clique em salvar!',
             style: TextStyle(fontSize: 20),
             textAlign: TextAlign.center,
           ),

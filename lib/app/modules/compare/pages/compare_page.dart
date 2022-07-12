@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:mercado_justo/app/modules/compare/compare_store.dart';
 import 'package:mercado_justo/app/modules/lists/pages/product_list_detail.dart';
 import 'package:mercado_justo/shared/controllers/list_store.dart';
 import 'package:mercado_justo/shared/controllers/market_store.dart';
+import 'package:mercado_justo/shared/controllers/position_store.dart';
 import 'package:mercado_justo/shared/models/market_model.dart';
 import 'package:mercado_justo/shared/models/product_model.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
@@ -19,6 +21,7 @@ class ComparePage extends StatefulWidget {
 
 class _ComparePageState extends ModularState<ComparePage, CompareStore> {
   final listStore = Modular.get<ListStore>();
+  final positionStore = Modular.get<PositionStore>();
   @override
   void initState() {
     super.initState();
@@ -255,7 +258,10 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                                                   const SizedBox(
                                                     height: 2,
                                                   ),
-                                                  Text('Distância: 1,5km'),
+                                                  Observer(builder: (_) {
+                                                    return Text(
+                                                        'Distância: ${(Geolocator.distanceBetween(positionStore.position!.latitude, positionStore.position!.longitude, market.latitude, market.longitude) / 1000).toStringAsFixed(2).replaceAll(r'.', ',')} km');
+                                                  }),
                                                   const SizedBox(
                                                     height: 2,
                                                   ),

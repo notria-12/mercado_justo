@@ -1,5 +1,4 @@
 import 'package:geolocator/geolocator.dart';
-import 'package:mercado_justo/shared/models/market_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Utils {
@@ -12,6 +11,20 @@ class Utils {
   static void launchUrl(String link) async {
     String _url = link;
     if (!await launch(_url)) throw 'Could not launch $_url';
+  }
+
+  static void launchMap(String latitude, String longitude) async {
+    final String googleMapslocationUrl =
+        "https://www.google.com/maps/search/?api=1&query=$latitude,$longitude";
+
+    final String encodedURl = Uri.encodeFull(googleMapslocationUrl);
+
+    if (await canLaunch(encodedURl)) {
+      await launch(encodedURl);
+    } else {
+      print('Could not launch $encodedURl');
+      throw 'Could not launch $encodedURl';
+    }
   }
 
   static Future<Position> determinePosition() async {
