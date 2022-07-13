@@ -11,6 +11,7 @@ import 'package:mercado_justo/shared/models/product_model.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/widgets/bottonsheets.dart';
 import 'package:mercado_justo/shared/widgets/custom_table_widget.dart';
+import 'package:mercado_justo/shared/widgets/dialogs.dart';
 import 'package:mercado_justo/shared/widgets/fixed_corner_table_widget.dart';
 import 'package:mercado_justo/shared/widgets/load_more_button.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -104,9 +105,33 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                                     productStore
                                         .getProductByBarcode(
                                             barcode: barcodeScanRes)
-                                        .then((value) =>
-                                            showDialogProductDetail(
-                                                context, value));
+                                        .then((value) {
+                                      if (value != null) {
+                                        showDialogProductDetail(context, value);
+                                      } else {
+                                        showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return AlertDialog(
+                                                title: Text(
+                                                    'Produto não cadastrado'),
+                                                content: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    Text(
+                                                      'Não existe um produto cadastrado com o código de barra lido',
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                    )
+                                                  ],
+                                                ),
+                                              );
+                                            });
+                                      }
+                                    });
                                   },
                                   icon: Icon(MdiIcons.barcodeScan)),
                             ],

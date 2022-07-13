@@ -68,7 +68,7 @@ abstract class _CompareStoreBase with Store {
     try {
       for (int i = 0; i < products.length; i++) {
         List<Map<String, dynamic>> pricesByProducts = [];
-        for (Market market in marketStore.markets) {
+        for (Market market in marketStore.filteredMarkets) {
           String? price = await priceStore.getProductPriceByMarket(
               marketId: market.id, barCode: products[i].barCode.first);
           int quantity = await getQuantity(listId!, products[i].productId!);

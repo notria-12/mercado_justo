@@ -188,7 +188,7 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                       );
                     }
                     if (listStore.productState is AppStateSuccess &&
-                        Modular.get<MarketStore>().markets.isNotEmpty) {
+                        Modular.get<MarketStore>().filteredMarkets.isNotEmpty) {
                       return FutureBuilder(
                         builder: (context, snapshot) {
                           switch (snapshot.connectionState) {
@@ -216,7 +216,7 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                                 child: ListView.builder(
                                   itemBuilder: (context, index) {
                                     Market market = Modular.get<MarketStore>()
-                                        .markets
+                                        .filteredMarkets
                                         .firstWhere((market) =>
                                             store.getFairPrice[index][0]
                                                 ['market_id'] ==
@@ -681,7 +681,31 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                         future: store.getProductsPrices(listStore.products),
                       );
                     }
-                    return Container();
+                    return Container(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Com base na sua localização atual, infelizmente não foi possível listar os mercados!',
+                            style: TextStyle(
+                                color: Colors.black38,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                  'Ajuste o raio de distância ou altere sua localização '),
+                            ],
+                          )
+                        ],
+                      ),
+                    );
                   },
                 );
               }

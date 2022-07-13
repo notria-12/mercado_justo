@@ -50,7 +50,7 @@ abstract class _ProductStoreBase with Store {
     }
   }
 
-  Future<Product> getProductByBarcode({required String barcode}) async {
+  Future<Product?> getProductByBarcode({required String barcode}) async {
     try {
       return repository.getProductByBarcode(barcode: barcode);
     } catch (e) {
