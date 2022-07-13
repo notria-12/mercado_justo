@@ -133,7 +133,9 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.done) {
                       return Visibility(
-                        visible: storeFairPrice.fairPricesFromList.isNotEmpty,
+                        visible: storeProductList.products.length -
+                                storeFairPrice.fairPricesFromList.length >
+                            0,
                         child: Column(
                           children: [
                             RichText(
@@ -555,8 +557,8 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                                           MainAxisAlignment.center,
                                       children: [
                                         Text("R\$ " +
-                                            snapshot.data
-                                                .toString()
+                                            snapshot.data!
+                                                .toStringAsFixed(2)
                                                 .replaceAll(r'.', ',')),
                                         const SizedBox(
                                           height: 20,

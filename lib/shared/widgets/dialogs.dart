@@ -3,9 +3,8 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/shared/controllers/fair_price_store.dart';
 import 'package:mercado_justo/shared/controllers/list_store.dart';
 import 'package:mercado_justo/shared/controllers/market_name_store.dart';
-import 'package:mercado_justo/shared/repositories/market_name_repository.dart';
-import 'package:mercado_justo/shared/utils/input_formaters.dart';
-import 'package:mercado_justo/shared/widgets/bottonsheets.dart';
+
+import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 
 class Dialogs {
   final TextEditingController _nameController = TextEditingController();
@@ -148,7 +147,10 @@ class Dialogs {
                               color: Color.fromARGB(255, 240, 241, 241),
                               borderRadius: BorderRadius.circular(10)),
                           child: TextFormField(
-                            inputFormatters: [InputFormater.valueMask],
+                            inputFormatters: [
+                              CurrencyTextInputFormatter(
+                                  locale: 'pt_br', symbol: 'R\$')
+                            ],
                             controller: _valueController,
                             textAlign: TextAlign.center,
                             keyboardType: TextInputType.number,
@@ -181,8 +183,11 @@ class Dialogs {
                         child: ElevatedButton(
                           child: Text('Salvar'),
                           onPressed: () {
-                            String newValue =
-                                _valueController.text.replaceAll(r',', '.');
+                            String newValue = _valueController.text
+                                .replaceAll(r'R$', '')
+                                .trim()
+                                .replaceAll(r',', '.');
+
                             if (value != null) {
                               Modular.get<FairPriceStore>()
                                   .updateFairPrice(

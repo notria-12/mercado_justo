@@ -36,6 +36,7 @@ dependencies:
   path_provider: ^2.0.9
   flutter_barcode_scanner: ^2.0.0
   google_maps_flutter: ^2.1.8
+  currency_text_input_formatter: ^2.1.7
 
 dev_dependencies:
   flutter_test:

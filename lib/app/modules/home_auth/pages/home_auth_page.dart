@@ -7,6 +7,10 @@ import 'package:mercado_justo/app/modules/home_auth/home_auth_store.dart';
 import 'package:mercado_justo/app/modules/home_auth/pages/home_auth_content.dart';
 import 'package:mercado_justo/app/modules/home_auth/widgets/custom_drawer.dart';
 import 'package:mercado_justo/app/modules/lists/pages/product_list_page.dart';
+import 'package:mercado_justo/shared/controllers/market_store.dart';
+import 'package:mercado_justo/shared/controllers/position_store.dart';
+import 'package:mercado_justo/shared/models/market_model.dart';
+import 'package:mobx/mobx.dart';
 
 class HomeAuthPage extends StatefulWidget {
   final String title;
@@ -23,6 +27,15 @@ class HomeAuthPageState extends ModularState<HomeAuthPage, HomeAuthStore> {
   ];
   List<String> titles = ['Início', 'Minhas Listas', 'Comparativo'];
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  late ReactionDisposer _disposer;
+  final storePosition = Modular.get<PositionStore>();
+  @override
+  void initState() {
+    super.initState();
+    _disposer = reaction((_) => storePosition.position, (_) {
+      Modular.get<MarketStore>().setMarkets();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

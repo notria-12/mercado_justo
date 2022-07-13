@@ -122,7 +122,7 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                                                       MainAxisSize.min,
                                                   children: [
                                                     Text(
-                                                      'Não existe um produto cadastrado com o código de barra lido',
+                                                      'Não existe um produto cadastrado com o código de barra lido($barcodeScanRes)',
                                                       textAlign:
                                                           TextAlign.center,
                                                     )
@@ -188,7 +188,7 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                                   }
                                 })),
                       loadMoreColumns: () {
-                        marketStore.getAllMarkets();
+                        // marketStore.getAllMarkets();
                       },
                       loadMore: productStore.canLoadMore,
                       cellHeight: 135,

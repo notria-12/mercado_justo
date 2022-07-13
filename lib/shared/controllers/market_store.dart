@@ -34,24 +34,50 @@ abstract class _MarketStoreBase with Store {
   @observable
   String? marketId;
 
-  Future getAllMarkets() async {
-    try {
-      List<Market> auxMarkets = await repository.getAllMarkets(page: page);
-      markets = [...markets, ...auxMarkets];
-      page++;
-    } catch (e) {
-      rethrow;
-    }
-  }
+  // Future getAllMarkets() async {
+  //   try {
+  //     List<Market> auxMarkets = await repository.getAllMarkets(page: page);
+  //     markets = [...markets, ...auxMarkets];
+  //     page++;
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
 
   Future getGroupMarkets() async {
     try {
       groupMarkets = await repository.getGroupMarkets();
 
-      markets = groupMarkets.map((e) => e[0]).toList();
+      setMarkets();
     } catch (e) {
       rethrow;
     }
+  }
+
+  void setMarkets() {
+    markets = groupMarkets.map((e) => getShorterDistance(e)).toList();
+  }
+
+  Market getShorterDistance(List<Market> markets) {
+    Market closerMarket = markets[0];
+
+    for (int i = 1; i < markets.length; i++) {
+      double currentDistance = Geolocator.distanceBetween(
+          positionStore.position!.latitude,
+          positionStore.position!.longitude,
+          closerMarket.latitude,
+          closerMarket.longitude);
+      if (currentDistance >
+          Geolocator.distanceBetween(
+              positionStore.position!.latitude,
+              positionStore.position!.longitude,
+              markets[i].latitude,
+              markets[i].longitude)) {
+        closerMarket = markets[i];
+      }
+    }
+
+    return closerMarket;
   }
 
   @computed
