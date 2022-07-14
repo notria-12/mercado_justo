@@ -58,7 +58,12 @@ abstract class _ListStoreBase with Store {
       marketSelected--;
     }
     if (value == 1 &&
-        marketSelected < (marketStore.filteredMarkets.length - 1)) {
+        marketSelected <
+            (marketStore.filteredMarkets
+                    .where((element) => element.isSelectable == true)
+                    .toList()
+                    .length -
+                1)) {
       marketSelected++;
     }
   }
@@ -98,7 +103,10 @@ abstract class _ListStoreBase with Store {
                     .firstWhere((element) => element.productId! == newList[i]))]
                 .map((e) => _parseToDouble(e))
                 .reduce((value, element) => value + element) /
-            marketStore.filteredMarkets.length;
+            marketStore.filteredMarkets
+                .where((element) => element.isSelectable == true)
+                .toList()
+                .length;
       }
     }
 
@@ -133,7 +141,10 @@ abstract class _ListStoreBase with Store {
           average += (prices[i]
                   .map((e) => _parseToDouble(e))
                   .reduce((value, element) => value + element)) /
-              marketStore.filteredMarkets.length;
+              marketStore.filteredMarkets
+                  .where((element) => element.isSelectable == true)
+                  .toList()
+                  .length;
         }
       }
     }
@@ -244,7 +255,9 @@ abstract class _ListStoreBase with Store {
     try {
       for (int i = 0; i < products.length; i++) {
         List<String> pricesByProducts = [];
-        for (Market market in marketStore.filteredMarkets) {
+        for (Market market in marketStore.filteredMarkets
+            .where((element) => element.isSelectable == true)
+            .toList()) {
           String? price = await priceStore.getProductPriceByMarket(
               marketId: market.id, barCode: products[i].barCode.first);
           pricesByProducts.add(price);

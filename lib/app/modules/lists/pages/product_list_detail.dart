@@ -8,6 +8,7 @@ import 'package:mercado_justo/shared/controllers/list_store.dart';
 import 'package:mercado_justo/shared/controllers/market_name_store.dart';
 import 'package:mercado_justo/shared/controllers/market_store.dart';
 import 'package:mercado_justo/shared/models/list_model.dart';
+import 'package:mercado_justo/shared/models/market_model.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/widgets/custom_table_widget.dart';
 import 'package:mercado_justo/shared/widgets/dialogs.dart';
@@ -55,9 +56,12 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
         padding: const EdgeInsets.all(16),
         child: Observer(
           builder: (_) {
+            List<Market> filteredMarkets = storeMarket.filteredMarkets
+                .where((element) => element.isSelectable == true)
+                .toList();
             return (storeProductList.productState is AppStateSuccess &&
                     storeProductList.prices.isNotEmpty)
-                ? storeMarket.filteredMarkets.isEmpty
+                ? filteredMarkets.isEmpty
                     ? Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -95,7 +99,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                           )
                         ],
                       )
-                    : productsAndPricesTable()
+                    : productsAndPricesTable(filteredMarkets)
                 : Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -114,7 +118,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
     );
   }
 
-  Column productsAndPricesTable() {
+  Column productsAndPricesTable(List<Market> filteredMarkets) {
     return Column(
       children: [
         Row(
@@ -348,9 +352,9 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                     return Container(
                       height: 60,
                       width: 100,
-                      child: Image.network(storeMarket
-                          .filteredMarkets[storeProductList.marketSelected]
-                          .imagePath!),
+                      child: Image.network(
+                          filteredMarkets[storeProductList.marketSelected]
+                              .imagePath!),
                     );
                   }
                 }),
@@ -503,16 +507,15 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                     }
                   }),
             ...List.generate(
-                storeMarket.filteredMarkets.length,
+                filteredMarkets.length,
                 (index) => InkWell(
                       onTap: () {
                         Modular.to.pushNamed('/home/marketDetail/',
-                            arguments: storeMarket.filteredMarkets[index]);
+                            arguments: filteredMarkets[index]);
                       },
                       child: Container(
                         width: 100,
-                        child: Image.network(
-                            storeMarket.filteredMarkets[index].imagePath!),
+                        child: Image.network(filteredMarkets[index].imagePath!),
                       ),
                     ))
           ],

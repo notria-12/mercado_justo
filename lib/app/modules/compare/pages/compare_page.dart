@@ -188,7 +188,11 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                       );
                     }
                     if (listStore.productState is AppStateSuccess &&
-                        Modular.get<MarketStore>().filteredMarkets.isNotEmpty) {
+                        Modular.get<MarketStore>()
+                            .filteredMarkets
+                            .where((element) => element.isSelectable == true)
+                            .toList()
+                            .isNotEmpty) {
                       return FutureBuilder(
                         builder: (context, snapshot) {
                           switch (snapshot.connectionState) {
@@ -217,6 +221,9 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                                   itemBuilder: (context, index) {
                                     Market market = Modular.get<MarketStore>()
                                         .filteredMarkets
+                                        .where((element) =>
+                                            element.isSelectable == true)
+                                        .toList()
                                         .firstWhere((market) =>
                                             store.getFairPrice[index][0]
                                                 ['market_id'] ==
