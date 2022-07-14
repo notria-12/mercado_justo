@@ -166,7 +166,8 @@ class CustomBottonSheets {
         });
   }
 
-  static void optionsList(BuildContext context, {required int listId}) {
+  static void optionsList(BuildContext context,
+      {required int listId, required String name}) {
     showModalBottomSheet(
         context: context,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -267,7 +268,10 @@ class CustomBottonSheets {
                         ),
                         CustomButtom(
                           label: 'Renomear Lista',
-                          onPressed: () {},
+                          onPressed: () {
+                            Dialogs().addNewList(context,
+                                value: name, listId: listId);
+                          },
                         ),
                         const SizedBox(
                           height: 20,

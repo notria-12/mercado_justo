@@ -183,6 +183,15 @@ abstract class _ListStoreBase with Store {
     }
   }
 
+  Future updateListName({required int listId, required String newName}) async {
+    try {
+      await _repository.updateListName(listId: listId, newName: newName);
+      getAllLists();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future updateQuantity(int listId) async {
     updateQuantityStatus = AppStateLoading();
     try {

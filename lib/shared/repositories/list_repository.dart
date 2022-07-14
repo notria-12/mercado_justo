@@ -17,6 +17,18 @@ class ListRepository {
     }
   }
 
+  Future updateListName({required int listId, required String newName}) async {
+    try {
+      //TODO pensar forma de injetar dependência de SQLHelper
+      Database database = await SQLHelper.init();
+
+      await database.update('lists', {'name': newName},
+          where: '"id" = $listId');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<List<ListModel>> getAllLists() async {
     try {
       Database database = await SQLHelper.init();
