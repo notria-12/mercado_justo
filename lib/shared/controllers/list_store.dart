@@ -220,6 +220,31 @@ abstract class _ListStoreBase with Store {
     }
   }
 
+  Future subtractList(
+      {required int mainListId,
+      required int secondaryLisId,
+      required String mainListName}) async {
+    try {
+      await _repository.subtractList(
+          mainListId: mainListId,
+          secondaryLisId: secondaryLisId,
+          mainListName: mainListName);
+
+      getAllLists();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future duplicateList({required int listId, required String listName}) async {
+    try {
+      await _repository.duplicateList(listId: listId, listName: listName);
+      getAllLists();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future getProducts(int listId) async {
     List<int> auxQuantities = [];
     try {

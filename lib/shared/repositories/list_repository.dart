@@ -5,13 +5,15 @@ import 'package:mercado_justo/shared/services/db/db.dart';
 import 'package:sqflite/sqflite.dart';
 
 class ListRepository {
-  Future createList(ListModel list) async {
+  Future<int> createList(ListModel list) async {
     try {
       //TODO pensar forma de injetar dependência de SQLHelper
       Database database = await SQLHelper.init();
 
-      await database.insert('lists', list.toMap(),
+      int id = await database.insert('lists', list.toMap(),
           conflictAlgorithm: ConflictAlgorithm.replace);
+
+      return id;
     } catch (e) {
       rethrow;
     }
@@ -38,6 +40,60 @@ class ListRepository {
       );
 
       return result.map((e) => ListModel.fromMap(e)).toList();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future subtractList(
+      {required int mainListId,
+      required int secondaryLisId,
+      required String mainListName}) async {
+    try {
+      Database database = await SQLHelper.init();
+      List<ProductListModel> mainProductList =
+          await getProductsByList(mainListId);
+      List<ProductListModel> secondaryProductList =
+          await getProductsByList(secondaryLisId);
+
+      List<ProductListModel> newProductList = mainProductList
+          .where((element) => !secondaryProductList.contains(element))
+          .toList();
+
+      int id =
+          await createList(ListModel(name: mainListName + '(Itens Faltando)'));
+
+      for (var listItem in newProductList) {
+        await database.insert(
+            'list_products',
+            {
+              'product_id': listItem.productId,
+              'list_id': id,
+              'quantity': listItem.quantity
+            },
+            conflictAlgorithm: ConflictAlgorithm.replace);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future duplicateList({required int listId, required String listName}) async {
+    try {
+      Database database = await SQLHelper.init();
+      List<ProductListModel> mainProductList = await getProductsByList(listId);
+      int id = await createList(ListModel(name: listName + '(Copia)'));
+
+      for (var listItem in mainProductList) {
+        await database.insert(
+            'list_products',
+            {
+              'product_id': listItem.productId,
+              'list_id': id,
+              'quantity': listItem.quantity
+            },
+            conflictAlgorithm: ConflictAlgorithm.replace);
+      }
     } catch (e) {
       rethrow;
     }

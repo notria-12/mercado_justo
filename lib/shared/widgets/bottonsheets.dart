@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/app/modules/home_auth/widgets/custom_button_widget.dart';
-import 'package:mercado_justo/app/modules/lists/pages/product_list_page.dart';
 import 'package:mercado_justo/shared/controllers/list_store.dart';
 import 'package:mercado_justo/shared/controllers/product_to_list_store.dart';
+import 'package:mercado_justo/shared/models/list_model.dart';
+import 'package:mercado_justo/shared/models/product_list_model.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/widgets/dialogs.dart';
 
@@ -119,6 +120,114 @@ class CustomBottonSheets {
         });
   }
 
+  void selectListToSubtract(BuildContext context,
+      {required int listId, required String listName}) {
+    showModalBottomSheet(
+        context: context,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        builder: (context) {
+          return Container(
+            child: Column(children: [
+              const SizedBox(
+                height: 10,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  Expanded(
+                    child: const Text(
+                      'Clique sobre a lista que deseja subtrair os produtos!',
+                      textAlign: TextAlign.center,
+                      style:
+                          TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                  IconButton(
+                      onPressed: () {
+                        Modular.to.pop();
+                      },
+                      icon: Icon(Icons.close))
+                ],
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              Expanded(
+                  // flex: 8,
+                  child: Container(
+                // color: Colors.blueGrey,
+                child: Observer(
+                  builder: (_) {
+                    if (store.listState is AppStateLoading) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else if (store.listState is AppStateError) {
+                      return Center(
+                        child: Text(
+                            'Encontramos problemas ao carregar suas listas'),
+                      );
+                    }
+                    if (store.product_list.isEmpty) {
+                      return Center(
+                        child:
+                            Text('Você precisa ter pelo menos mais uma lista!'),
+                      );
+                    } else {
+                      List<ListModel> productList = store.product_list
+                          .where((element) => element.id! != listId)
+                          .toList();
+                      return ListView.builder(
+                        itemBuilder: (context, index) {
+                          return Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  CustomButtom(
+                                    label: productList[index].name,
+                                    onPressed: () {
+                                      store
+                                          .subtractList(
+                                              mainListId: listId,
+                                              secondaryLisId:
+                                                  productList[index].id!,
+                                              mainListName: listName)
+                                          .then((value) {
+                                        Modular.to.pop();
+                                        Modular.to.pop();
+                                      });
+                                    },
+                                  ),
+                                  // SizedBox(
+                                  //   width: 5,
+                                  // ),
+                                  // OptionsListButton()
+                                ],
+                              ),
+                              SizedBox(
+                                height: 20,
+                              )
+                            ],
+                          );
+                        },
+                        itemCount: productList.length,
+                      );
+                    }
+                  },
+                ),
+              )),
+              SizedBox(
+                height: 5,
+              ),
+            ]),
+          );
+        });
+  }
+
   static void addToList(BuildContext context) {
     Modular.to.pop();
     Modular.to.pop();
@@ -166,7 +275,7 @@ class CustomBottonSheets {
         });
   }
 
-  static void optionsList(BuildContext context,
+  void optionsList(BuildContext context,
       {required int listId, required String name}) {
     showModalBottomSheet(
         context: context,
@@ -278,14 +387,24 @@ class CustomBottonSheets {
                         ),
                         CustomButtom(
                           label: 'Subtrair Lista',
-                          onPressed: () {},
+                          onPressed: () {
+                            selectListToSubtract(context,
+                                listId: listId, listName: name);
+                          },
                         ),
                         const SizedBox(
                           height: 20,
                         ),
                         CustomButtom(
                           label: 'Duplicar Lista',
-                          onPressed: () {},
+                          onPressed: () {
+                            store
+                                .duplicateList(listId: listId, listName: name)
+                                .then((value) {
+                              Modular.to.pop();
+                              // Modular.to.pop();
+                            });
+                          },
                         ),
                       ],
                     ),

@@ -136,7 +136,7 @@ class _ProductListPageState extends ModularState<ProductListPage, ListStore> {
   Widget OptionsListButton({required int listId, required String name}) {
     return InkWell(
       onTap: () =>
-          CustomBottonSheets.optionsList(context, listId: listId, name: name),
+          CustomBottonSheets().optionsList(context, listId: listId, name: name),
       child: Container(
         height: 50,
         width: 45,
