@@ -108,7 +108,12 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                 return productsAndPricesTable(filteredMarkets);
               }
             }
-            // if()
+            if (storeProductList.productState is AppStateSuccess &&
+                storeProductList.products.isEmpty) {
+              return Center(
+                child: Text('Você ainda não adicionou produtos a essa lista'),
+              );
+            }
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
