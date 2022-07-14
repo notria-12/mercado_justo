@@ -11,6 +11,7 @@ import 'package:mercado_justo/shared/models/market_model.dart';
 import 'package:mercado_justo/shared/models/product_model.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/widgets/button_share.dart';
+import 'package:mobx/mobx.dart';
 
 class ComparePage extends StatefulWidget {
   const ComparePage({Key? key}) : super(key: key);
@@ -22,6 +23,7 @@ class ComparePage extends StatefulWidget {
 class _ComparePageState extends ModularState<ComparePage, CompareStore> {
   final listStore = Modular.get<ListStore>();
   final positionStore = Modular.get<PositionStore>();
+  final marketStore = Modular.get<MarketStore>();
   @override
   void initState() {
     super.initState();
@@ -62,7 +64,9 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                       label: 'Filtro',
                       onTap: () {
                         Modular.get<MarketStore>().marketId = '';
-                        Modular.to.pushNamed('/home_auth/list/filters');
+                        Modular.to
+                            .pushNamed('/home_auth/list/filters')
+                            .then((value) => store.reloadList());
                       },
                     ),
                     ButtonShare(),

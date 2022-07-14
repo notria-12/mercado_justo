@@ -13,6 +13,7 @@ import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/widgets/custom_table_widget.dart';
 import 'package:mercado_justo/shared/widgets/dialogs.dart';
 import 'package:mercado_justo/shared/widgets/fixed_corner_table_widget.dart';
+import 'package:mobx/mobx.dart';
 
 class ProductListDetailsPage extends StatefulWidget {
   ListModel listModel;
@@ -26,17 +27,24 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
   final storeMarket = Modular.get<MarketStore>();
   final storeProductList = Modular.get<ListStore>();
   final storeFairPrice = Modular.get<FairPriceStore>();
+  List<Market> filteredMarkets = [];
   double price = 0.0;
+  late ReactionDisposer _disposer;
   @override
   void initState() {
     storeProductList.getProducts(widget.listModel.id!);
-
+    _disposer = autorun((_) {
+      filteredMarkets = storeMarket.filteredMarkets
+          .where((element) => element.isSelectable == true)
+          .toList();
+    });
     super.initState();
   }
 
   @override
   void dispose() {
     storeProductList.prices = [];
+    _disposer();
     super.dispose();
   }
 
@@ -56,62 +64,63 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
         padding: const EdgeInsets.all(16),
         child: Observer(
           builder: (_) {
-            List<Market> filteredMarkets = storeMarket.filteredMarkets
-                .where((element) => element.isSelectable == true)
-                .toList();
-            return (storeProductList.productState is AppStateSuccess &&
-                    storeProductList.prices.isNotEmpty)
-                ? filteredMarkets.isEmpty
-                    ? Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Com base na sua localização atual, infelizmente não foi possível listar os mercados!',
-                            style: TextStyle(
-                                color: Colors.black38,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.center,
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text('Ajuste o raio de distância clicando '),
-                              InkWell(
-                                child: Text(
-                                  'aqui',
-                                  style: TextStyle(color: Colors.lightBlue),
-                                ),
-                                onTap: () {
-                                  Modular.to
-                                      .pushNamed('/home_auth/list/filters')
-                                      .then((value) {
-                                    storeProductList.prices = [];
-                                    storeProductList
-                                        .getProducts(widget.listModel.id!);
-                                  });
-                                },
-                              )
-                            ],
-                          )
-                        ],
-                      )
-                    : productsAndPricesTable(filteredMarkets)
-                : Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        Text('Aguarde um instante...'),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        CircularProgressIndicator()
-                      ],
+            if (storeProductList.productState is AppStateSuccess &&
+                storeProductList.prices.isNotEmpty) {
+              if (filteredMarkets.isEmpty) {
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Com base na sua localização atual, infelizmente não foi possível listar os mercados!',
+                      style: TextStyle(
+                          color: Colors.black38,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
                     ),
-                  );
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text('Ajuste o raio de distância clicando '),
+                        InkWell(
+                          child: const Text(
+                            'aqui',
+                            style: TextStyle(color: Colors.lightBlue),
+                          ),
+                          onTap: () {
+                            Modular.to
+                                .pushNamed('/home_auth/list/filters')
+                                .then((value) {
+                              storeProductList.prices = [];
+                              storeProductList
+                                  .getProducts(widget.listModel.id!);
+                            });
+                          },
+                        )
+                      ],
+                    )
+                  ],
+                );
+              } else {
+                return productsAndPricesTable(filteredMarkets);
+              }
+            }
+            // if()
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Text('Aguarde um instante...'),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  CircularProgressIndicator()
+                ],
+              ),
+            );
           },
         ),
       ),
@@ -130,84 +139,84 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
               style:
                   TextStyle(color: Colors.black54, fontWeight: FontWeight.w500),
             ),
-            Observer(builder: (_) {
-              if (storeProductList.isFairPrice &&
-                  storeProductList.marketSelected == -1) {
-                return FutureBuilder(
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      return Visibility(
-                        visible: storeProductList.products.length -
-                                storeFairPrice.fairPricesFromList.length >
-                            0,
-                        child: Column(
+            // Observer(builder: (_) {
+            if (storeProductList.isFairPrice &&
+                storeProductList.marketSelected == -1)
+              // return
+              FutureBuilder(
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    return Visibility(
+                      visible: storeProductList.products.length -
+                              storeFairPrice.fairPricesFromList.length >
+                          0,
+                      child: Column(
+                        children: [
+                          RichText(
+                              text: TextSpan(
+                                  children: [
+                                TextSpan(
+                                    text:
+                                        ' ${storeProductList.products.length - storeFairPrice.fairPricesFromList.length} '),
+                                const TextSpan(text: 'item')
+                              ],
+                                  text: 'Falta',
+                                  style: const TextStyle(
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16))),
+                          RichText(
+                              text: TextSpan(
+                                  children: [
+                                TextSpan(
+                                    text:
+                                        ' R\$ ${storeProductList.getAverageMissingProducts(storeFairPrice.fairPricesFromList.map((e) => e['product_id'] as int).toList()).toStringAsFixed(2)} '),
+                              ],
+                                  text: 'Valor médio',
+                                  style: const TextStyle(
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.bold)))
+                        ],
+                      ),
+                    );
+                  }
+                  return Container();
+                },
+                future: storeFairPrice.getFairPricesFromList(
+                    listId: widget.listModel.id!),
+              ),
+            // }
+            Visibility(
+              visible: storeProductList.missingProducts['missingItens'] != 0,
+              child: Column(
+                children: [
+                  RichText(
+                      text: TextSpan(
                           children: [
-                            RichText(
-                                text: TextSpan(
-                                    children: [
-                                  TextSpan(
-                                      text:
-                                          ' ${storeProductList.products.length - storeFairPrice.fairPricesFromList.length} '),
-                                  const TextSpan(text: 'item')
-                                ],
-                                    text: 'Falta',
-                                    style: const TextStyle(
-                                        color: Colors.red,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16))),
-                            RichText(
-                                text: TextSpan(
-                                    children: [
-                                  TextSpan(
-                                      text:
-                                          ' R\$ ${storeProductList.getAverageMissingProducts(storeFairPrice.fairPricesFromList.map((e) => e['product_id'] as int).toList()).toStringAsFixed(2)} '),
-                                ],
-                                    text: 'Valor médio',
-                                    style: const TextStyle(
-                                        color: Colors.red,
-                                        fontWeight: FontWeight.bold)))
-                          ],
-                        ),
-                      );
-                    }
-                    return Container();
-                  },
-                  future: storeFairPrice.getFairPricesFromList(
-                      listId: widget.listModel.id!),
-                );
-              }
-              return Visibility(
-                visible: storeProductList.missingProducts['missingItens'] != 0,
-                child: Column(
-                  children: [
-                    RichText(
-                        text: TextSpan(
-                            children: [
-                          TextSpan(
-                              text:
-                                  ' ${storeProductList.missingProducts['missingItens']} '),
-                          const TextSpan(text: 'item')
-                        ],
-                            text: 'Falta',
-                            style: const TextStyle(
-                                color: Colors.red,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16))),
-                    RichText(
-                        text: TextSpan(
-                            children: [
-                          TextSpan(
-                              text:
-                                  ' R\$ ${storeProductList.missingProducts['average']} '),
-                        ],
-                            text: 'Valor médio',
-                            style: const TextStyle(
-                                color: Colors.red,
-                                fontWeight: FontWeight.bold)))
-                  ],
-                ),
-              );
-            })
+                        TextSpan(
+                            text:
+                                ' ${storeProductList.missingProducts['missingItens']} '),
+                        const TextSpan(text: 'item')
+                      ],
+                          text: 'Falta',
+                          style: const TextStyle(
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16))),
+                  RichText(
+                      text: TextSpan(
+                          children: [
+                        TextSpan(
+                            text:
+                                ' R\$ ${storeProductList.missingProducts['average']} '),
+                      ],
+                          text: 'Valor médio',
+                          style: const TextStyle(
+                              color: Colors.red, fontWeight: FontWeight.bold)))
+                ],
+              ),
+            )
+            // })
           ],
         ),
         Row(
@@ -383,6 +392,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                 Modular.to.pushNamed('/home_auth/list/filters').then((value) {
                   storeProductList.prices = [];
                   storeProductList.getProducts(widget.listModel.id!);
+                  // Modular.get<>();
                 });
               },
             ),

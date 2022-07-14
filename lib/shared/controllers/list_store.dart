@@ -224,7 +224,7 @@ abstract class _ListStoreBase with Store {
             .add(await _repository.getQuantity(listId, product.productId!));
       }
       quantities = auxQuantities;
-      getProductsPrices();
+      await getProductsPrices();
       productState = AppStateSuccess();
     } catch (e) {
       productState = AppStateError();
