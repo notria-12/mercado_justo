@@ -256,8 +256,8 @@ class Dialogs {
                             if (input!.isEmpty) {
                               return 'O nome é obrigatório';
                             }
-                            if (input.length < 8) {
-                              return 'O nome precisa ter pelo menos 8 letras';
+                            if (input.length < 3) {
+                              return 'O nome precisa ter pelo menos 3 letras';
                             }
                           },
                         ),

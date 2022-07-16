@@ -25,6 +25,8 @@ class CustomButtom extends StatelessWidget {
                   Text(
                     label,
                     textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(fontSize: 18, color: Colors.white70),
                   ),
                   subTitle!
