@@ -1,3 +1,4 @@
+import 'package:mercado_justo/app/../shared/controllers/config_store.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/app/../shared/controllers/position_store.dart';
 import 'package:mercado_justo/app/modules/home_auth/home_auth_module.dart';
@@ -16,6 +17,7 @@ import 'modules/lists/filter_store.dart';
 class AppModule extends Module {
   @override
   final List<Bind> binds = [
+    Bind.singleton((i) => ConfigStore()),
     Bind.lazySingleton((i) => FilterStore()),
     Bind.lazySingleton((i) => PositionStore()),
     Bind.singleton((i) => getDioInstance()),

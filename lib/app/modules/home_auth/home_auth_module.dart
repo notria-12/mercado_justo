@@ -1,11 +1,13 @@
 import 'package:mercado_justo/app/modules/common_questions/common_questions_module.dart';
 import 'package:mercado_justo/app/modules/common_questions/presenter/common_questions_page.dart';
 import 'package:mercado_justo/app/modules/compare/compare_store.dart';
+import 'package:mercado_justo/app/modules/config/config_page.dart';
 import 'package:mercado_justo/app/modules/home_auth/home_auth_store.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/app/modules/home_auth/pages/home_auth_page.dart';
 import 'package:mercado_justo/app/modules/lists/lists_module.dart';
 import 'package:mercado_justo/app/modules/terms_and_conditions/terms_and_conditions_module.dart';
+import 'package:mercado_justo/shared/controllers/config_store.dart';
 import 'package:mercado_justo/shared/controllers/list_store.dart';
 import 'package:mercado_justo/shared/controllers/market_store.dart';
 import 'package:mercado_justo/shared/controllers/price_store.dart';
@@ -40,6 +42,7 @@ class HomeAuthModule extends Module {
   @override
   final List<ModularRoute> routes = [
     ChildRoute(Modular.initialRoute, child: (_, args) => const HomeAuthPage()),
+    ChildRoute('/config/', child: (_, args) => const ConfigPage()),
     ModuleRoute('/faq/', module: CommonQuestionsModule()),
     ModuleRoute('/list/', module: ListsModule()),
     ModuleRoute('/terms/', module: TermsAndConditionsModule())
