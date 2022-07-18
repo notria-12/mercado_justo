@@ -5,6 +5,7 @@ import 'package:mercado_justo/app/modules/home_auth/home_auth_store.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/app/modules/home_auth/pages/home_auth_page.dart';
 import 'package:mercado_justo/app/modules/lists/lists_module.dart';
+import 'package:mercado_justo/app/modules/terms_and_conditions/terms_and_conditions_module.dart';
 import 'package:mercado_justo/shared/controllers/list_store.dart';
 import 'package:mercado_justo/shared/controllers/market_store.dart';
 import 'package:mercado_justo/shared/controllers/price_store.dart';
@@ -40,6 +41,7 @@ class HomeAuthModule extends Module {
   final List<ModularRoute> routes = [
     ChildRoute(Modular.initialRoute, child: (_, args) => const HomeAuthPage()),
     ModuleRoute('/faq/', module: CommonQuestionsModule()),
-    ModuleRoute('/list/', module: ListsModule())
+    ModuleRoute('/list/', module: ListsModule()),
+    ModuleRoute('/terms/', module: TermsAndConditionsModule())
   ];
 }
