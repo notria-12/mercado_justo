@@ -227,15 +227,8 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                                                   .products[index].imagePath!,
                                               errorBuilder:
                                                   (context, error, stackTrace) {
-                                                return Container(
-                                                  color: Colors.greenAccent,
-                                                  alignment: Alignment.center,
-                                                  child: const Text(
-                                                    'Imagem indisponível!',
-                                                    style:
-                                                        TextStyle(fontSize: 18),
-                                                  ),
-                                                );
+                                                return Image.asset(
+                                                    'assets/img/image_not_found.jpg');
                                               },
                                             ),
                                           ),
@@ -333,7 +326,12 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                 ),
                 Container(
                   height: 200,
-                  child: Image.network(product.imagePath!),
+                  child: Image.network(
+                    product.imagePath!,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Image.asset('assets/img/image_not_found.jpg');
+                    },
+                  ),
                 ),
                 TextButton(
                     style: TextButton.styleFrom(

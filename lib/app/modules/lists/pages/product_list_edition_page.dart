@@ -218,7 +218,12 @@ class _ProductEditionPageState extends State<ProductEditionPage> {
                         // padding: const EdgeInsets.all(8),
                         child: Center(
                           child: Image.network(
-                              storeProductList.products[index].imagePath!),
+                            storeProductList.products[index].imagePath!,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Image.asset(
+                                  'assets/img/image_not_found.jpg');
+                            },
+                          ),
                         ),
                       )),
                       DataCell(Container(

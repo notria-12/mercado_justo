@@ -367,8 +367,12 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                       height: 60,
                       width: 100,
                       child: Image.network(
-                          filteredMarkets[storeProductList.marketSelected]
-                              .imagePath!),
+                        filteredMarkets[storeProductList.marketSelected]
+                            .imagePath!,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Image.asset('assets/img/image_not_found.jpg');
+                        },
+                      ),
                     );
                   }
                 }),
@@ -439,7 +443,13 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                       alignment: Alignment.center,
                       child: Container(
                         // margin: EdgeInsets.all(8),
-                        child: Image.network(e.imagePath!),
+                        child: Image.network(
+                          e.imagePath!,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Image.asset(
+                                'assets/img/image_not_found.jpg');
+                          },
+                        ),
                         height: 90,
                         // width: 80,
                       ),

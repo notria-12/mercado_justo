@@ -409,7 +409,7 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'O seu carrinho está vazio.',
+                    'O seu comparativo está vazio.',
                     style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(
@@ -458,7 +458,12 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                   child: Container(
                     width: 100,
                     height: 80,
-                    child: Image.network(products[i].imagePath!),
+                    child: Image.network(
+                      products[i].imagePath!,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Image.asset('assets/img/image_not_found.jpg');
+                      },
+                    ),
                   ),
                 ),
                 Align(
@@ -742,7 +747,12 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
             // width: 130,
             // padding: const EdgeInsets.all(8),
             child: Center(
-              child: Image.network(e[i].imagePath!),
+              child: Image.network(
+                e[i].imagePath!,
+                errorBuilder: (context, error, stackTrace) {
+                  return Image.asset('assets/img/image_not_found.jpg');
+                },
+              ),
             ),
           )),
           DataCell(Container(

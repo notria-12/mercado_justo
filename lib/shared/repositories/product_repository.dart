@@ -66,7 +66,11 @@ class ProductRepository {
   Future<String> getProductImage(String barCode) async {
     try {
       final result = await dio.get('/imagens/produto/${barCode}');
-      return result.data['dados']['url'];
+      if (result.data['dados'] != null) {
+        return result.data['dados']['url'];
+      } else {
+        return '';
+      }
     } catch (e) {
       rethrow;
     }

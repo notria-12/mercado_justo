@@ -6,7 +6,7 @@ class ConfigStore = _ConfigStoreBase with _$ConfigStore;
 
 abstract class _ConfigStoreBase with Store {
   @observable
-  bool separetedByCategory = false;
+  bool separetedByCategory = true;
 
   @action
   setSeparetedByCategory(bool value) => separetedByCategory = value;
