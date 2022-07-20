@@ -24,6 +24,21 @@ mixin _$ProductStore on _ProductStoreBase, Store {
     });
   }
 
+  final _$isSearchAtom = Atom(name: '_ProductStoreBase.isSearch');
+
+  @override
+  bool get isSearch {
+    _$isSearchAtom.reportRead();
+    return super.isSearch;
+  }
+
+  @override
+  set isSearch(bool value) {
+    _$isSearchAtom.reportWrite(value, super.isSearch, () {
+      super.isSearch = value;
+    });
+  }
+
   final _$productStateAtom = Atom(name: '_ProductStoreBase.productState');
 
   @override
@@ -36,6 +51,37 @@ mixin _$ProductStore on _ProductStoreBase, Store {
   set productState(AppState value) {
     _$productStateAtom.reportWrite(value, super.productState, () {
       super.productState = value;
+    });
+  }
+
+  final _$canLoadMoreAtom = Atom(name: '_ProductStoreBase.canLoadMore');
+
+  @override
+  bool get canLoadMore {
+    _$canLoadMoreAtom.reportRead();
+    return super.canLoadMore;
+  }
+
+  @override
+  set canLoadMore(bool value) {
+    _$canLoadMoreAtom.reportWrite(value, super.canLoadMore, () {
+      super.canLoadMore = value;
+    });
+  }
+
+  final _$onlyButtonLoadMoreAtom =
+      Atom(name: '_ProductStoreBase.onlyButtonLoadMore');
+
+  @override
+  bool get onlyButtonLoadMore {
+    _$onlyButtonLoadMoreAtom.reportRead();
+    return super.onlyButtonLoadMore;
+  }
+
+  @override
+  set onlyButtonLoadMore(bool value) {
+    _$onlyButtonLoadMoreAtom.reportWrite(value, super.onlyButtonLoadMore, () {
+      super.onlyButtonLoadMore = value;
     });
   }
 
@@ -58,7 +104,10 @@ mixin _$ProductStore on _ProductStoreBase, Store {
   String toString() {
     return '''
 products: ${products},
+isSearch: ${isSearch},
 productState: ${productState},
+canLoadMore: ${canLoadMore},
+onlyButtonLoadMore: ${onlyButtonLoadMore},
 page: ${page}
     ''';
   }

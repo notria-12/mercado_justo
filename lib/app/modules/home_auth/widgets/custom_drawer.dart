@@ -39,38 +39,29 @@ class CustomDrawer extends StatelessWidget {
         ),
         DrawerItem(
             child: const Text(
-          'Início',
-          style: TextStyle(
-              fontSize: 15,
-              // fontWeight: FontWeight.w400,
-              color: Colors.black87),
-        )),
-        DrawerItem(
-            child: const Text(
-          'Minhas Listas',
-          style: TextStyle(
-              fontSize: 15,
-              // fontWeight: FontWeight.w400,
-              color: Colors.black87),
-        )),
-        DrawerItem(
-            child: const Text(
-          'Meu Perfil',
-          style: TextStyle(
-              fontSize: 15,
-              // fontWeight: FontWeight.w400,
-              color: Colors.black87),
-        )),
-        DrawerItem(
-            child: Container(
-          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-          color: Colors.green,
-          child: const Text('Seja Premium',
+              'Meu Perfil',
               style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white)),
-        )),
+                  fontSize: 15,
+                  // fontWeight: FontWeight.w400,
+                  color: Colors.black87),
+            ),
+            onTap: () {
+              Modular.to.pushNamed('/profile/');
+            }),
+        DrawerItem(
+          child: Container(
+            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+            color: Colors.green,
+            child: const Text('Seja Premium',
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white)),
+          ),
+          onTap: () {
+            Modular.to.pushNamed('/signature/');
+          },
+        ),
         DrawerItem(
             child: const Text(
           'Redes Sociais',
@@ -88,13 +79,16 @@ class CustomDrawer extends StatelessWidget {
               color: Colors.black87),
         )),
         DrawerItem(
+            onTap: () {
+              Modular.to.pushNamed('/home_auth/faq/');
+            },
             child: const Text(
-          'Perguntas Frequentes',
-          style: TextStyle(
-              fontSize: 15,
-              // fontWeight: FontWeight.w400,
-              color: Colors.black87),
-        )),
+              'Perguntas Frequentes',
+              style: TextStyle(
+                  fontSize: 15,
+                  // fontWeight: FontWeight.w400,
+                  color: Colors.black87),
+            )),
         DrawerItem(
             child: const Text(
           'Compartilhar o App com Amigos',
@@ -104,21 +98,27 @@ class CustomDrawer extends StatelessWidget {
               color: Colors.black87),
         )),
         DrawerItem(
+            onTap: () {
+              Modular.to.pushNamed('/home_auth/terms/');
+            },
             child: const Text(
-          'Termos e Condições',
-          style: TextStyle(
-              fontSize: 15,
-              // fontWeight: FontWeight.w400,
-              color: Colors.black87),
-        )),
+              'Termos e Condições',
+              style: TextStyle(
+                  fontSize: 15,
+                  // fontWeight: FontWeight.w400,
+                  color: Colors.black87),
+            )),
         DrawerItem(
+            onTap: () {
+              Modular.to.pushNamed('/home_auth/config/');
+            },
             child: const Text(
-          'Configurações',
-          style: TextStyle(
-              fontSize: 15,
-              // fontWeight: FontWeight.w400,
-              color: Colors.black87),
-        )),
+              'Configurações',
+              style: TextStyle(
+                  fontSize: 15,
+                  // fontWeight: FontWeight.w400,
+                  color: Colors.black87),
+            )),
         DrawerItem(
           child: const Text(
             'Sair',

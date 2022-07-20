@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:mercado_justo/app/modules/compare/compare_store.dart';
 import 'package:mercado_justo/app/modules/lists/pages/product_list_detail.dart';
+import 'package:mercado_justo/shared/controllers/config_store.dart';
 import 'package:mercado_justo/shared/controllers/list_store.dart';
 import 'package:mercado_justo/shared/controllers/market_store.dart';
+import 'package:mercado_justo/shared/controllers/position_store.dart';
 import 'package:mercado_justo/shared/models/market_model.dart';
 import 'package:mercado_justo/shared/models/product_model.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/widgets/button_share.dart';
+import 'package:mobx/mobx.dart';
 
 class ComparePage extends StatefulWidget {
   const ComparePage({Key? key}) : super(key: key);
@@ -19,6 +23,8 @@ class ComparePage extends StatefulWidget {
 
 class _ComparePageState extends ModularState<ComparePage, CompareStore> {
   final listStore = Modular.get<ListStore>();
+  final positionStore = Modular.get<PositionStore>();
+  final marketStore = Modular.get<MarketStore>();
   @override
   void initState() {
     super.initState();
@@ -59,7 +65,9 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                       label: 'Filtro',
                       onTap: () {
                         Modular.get<MarketStore>().marketId = '';
-                        Modular.to.pushNamed('/home_auth/list/filters');
+                        Modular.to
+                            .pushNamed('/home_auth/list/filters')
+                            .then((value) => store.reloadList());
                       },
                     ),
                     ButtonShare(),
@@ -171,20 +179,41 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                 return Observer(
                   builder: (_) {
                     if (listStore.productState is AppStateLoading) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Text('Carregando produtos...'),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            CircularProgressIndicator(),
+                          ],
+                        ),
                       );
                     }
                     if (listStore.productState is AppStateSuccess &&
-                        Modular.get<MarketStore>().markets.isNotEmpty) {
+                        Modular.get<MarketStore>()
+                            .filteredMarkets
+                            .where((element) => element.isSelectable == true)
+                            .toList()
+                            .isNotEmpty) {
                       return FutureBuilder(
                         builder: (context, snapshot) {
                           switch (snapshot.connectionState) {
                             case ConnectionState.none:
                             case ConnectionState.waiting:
-                              return const Center(
-                                child: CircularProgressIndicator(),
-                              );
+                              return Center(
+                                  child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const [
+                                  Text('Calculando preço justo...'),
+                                  SizedBox(
+                                    height: 8,
+                                  ),
+                                  CircularProgressIndicator(),
+                                ],
+                              ));
 
                             case ConnectionState.done:
                               if (snapshot.hasError) {
@@ -196,7 +225,10 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                                 child: ListView.builder(
                                   itemBuilder: (context, index) {
                                     Market market = Modular.get<MarketStore>()
-                                        .markets
+                                        .filteredMarkets
+                                        .where((element) =>
+                                            element.isSelectable == true)
+                                        .toList()
                                         .firstWhere((market) =>
                                             store.getFairPrice[index][0]
                                                 ['market_id'] ==
@@ -238,7 +270,10 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                                                   const SizedBox(
                                                     height: 2,
                                                   ),
-                                                  Text('Distância: 1,5km'),
+                                                  Observer(builder: (_) {
+                                                    return Text(
+                                                        'Distância: ${(Geolocator.distanceBetween(positionStore.position!.latitude, positionStore.position!.longitude, market.latitude, market.longitude) / 1000).toStringAsFixed(2).replaceAll(r'.', ',')} km');
+                                                  }),
                                                   const SizedBox(
                                                     height: 2,
                                                   ),
@@ -263,390 +298,71 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                                         const SizedBox(
                                           height: 15,
                                         ),
-                                        ...store
-                                            .groupProducts(store
-                                                .getFairPrice[index]
-                                                .map((fairPrice) =>
-                                                    Product.fromMap(fairPrice[
-                                                        'product_id']))
-                                                .toList())
-                                            .map((e) => Container(
-                                                  decoration: const BoxDecoration(
-                                                      border: Border(
-                                                          top: BorderSide(
-                                                              width: 0.3,
-                                                              color: Colors
-                                                                  .black54))),
-                                                  child: ExpansionTile(
-                                                    collapsedBackgroundColor:
-                                                        Color.fromARGB(
-                                                            255, 240, 241, 241),
-                                                    title: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        Text(e[0].category!),
-                                                        Text(
-                                                            ' R\$ ${store.getFairPrice[index].where((element) => element['product_id']['categoria_1'] == e[0].category).map((e) => e['quantity'] * e['value'] as double).reduce((value, element) => value + element).toStringAsFixed(2).replaceAll(r'.', ',')}'),
-                                                      ],
-                                                    ),
-                                                    children: [
-                                                      DataTable(
-                                                        border:
-                                                            const TableBorder(
-                                                          verticalInside:
-                                                              BorderSide(
-                                                                  color: Colors
-                                                                      .grey,
-                                                                  width: 0.2),
-                                                        ),
-                                                        dataRowHeight: 110,
-                                                        headingRowHeight: 0,
-                                                        horizontalMargin: 8,
-                                                        columnSpacing: 0,
-                                                        columns: const [
-                                                          DataColumn(
-                                                              label: Text('')),
-                                                          DataColumn(
-                                                              label: Text('')),
-                                                          DataColumn(
-                                                              label: Text(''))
-                                                        ],
-                                                        rows: List.generate(
-                                                            e.length, (i) {
-                                                          var row = store
-                                                              .getFairPrice[
-                                                                  index]
-                                                              .firstWhere((element) =>
-                                                                  element['product_id']
-                                                                      ['_id'] ==
-                                                                  e[i].id);
-                                                          return DataRow(
-                                                              cells: [
-                                                                DataCell(
-                                                                  Stack(
-                                                                    children: [
-                                                                      Align(
-                                                                        alignment:
-                                                                            Alignment.center,
-                                                                        child:
-                                                                            Container(
-                                                                          width:
-                                                                              100,
-                                                                          height:
-                                                                              80,
-                                                                          child:
-                                                                              Image.network(e[i].imagePath!),
-                                                                        ),
-                                                                      ),
-                                                                      Align(
-                                                                        child:
-                                                                            Container(
-                                                                          height:
-                                                                              25,
-                                                                          width:
-                                                                              35,
-                                                                          decoration: BoxDecoration(
-                                                                              color: Colors.white,
-                                                                              borderRadius: const BorderRadius.all(Radius.circular(5)),
-                                                                              border: Border.all(color: Colors.black26)),
-                                                                          child:
-                                                                              Center(
-                                                                            child:
-                                                                                Text(
-                                                                              '${row['quantity']}x',
-                                                                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                        alignment:
-                                                                            Alignment.topRight,
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                                DataCell(
-                                                                    Container(
-                                                                  padding: const EdgeInsets
-                                                                          .symmetric(
-                                                                      horizontal:
-                                                                          4,
-                                                                      vertical:
-                                                                          2),
-                                                                  child: Column(
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .start,
-                                                                    children: [
-                                                                      Text(
-                                                                        e[i].description,
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                Colors.black54,
-                                                                            fontWeight: FontWeight.w500),
-                                                                        overflow:
-                                                                            TextOverflow.ellipsis,
-                                                                        maxLines:
-                                                                            3,
-                                                                      ),
-                                                                      const SizedBox(
-                                                                        height:
-                                                                            2,
-                                                                      ),
-                                                                      Text(
-                                                                        'R\$ ${row['value']}',
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                Colors.black54,
-                                                                            fontWeight: FontWeight.w500),
-                                                                      ),
-                                                                      const SizedBox(
-                                                                        height:
-                                                                            2,
-                                                                      ),
-                                                                      Text(
-                                                                        'R\$ ${(row['value'] * row['quantity']).toString().replaceAll(r'.', ',')}',
-                                                                        style: TextStyle(
-                                                                            fontSize:
-                                                                                18,
-                                                                            fontWeight:
-                                                                                FontWeight.bold),
-                                                                      )
-                                                                    ],
-                                                                  ),
-                                                                )),
-                                                                DataCell(
-                                                                    Container(
-                                                                  width: 120,
-                                                                  child: Column(
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .center,
-                                                                    children: [
-                                                                      const SizedBox(
-                                                                        height:
-                                                                            20,
-                                                                      ),
-                                                                      InkWell(
-                                                                        onTap:
-                                                                            () {
-                                                                          showDialog(
-                                                                              context: context,
-                                                                              builder: (context) {
-                                                                                return AlertDialog(
-                                                                                  insetPadding: EdgeInsets.symmetric(horizontal: 4),
-                                                                                  content: Container(
-                                                                                    child: Column(
-                                                                                      mainAxisSize: MainAxisSize.min,
-                                                                                      children: [
-                                                                                        DataTable(
-                                                                                          border: TableBorder(verticalInside: BorderSide(color: Colors.grey, width: 0.2)),
-                                                                                          dataRowHeight: 110,
-                                                                                          headingRowHeight: 0,
-                                                                                          horizontalMargin: 8,
-                                                                                          columnSpacing: 0,
-                                                                                          columns: const [
-                                                                                            DataColumn(label: Text('')),
-                                                                                            DataColumn(label: Text('')),
-                                                                                            DataColumn(label: Text(''))
-                                                                                          ],
-                                                                                          rows: [
-                                                                                            DataRow(cells: [
-                                                                                              DataCell(Container(
-                                                                                                // width: 120,
-                                                                                                child: Row(
-                                                                                                  children: [
-                                                                                                    InkWell(
-                                                                                                      onTap: () {
-                                                                                                        showModalBottomSheet(
-                                                                                                            context: context,
-                                                                                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                                                                                            builder: (context) {
-                                                                                                              return Container(
-                                                                                                                padding: EdgeInsets.all(16),
-                                                                                                                child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.start, children: [
-                                                                                                                  const SizedBox(
-                                                                                                                    height: 10,
-                                                                                                                  ),
-                                                                                                                  const Text(
-                                                                                                                    "Tem Certeza que deseja remover?",
-                                                                                                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                                                                                                                  ),
-                                                                                                                  const SizedBox(
-                                                                                                                    height: 4,
-                                                                                                                  ),
-                                                                                                                  const SizedBox(
-                                                                                                                    height: 8,
-                                                                                                                  ),
-                                                                                                                  Row(
-                                                                                                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                                                                                                    children: [
-                                                                                                                      InkWell(
-                                                                                                                        onTap: () {
-                                                                                                                          store.removeProductFromList(e[i].productId!);
-
-                                                                                                                          Modular.to.pop();
-                                                                                                                          Modular.to.pop();
-                                                                                                                        },
-                                                                                                                        child: Container(
-                                                                                                                          width: 170,
-                                                                                                                          padding: EdgeInsets.all(16),
-                                                                                                                          decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.all(Radius.circular(5))),
-                                                                                                                          child: Center(
-                                                                                                                            child: Text(
-                                                                                                                              'Remover',
-                                                                                                                              style: TextStyle(color: Colors.white, fontSize: 18),
-                                                                                                                            ),
-                                                                                                                          ),
-                                                                                                                        ),
-                                                                                                                      ),
-                                                                                                                      InkWell(
-                                                                                                                        onTap: () {
-                                                                                                                          Modular.to.pop();
-                                                                                                                        },
-                                                                                                                        child: Container(
-                                                                                                                          width: 170,
-                                                                                                                          padding: EdgeInsets.all(16),
-                                                                                                                          decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.grey), borderRadius: BorderRadius.all(Radius.circular(5))),
-                                                                                                                          child: Center(
-                                                                                                                            child: Text(
-                                                                                                                              'Cancelar',
-                                                                                                                              style: TextStyle(fontSize: 18),
-                                                                                                                            ),
-                                                                                                                          ),
-                                                                                                                        ),
-                                                                                                                      )
-                                                                                                                    ],
-                                                                                                                  )
-                                                                                                                ]),
-                                                                                                              );
-                                                                                                            });
-                                                                                                      },
-                                                                                                      child: const Icon(
-                                                                                                        Icons.delete_outline,
-                                                                                                        size: 40,
-                                                                                                      ),
-                                                                                                    ),
-                                                                                                    const SizedBox(
-                                                                                                      width: 2,
-                                                                                                    ),
-                                                                                                    Column(
-                                                                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                                                                      children: [
-                                                                                                        const Text(
-                                                                                                          'Quantidade',
-                                                                                                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
-                                                                                                        ),
-                                                                                                        const SizedBox(
-                                                                                                          height: 3,
-                                                                                                        ),
-                                                                                                        Container(
-                                                                                                          height: 35,
-                                                                                                          width: 70,
-                                                                                                          child: Center(
-                                                                                                            child: TextFormField(
-                                                                                                              keyboardType: TextInputType.number,
-                                                                                                              textAlign: TextAlign.center,
-                                                                                                              textAlignVertical: TextAlignVertical.center,
-                                                                                                              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
-                                                                                                              decoration: const InputDecoration(
-                                                                                                                border: OutlineInputBorder(),
-                                                                                                                contentPadding: EdgeInsets.symmetric(vertical: 2),
-                                                                                                              ),
-                                                                                                              initialValue: row['quantity'].toString(),
-                                                                                                              onChanged: (value) {
-                                                                                                                store.newQuantity = int.parse(value);
-                                                                                                              },
-                                                                                                            ),
-                                                                                                          ),
-                                                                                                        )
-                                                                                                      ],
-                                                                                                    ),
-                                                                                                    const SizedBox(
-                                                                                                      width: 3,
-                                                                                                    ),
-                                                                                                  ],
-                                                                                                ),
-                                                                                              )),
-                                                                                              DataCell(Container(
-                                                                                                height: 100,
-                                                                                                // width: 130,
-                                                                                                // padding: const EdgeInsets.all(8),
-                                                                                                child: Center(
-                                                                                                  child: Image.network(e[i].imagePath!),
-                                                                                                ),
-                                                                                              )),
-                                                                                              DataCell(Container(
-                                                                                                padding: EdgeInsets.all(8),
-                                                                                                child: Text(
-                                                                                                  e[i].description,
-                                                                                                  textAlign: TextAlign.center,
-                                                                                                  overflow: TextOverflow.ellipsis,
-                                                                                                  maxLines: 5,
-                                                                                                ),
-                                                                                                width: 100,
-                                                                                              ))
-                                                                                            ])
-                                                                                          ],
-                                                                                        ),
-                                                                                        Observer(builder: (_) {
-                                                                                          return Container(
-                                                                                            padding: EdgeInsets.all(4),
-                                                                                            child: ElevatedButton(
-                                                                                              onPressed: store.newQuantity == null
-                                                                                                  ? null
-                                                                                                  : () {
-                                                                                                      store.updateQuantity(e[i].productId!);
-                                                                                                      Modular.to.pop();
-                                                                                                    },
-                                                                                              child: Text('SALVAR'),
-                                                                                              style: ElevatedButton.styleFrom(primary: Colors.lightBlue),
-                                                                                            ),
-                                                                                            height: 50,
-                                                                                            width: 300,
-                                                                                          );
-                                                                                        })
-                                                                                      ],
-                                                                                    ),
-                                                                                  ),
-                                                                                );
-                                                                              }).then((value) => store.newQuantity = null);
-                                                                        },
-                                                                        child: Row(
-                                                                            mainAxisAlignment:
-                                                                                MainAxisAlignment.center,
-                                                                            children: const [
-                                                                              Icon(
-                                                                                Icons.edit_outlined,
-                                                                                size: 15,
-                                                                                color: Colors.lightBlue,
-                                                                              ),
-                                                                              Text('editar item'),
-                                                                            ]),
-                                                                      ),
-                                                                      const SizedBox(
-                                                                        height:
-                                                                            5,
-                                                                      ),
-                                                                      Align(
-                                                                        alignment:
-                                                                            Alignment.topRight,
-                                                                        child: Checkbox(
-                                                                            value:
-                                                                                true,
-                                                                            onChanged:
-                                                                                (value) {}),
-                                                                      )
-                                                                    ],
-                                                                  ),
-                                                                ))
-                                                              ]);
-                                                        }),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ))
+                                        Observer(
+                                          builder: (_) {
+                                            if (Modular.get<ConfigStore>()
+                                                    .separetedByCategory ==
+                                                false) {
+                                              return productsTable(
+                                                  store.getFairPrice[index]
+                                                      .map((fairPrice) =>
+                                                          Product.fromMap(
+                                                              fairPrice[
+                                                                  'product_id']))
+                                                      .toList(),
+                                                  index);
+                                            } else {
+                                              return Column(
+                                                children: [
+                                                  ...store
+                                                      .groupProducts(store
+                                                          .getFairPrice[index]
+                                                          .map((fairPrice) =>
+                                                              Product.fromMap(
+                                                                  fairPrice[
+                                                                      'product_id']))
+                                                          .toList())
+                                                      .map((e) => Container(
+                                                            decoration: const BoxDecoration(
+                                                                border: Border(
+                                                                    top: BorderSide(
+                                                                        width:
+                                                                            0.3,
+                                                                        color: Colors
+                                                                            .black54))),
+                                                            child:
+                                                                ExpansionTile(
+                                                              maintainState:
+                                                                  true,
+                                                              collapsedBackgroundColor:
+                                                                  const Color
+                                                                          .fromARGB(
+                                                                      255,
+                                                                      240,
+                                                                      241,
+                                                                      241),
+                                                              title: Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .spaceBetween,
+                                                                children: [
+                                                                  Text(e[0]
+                                                                      .category!),
+                                                                  Text(
+                                                                      ' R\$ ${store.getFairPrice[index].where((element) => element['product_id']['categoria_1'] == e[0].category).map((e) => e['quantity'] * e['value'] as double).reduce((value, element) => value + element).toStringAsFixed(2).replaceAll(r'.', ',')}'),
+                                                                ],
+                                                              ),
+                                                              children: [
+                                                                productsTable(
+                                                                    e, index)
+                                                              ],
+                                                            ),
+                                                          ))
+                                                ],
+                                              );
+                                            }
+                                          },
+                                        )
                                       ],
                                     );
                                   },
@@ -660,7 +376,31 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                         future: store.getProductsPrices(listStore.products),
                       );
                     }
-                    return Container();
+                    return Container(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Com base na sua localização atual, infelizmente não foi possível listar os mercados!',
+                            style: TextStyle(
+                                color: Colors.black38,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                  'Ajuste o raio de distância ou altere sua localização '),
+                            ],
+                          )
+                        ],
+                      ),
+                    );
                   },
                 );
               }
@@ -669,7 +409,7 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'O seu carrinho está vazio.',
+                    'O seu comparativo está vazio.',
                     style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(
@@ -690,5 +430,367 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
         ],
       ),
     );
+  }
+
+  DataTable productsTable(List<Product> products, int index) {
+    return DataTable(
+      border: const TableBorder(
+        verticalInside: BorderSide(color: Colors.grey, width: 0.2),
+      ),
+      dataRowHeight: 110,
+      headingRowHeight: 0,
+      horizontalMargin: 8,
+      columnSpacing: 0,
+      columns: const [
+        DataColumn(label: Text('')),
+        DataColumn(label: Text('')),
+        DataColumn(label: Text(''))
+      ],
+      rows: List.generate(products.length, (i) {
+        var row = store.getFairPrice[index].firstWhere(
+            (element) => element['product_id']['_id'] == products[i].id);
+        return DataRow(cells: [
+          DataCell(
+            Stack(
+              children: [
+                Align(
+                  alignment: Alignment.center,
+                  child: Container(
+                    width: 100,
+                    height: 80,
+                    child: Image.network(
+                      products[i].imagePath!,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Image.asset('assets/img/image_not_found.jpg');
+                      },
+                    ),
+                  ),
+                ),
+                Align(
+                  child: Container(
+                    height: 25,
+                    width: 35,
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(5)),
+                        border: Border.all(color: Colors.black26)),
+                    child: Center(
+                      child: Text(
+                        '${row['quantity']}x',
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                    ),
+                  ),
+                  alignment: Alignment.topRight,
+                ),
+              ],
+            ),
+          ),
+          DataCell(Container(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  products[i].description,
+                  style: TextStyle(
+                      color: Colors.black54, fontWeight: FontWeight.w500),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 3,
+                ),
+                const SizedBox(
+                  height: 2,
+                ),
+                Text(
+                  'R\$ ${(row['value'] as double).toStringAsFixed(2)}',
+                  style: TextStyle(
+                      color: Colors.black54, fontWeight: FontWeight.w500),
+                ),
+                const SizedBox(
+                  height: 2,
+                ),
+                Text(
+                  'R\$ ${(row['value'] * row['quantity'] as double).toStringAsFixed(2).replaceAll(r'.', ',')}',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                )
+              ],
+            ),
+          )),
+          DataCell(Container(
+            width: 120,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(
+                  height: 20,
+                ),
+                InkWell(
+                  onTap: () {
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            insetPadding: EdgeInsets.symmetric(horizontal: 4),
+                            content: Container(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  productsTableEdit(context, products, i, row),
+                                  Observer(builder: (_) {
+                                    return Container(
+                                      padding: EdgeInsets.all(4),
+                                      child: ElevatedButton(
+                                        onPressed: store.newQuantity == null
+                                            ? null
+                                            : () {
+                                                store.updateQuantity(
+                                                    products[i].productId!);
+                                                Modular.to.pop();
+                                              },
+                                        child: Text('SALVAR'),
+                                        style: ElevatedButton.styleFrom(
+                                            primary: Colors.lightBlue),
+                                      ),
+                                      height: 50,
+                                      width: 300,
+                                    );
+                                  })
+                                ],
+                              ),
+                            ),
+                          );
+                        }).then((value) => store.newQuantity = null);
+                  },
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        Icon(
+                          Icons.edit_outlined,
+                          size: 15,
+                          color: Colors.lightBlue,
+                        ),
+                        Text('editar item'),
+                      ]),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Align(
+                  alignment: Alignment.topRight,
+                  child: ProductCheckBox(),
+                )
+              ],
+            ),
+          ))
+        ]);
+      }),
+    );
+  }
+
+  DataTable productsTableEdit(
+      BuildContext context, List<Product> e, int i, Map<String, dynamic> row) {
+    return DataTable(
+      border: TableBorder(
+          verticalInside: BorderSide(color: Colors.grey, width: 0.2)),
+      dataRowHeight: 110,
+      headingRowHeight: 0,
+      horizontalMargin: 8,
+      columnSpacing: 0,
+      columns: const [
+        DataColumn(label: Text('')),
+        DataColumn(label: Text('')),
+        DataColumn(label: Text(''))
+      ],
+      rows: [
+        DataRow(cells: [
+          DataCell(Container(
+            // width: 120,
+            child: Row(
+              children: [
+                InkWell(
+                  onTap: () {
+                    showModalBottomSheet(
+                        context: context,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                        builder: (context) {
+                          return Container(
+                            padding: EdgeInsets.all(16),
+                            child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  const Text(
+                                    "Tem Certeza que deseja remover?",
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  const SizedBox(
+                                    height: 4,
+                                  ),
+                                  const SizedBox(
+                                    height: 8,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      InkWell(
+                                        onTap: () {
+                                          store.removeProductFromList(
+                                              e[i].productId!);
+
+                                          Modular.to.pop();
+                                          Modular.to.pop();
+                                        },
+                                        child: Container(
+                                          width: 170,
+                                          padding: EdgeInsets.all(16),
+                                          decoration: BoxDecoration(
+                                              color: Colors.red,
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(5))),
+                                          child: Center(
+                                            child: Text(
+                                              'Remover',
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 18),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      InkWell(
+                                        onTap: () {
+                                          Modular.to.pop();
+                                        },
+                                        child: Container(
+                                          width: 170,
+                                          padding: EdgeInsets.all(16),
+                                          decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              border: Border.all(
+                                                  color: Colors.grey),
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(5))),
+                                          child: Center(
+                                            child: Text(
+                                              'Cancelar',
+                                              style: TextStyle(fontSize: 18),
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  )
+                                ]),
+                          );
+                        });
+                  },
+                  child: const Icon(
+                    Icons.delete_outline,
+                    size: 40,
+                  ),
+                ),
+                const SizedBox(
+                  width: 2,
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Quantidade',
+                      style:
+                          TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+                    ),
+                    const SizedBox(
+                      height: 3,
+                    ),
+                    Container(
+                      height: 35,
+                      width: 70,
+                      child: Center(
+                        child: TextFormField(
+                          keyboardType: TextInputType.number,
+                          textAlign: TextAlign.center,
+                          textAlignVertical: TextAlignVertical.center,
+                          style: const TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.w700),
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.symmetric(vertical: 2),
+                          ),
+                          initialValue: row['quantity'].toString(),
+                          onChanged: (value) {
+                            store.newQuantity = int.parse(value);
+                          },
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                const SizedBox(
+                  width: 3,
+                ),
+              ],
+            ),
+          )),
+          DataCell(Container(
+            height: 100,
+            // width: 130,
+            // padding: const EdgeInsets.all(8),
+            child: Center(
+              child: Image.network(
+                e[i].imagePath!,
+                errorBuilder: (context, error, stackTrace) {
+                  return Image.asset('assets/img/image_not_found.jpg');
+                },
+              ),
+            ),
+          )),
+          DataCell(Container(
+            padding: EdgeInsets.all(8),
+            child: Text(
+              e[i].description,
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 5,
+            ),
+            width: 100,
+          ))
+        ])
+      ],
+    );
+  }
+}
+
+class ProductCheckBox extends StatefulWidget {
+  ProductCheckBox({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<ProductCheckBox> createState() => _ProductCheckBoxState();
+}
+
+class _ProductCheckBoxState extends State<ProductCheckBox> {
+  bool isChecked = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Checkbox(
+        value: isChecked,
+        onChanged: (value) {
+          setState(() {
+            isChecked = value!;
+          });
+        });
   }
 }

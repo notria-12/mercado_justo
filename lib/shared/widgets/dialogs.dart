@@ -3,13 +3,10 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/shared/controllers/fair_price_store.dart';
 import 'package:mercado_justo/shared/controllers/list_store.dart';
 import 'package:mercado_justo/shared/controllers/market_name_store.dart';
-import 'package:mercado_justo/shared/repositories/market_name_repository.dart';
-import 'package:mercado_justo/shared/widgets/bottonsheets.dart';
+
+import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 
 class Dialogs {
-  final TextEditingController _nameController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
-
   Future addNewMarketName(BuildContext context,
       {required int listId, String? name}) {
     final _formValuekey = GlobalKey<FormState>();
@@ -147,12 +144,15 @@ class Dialogs {
                               color: Color.fromARGB(255, 240, 241, 241),
                               borderRadius: BorderRadius.circular(10)),
                           child: TextFormField(
+                            inputFormatters: [
+                              CurrencyTextInputFormatter(
+                                  locale: 'pt_br', symbol: 'R\$')
+                            ],
                             controller: _valueController,
                             textAlign: TextAlign.center,
                             keyboardType: TextInputType.number,
                             decoration: const InputDecoration(
-                                hintText: 'Insira o valor',
-                                border: InputBorder.none),
+                                hintText: '00,00', border: InputBorder.none),
                           )),
                       const SizedBox(
                         height: 10,
@@ -180,8 +180,11 @@ class Dialogs {
                         child: ElevatedButton(
                           child: Text('Salvar'),
                           onPressed: () {
-                            String newValue =
-                                _valueController.text.replaceAll(r',', '.');
+                            String newValue = _valueController.text
+                                .replaceAll(r'R$', '')
+                                .trim()
+                                .replaceAll(r',', '.');
+
                             if (value != null) {
                               Modular.get<FairPriceStore>()
                                   .updateFairPrice(
@@ -209,14 +212,19 @@ class Dialogs {
             ));
   }
 
-  void addNewList(BuildContext context) {
+  void addNewList(BuildContext context, {String? value, int? listId}) {
+    final TextEditingController _nameController = TextEditingController();
+    final _formKey = GlobalKey<FormState>();
+    if (value != null) {
+      _nameController.text = value;
+    }
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text('Nova Lista'),
+                  Text(value != null ? 'Editar Lista' : 'Nova Lista'),
                   IconButton(
                       padding: EdgeInsets.zero,
                       onPressed: () {
@@ -248,8 +256,8 @@ class Dialogs {
                             if (input!.isEmpty) {
                               return 'O nome é obrigatório';
                             }
-                            if (input.length < 8) {
-                              return 'O nome precisa ter pelo menos 8 letras';
+                            if (input.length < 3) {
+                              return 'O nome precisa ter pelo menos 3 letras';
                             }
                           },
                         ),
@@ -268,15 +276,23 @@ class Dialogs {
                             final formState = _formKey.currentState!;
                             if (formState.validate()) {
                               formState.save();
-                              Modular.get<ListStore>()
-                                  .createNewList(_nameController.text);
-                              Modular.to.pop();
+                              if (value != null) {
+                                Modular.get<ListStore>().updateListName(
+                                    listId: listId!,
+                                    newName: _nameController.text);
+                                Modular.to.pop();
+                                Modular.to.pop();
+                              } else {
+                                Modular.get<ListStore>()
+                                    .createNewList(_nameController.text);
+                                Modular.to.pop();
+                              }
                             }
                           },
-                          child: const Center(
+                          child: Center(
                             child: Text(
-                              'Criar nova lista',
-                              style: TextStyle(fontSize: 20),
+                              value != null ? 'Salvar' : 'Criar nova lista',
+                              style: const TextStyle(fontSize: 20),
                             ),
                           ),
                           style: ElevatedButton.styleFrom(

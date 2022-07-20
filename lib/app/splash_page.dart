@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/shared/auth/auth_controller.dart';
+import 'package:mercado_justo/shared/controllers/position_store.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({Key? key}) : super(key: key);
@@ -11,6 +12,7 @@ class SplashPage extends StatefulWidget {
 
 class _SplashPageState extends State<SplashPage> {
   final authController = Modular.get<AuthController>();
+  final positionStore = Modular.get<PositionStore>();
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +22,7 @@ class _SplashPageState extends State<SplashPage> {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
             case ConnectionState.waiting:
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             case ConnectionState.done:
               // Modular.to.pushReplacementNamed('/login/');
               return Container();
@@ -29,7 +31,7 @@ class _SplashPageState extends State<SplashPage> {
           }
         },
         future: Future.wait(
-            [authController.init(), Future.delayed(Duration(seconds: 3))]),
+            [authController.init(), positionStore.getCurrentPosition()]),
       ),
     );
   }

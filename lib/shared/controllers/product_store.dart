@@ -12,20 +12,81 @@ abstract class _ProductStoreBase with Store {
   _ProductStoreBase({
     required this.repository,
   });
+
   @observable
   List<Product> products = [];
 
   @observable
+  bool isSearch = false;
+
+  @observable
   AppState productState = AppStateEmpty();
+
+  @observable
+  bool canLoadMore = true;
+
+  @observable
+  bool onlyButtonLoadMore = false;
 
   @observable
   int page = 1;
 
   Future getAllProducts() async {
     try {
+      isSearch = false;
       productState = AppStateLoading();
-      products = [...products, ...await repository.getAllProducts(page: page)];
+      var productsResult = await repository.getAllProducts(page: page);
+      if (productsResult.length < 15) {
+        canLoadMore = false;
+      } else {
+        canLoadMore = true;
+      }
+      products = [...products, ...productsResult];
       page++;
+      productState = AppStateSuccess();
+    } catch (e) {
+      productState = AppStateError();
+      rethrow;
+    }
+  }
+
+  Future<Product?> getProductByBarcode({required String barcode}) async {
+    try {
+      return repository.getProductByBarcode(barcode: barcode);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future getProductsByDescription(
+      {required String description, bool isNewSearch = true}) async {
+    try {
+      if (isSearch) {
+        if (isNewSearch) {
+          page = 1;
+        } else {
+          page++;
+        }
+      } else {
+        page = 1;
+      }
+
+      productState = AppStateLoading();
+      var productsResult = await repository.getProductsByDescription(
+          description: description, page: page);
+      if (productsResult.length < 15) {
+        canLoadMore = false;
+      } else {
+        canLoadMore = true;
+      }
+      if (isNewSearch) {
+        products = productsResult;
+
+        isSearch = true;
+      } else {
+        products = [...products, ...productsResult];
+      }
+
       productState = AppStateSuccess();
     } catch (e) {
       productState = AppStateError();

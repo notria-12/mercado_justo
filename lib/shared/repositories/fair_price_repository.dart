@@ -28,6 +28,19 @@ class FairPriceRepository {
     }
   }
 
+  Future<List<Map>?> getFairPricesFromList(int listId) async {
+    try {
+      Database database = await SQLHelper.init();
+      var result = await database.query('prices', where: '"list_id" = $listId');
+
+      if (result.isNotEmpty) {
+        return result;
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future updateFairPrice(double value, int listId, int productId) async {
     try {
       Database database = await SQLHelper.init();

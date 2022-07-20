@@ -43,6 +43,9 @@ class Price {
   }
 
   factory Price.fromMap(Map<String, dynamic> map) {
+    if (map.isEmpty) {
+      print(map);
+    }
     return Price(
       id: map['_id'] ?? '',
       idMarket: map['id']?.toInt() ?? 0,

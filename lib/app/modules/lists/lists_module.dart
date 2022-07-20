@@ -1,3 +1,4 @@
+import 'package:mercado_justo/app//modules/lists/filter_store.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/app/modules/compare/compare_store.dart';
 import 'package:mercado_justo/app/modules/lists/pages/filter_list_page.dart';

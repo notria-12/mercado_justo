@@ -12,6 +12,9 @@ abstract class _FairPriceStoreBase with Store {
     this._repository,
   );
 
+  @observable
+  List<Map> fairPricesFromList = [];
+
   Future<double?> getFairPrice(
       {required int listId, required productId}) async {
     try {
@@ -23,7 +26,20 @@ abstract class _FairPriceStoreBase with Store {
 
   Future deleteFairPrice({required int listId, required productId}) async {
     try {
-      return _repository.deleteFairPrice(listId, productId);
+      await _repository.deleteFairPrice(listId, productId);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future getFairPricesFromList({required int listId}) async {
+    try {
+      var list = await _repository.getFairPricesFromList(listId);
+      if (list != null) {
+        fairPricesFromList = list;
+      } else {
+        fairPricesFromList = [];
+      }
     } catch (e) {
       rethrow;
     }

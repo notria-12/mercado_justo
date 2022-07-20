@@ -58,10 +58,10 @@ class ProductListModel {
     if (identical(this, other)) return true;
 
     return other is ProductListModel &&
-        other.id == id &&
-        other.productId == productId &&
-        other.listId == listId &&
-        other.quantity == quantity;
+        // other.id == id &&
+        other.productId == productId;
+    //       other.listId == listId &&
+    //       other.quantity == quantity;
   }
 
   @override

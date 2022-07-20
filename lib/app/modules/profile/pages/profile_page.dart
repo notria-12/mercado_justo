@@ -106,7 +106,9 @@ class ProfilePageState extends State<ProfilePage> {
               ),
               ButtonProfileOptions(
                 label: 'Alterar localização',
-                onTap: () {},
+                onTap: () {
+                  Modular.to.pushNamed('/profile/maps');
+                },
               ),
               SizedBox(
                 height: 15,
