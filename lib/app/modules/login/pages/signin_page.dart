@@ -128,7 +128,7 @@ class _SignInPageState extends ModularState<SignInPage, LoginStore> {
                     Modular.to.pushNamed('/login/codeEmail/');
                   },
                   child: const Text(
-                    'Não estou com acesso ao meu celular',
+                    'Acessar com meu email',
                     style: TextStyle(
                         decoration: TextDecoration.underline,
                         color: Colors.grey,

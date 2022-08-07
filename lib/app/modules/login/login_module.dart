@@ -19,6 +19,6 @@ class LoginModule extends Module {
     ChildRoute(Modular.initialRoute, child: (_, args) => const SignInPage()),
     ChildRoute('/signup/', child: (_, args) => const SignUpPage()),
     ChildRoute('/receivedCode/', child: (_, args) => const ReceivedCodePage()),
-    ChildRoute('/codeEmail/', child: (_, args) => const SignInEmailPage()),
+    ChildRoute('/codeEmail/', child: (_, args) => const CodeEmailPage()),
   ];
 }

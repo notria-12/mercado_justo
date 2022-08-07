@@ -71,6 +71,8 @@ class LoginRepository {
     PhoneAuthCredential credential = PhoneAuthProvider.credential(
         verificationId: verificationId, smsCode: smsCode);
 
-    await auth.signInWithCredential(credential);
+    UserCredential userCredential = await auth.signInWithCredential(credential);
+    String token = await userCredential.user!.getIdToken();
+    print(token);
   }
 }
