@@ -16,7 +16,6 @@ class CodeEmailPage extends StatefulWidget {
 }
 
 class _CodeEmailPageState extends State<CodeEmailPage> {
-  final _emailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final _loginByEmailCodeStore = Modular.get<LoginByEmailCodeStore>();
   late ReactionDisposer _disposer;
@@ -31,12 +30,14 @@ class _CodeEmailPageState extends State<CodeEmailPage> {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text(stateError.error.message)));
       }
+      if (_loginByEmailCodeStore.sendLoginCodeState is AppStateSuccess) {
+        Modular.to.pushNamed('/login/receivedEmailCode/');
+      }
     });
   }
 
   @override
   void dispose() {
-    _emailController.dispose();
     _disposer();
     super.dispose();
   }
@@ -77,7 +78,7 @@ class _CodeEmailPageState extends State<CodeEmailPage> {
               ),
               CustomTextInput(
                   validator: InputValidators.validateEmail,
-                  controller: _emailController,
+                  onSave: (input) => _loginByEmailCodeStore.email = input,
                   inputType: TextInputType.emailAddress,
                   label: 'Seu email cadastrado',
                   hintText: 'Seu e-mail',
@@ -106,8 +107,8 @@ class _CodeEmailPageState extends State<CodeEmailPage> {
                         : () {
                             var formState = _formKey.currentState!;
                             if (formState.validate()) {
-                              _loginByEmailCodeStore.sendLoginCodeByEmail(
-                                  email: _emailController.text);
+                              formState.save();
+                              _loginByEmailCodeStore.sendLoginCodeByEmail();
                             }
                             // Modular.to.pushNamed('/login/receivedCode/');
                           },

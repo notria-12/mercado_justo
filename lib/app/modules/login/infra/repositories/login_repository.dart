@@ -15,4 +15,14 @@ class LoginRepositoryImpl implements ILoginRepository {
       rethrow;
     }
   }
+
+  @override
+  Future<void> loginWithEmailCode(
+      {required String code, required String email}) async {
+    try {
+      await _datasource.loginWithEmailCode(code: code, email: email);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

@@ -1,3 +1,4 @@
+import 'package:mercado_justo/app/modules/login/domain/usecases/login_with_email_code_usecase.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/utils/error.dart';
 import 'package:mobx/mobx.dart';
@@ -11,20 +12,39 @@ class LoginByEmailCodeStore = _LoginByEmailCodeStoreBase
 
 abstract class _LoginByEmailCodeStoreBase with Store {
   final ISendLoginCodeByEmail _sendLoginCodeByEmail;
+  final ILoginWithEmailCodeUsecase _loginWithEmailCodeUsecase;
   _LoginByEmailCodeStoreBase(
-    this._sendLoginCodeByEmail,
-  );
+      this._sendLoginCodeByEmail, this._loginWithEmailCodeUsecase);
 
   @observable
   AppState sendLoginCodeState = AppStateEmpty();
 
-  Future<void> sendLoginCodeByEmail({required String email}) async {
+  @observable
+  AppState loginState = AppStateEmpty();
+
+  @observable
+  String? email;
+
+  @observable
+  String? code;
+
+  Future<void> sendLoginCodeByEmail() async {
     try {
       sendLoginCodeState = AppStateLoading();
-      await _sendLoginCodeByEmail.call(email: email);
+      await _sendLoginCodeByEmail.call(email: email!);
       sendLoginCodeState = AppStateSuccess();
     } on Failure catch (e) {
       sendLoginCodeState = AppStateError(error: e);
+    }
+  }
+
+  Future<void> loginWithEmailCode() async {
+    try {
+      loginState = AppStateLoading();
+      await _loginWithEmailCodeUsecase.call(code: code!, email: email!);
+      loginState = AppStateSuccess();
+    } on Failure catch (e) {
+      loginState = AppStateError(error: e);
     }
   }
 }
