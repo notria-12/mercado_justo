@@ -1,6 +1,7 @@
 import 'package:mercado_justo/shared/models/product_model.dart';
 import 'package:mercado_justo/shared/repositories/product_repository.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
+import 'package:mercado_justo/shared/utils/error.dart';
 import 'package:mobx/mobx.dart';
 
 part 'product_store.g.dart';
@@ -45,7 +46,7 @@ abstract class _ProductStoreBase with Store {
       page++;
       productState = AppStateSuccess();
     } catch (e) {
-      productState = AppStateError();
+      productState = AppStateError(error: Failure(title: '', message: ''));
       rethrow;
     }
   }
@@ -89,7 +90,7 @@ abstract class _ProductStoreBase with Store {
 
       productState = AppStateSuccess();
     } catch (e) {
-      productState = AppStateError();
+      productState = AppStateError(error: Failure(title: '', message: ''));
       rethrow;
     }
   }
@@ -101,7 +102,7 @@ abstract class _ProductStoreBase with Store {
       productState = AppStateSuccess();
       return imagePath;
     } catch (e) {
-      productState = AppStateError();
+      productState = AppStateError(error: Failure(title: '', message: ''));
       rethrow;
     }
   }

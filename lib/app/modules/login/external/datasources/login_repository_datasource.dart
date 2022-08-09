@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 
-import 'package:mercado_justo/app/modules/login/internal/datasources/i_login_datasource.dart';
+import 'package:mercado_justo/app/modules/login/infra/datasources/i_login_datasource.dart';
+import 'package:mercado_justo/shared/utils/error.dart';
 
 class LoginDatasourceImpl implements ILoginDatasource {
   Dio _dio;
@@ -11,9 +12,12 @@ class LoginDatasourceImpl implements ILoginDatasource {
   Future<void> sendLoginCodeByEmail({required String email}) async {
     try {
       await _dio.post('auth/codigo-login/', data: {'email': email});
+    } on DioError catch (e) {
+      throw Failure(title: 'Erro login', message: e.response!.data['mensagem']);
     } catch (e) {
-      //TODO: Tratar execessão
-      rethrow;
+      throw Failure(
+          title: 'Erro login',
+          message: 'Não foi possível enviar código para seu email');
     }
   }
 }

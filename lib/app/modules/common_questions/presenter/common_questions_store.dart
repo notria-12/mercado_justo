@@ -1,4 +1,5 @@
 import 'package:mercado_justo/shared/utils/app_state.dart';
+import 'package:mercado_justo/shared/utils/error.dart';
 import 'package:mobx/mobx.dart';
 
 import 'package:mercado_justo/app/modules/common_questions/domain/entities/common_questions_entity.dart';
@@ -27,7 +28,10 @@ abstract class _CommonQuestionsStoreBase with Store {
       commonQuestions = await usecase.call();
       commonQuestionsState = AppStateSuccess();
     } catch (e) {
-      commonQuestionsState = AppStateError();
+      commonQuestionsState = AppStateError(
+          error: Failure(
+              title: '',
+              message: 'Não foi possível carregar as perguntas frequentes'));
       rethrow;
     }
   }

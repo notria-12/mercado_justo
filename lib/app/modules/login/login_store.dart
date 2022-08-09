@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/app/modules/login/login_repository.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
+import 'package:mercado_justo/shared/utils/error.dart';
 import 'package:mobx/mobx.dart';
 
 part 'login_store.g.dart';
@@ -37,7 +38,7 @@ abstract class _LoginStoreBase with Store {
       loginState = AppStateSuccess();
       Modular.to.pushReplacementNamed("/home_auth/");
     } catch (e) {
-      loginState = AppStateError();
+      loginState = AppStateError(error: Failure(title: '', message: ''));
     }
   }
 
@@ -70,7 +71,7 @@ abstract class _LoginStoreBase with Store {
       print(verificationId);
       loginState = AppStateSuccess();
     } catch (e) {
-      loginState = AppStateError();
+      loginState = AppStateError(error: Failure(title: '', message: ''));
       rethrow;
     }
   }
@@ -85,7 +86,7 @@ abstract class _LoginStoreBase with Store {
         '/home_auth/',
       );
     } catch (e) {
-      loginState = AppStateError();
+      loginState = AppStateError(error: Failure(title: '', message: ''));
       rethrow;
     }
   }
