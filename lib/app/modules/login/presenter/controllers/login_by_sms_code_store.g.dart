@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'login_store.dart';
+part of 'login_by_sms_code_store.dart';
 
 // **************************************************************************
 // StoreGenerator
@@ -8,8 +8,8 @@ part of 'login_store.dart';
 
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
-mixin _$LoginStore on _LoginStoreBase, Store {
-  final _$phoneNumberAtom = Atom(name: '_LoginStoreBase.phoneNumber');
+mixin _$LoginBySmsCodeStore on _LoginBySmsCodeStoreBase, Store {
+  final _$phoneNumberAtom = Atom(name: '_LoginBySmsCodeStoreBase.phoneNumber');
 
   @override
   String? get phoneNumber {
@@ -24,7 +24,7 @@ mixin _$LoginStore on _LoginStoreBase, Store {
     });
   }
 
-  final _$codeAtom = Atom(name: '_LoginStoreBase.code');
+  final _$codeAtom = Atom(name: '_LoginBySmsCodeStoreBase.code');
 
   @override
   String? get code {
@@ -39,7 +39,8 @@ mixin _$LoginStore on _LoginStoreBase, Store {
     });
   }
 
-  final _$verificationIdAtom = Atom(name: '_LoginStoreBase.verificationId');
+  final _$verificationIdAtom =
+      Atom(name: '_LoginBySmsCodeStoreBase.verificationId');
 
   @override
   String? get verificationId {
@@ -54,7 +55,7 @@ mixin _$LoginStore on _LoginStoreBase, Store {
     });
   }
 
-  final _$loginStateAtom = Atom(name: '_LoginStoreBase.loginState');
+  final _$loginStateAtom = Atom(name: '_LoginBySmsCodeStoreBase.loginState');
 
   @override
   AppState get loginState {
@@ -70,7 +71,7 @@ mixin _$LoginStore on _LoginStoreBase, Store {
   }
 
   final _$sendLoginCodeStateAtom =
-      Atom(name: '_LoginStoreBase.sendLoginCodeState');
+      Atom(name: '_LoginBySmsCodeStoreBase.sendLoginCodeState');
 
   @override
   AppState get sendLoginCodeState {

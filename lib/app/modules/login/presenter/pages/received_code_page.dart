@@ -4,6 +4,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/app/modules/login/login_store.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/widgets/custom_text_input_widget.dart';
+import 'package:mobx/mobx.dart';
 
 class ReceivedCodePage extends StatefulWidget {
   const ReceivedCodePage({Key? key}) : super(key: key);
@@ -15,6 +16,23 @@ class ReceivedCodePage extends StatefulWidget {
 class _ReceivedCodePageState
     extends ModularState<ReceivedCodePage, LoginStore> {
   final _formKey = GlobalKey<FormState>();
+
+  late ReactionDisposer _disposer;
+  @override
+  void initState() {
+    super.initState();
+    _disposer = autorun((_) {
+      if (store.loginState is AppStateError) {
+        final stateError = store.loginState as AppStateError;
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(stateError.error.message)));
+      }
+      if (store.loginState is AppStateSuccess) {
+        Modular.to.pushReplacementNamed('/home_auth/');
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,14 +94,16 @@ class _ReceivedCodePageState
                             style: TextStyle(fontSize: 16),
                           ),
                     style: ElevatedButton.styleFrom(primary: Colors.lightBlue),
-                    onPressed: () {
-                      var formState = _formKey.currentState!;
-                      if (formState.validate()) {
-                        formState.save();
-                        print(store.code);
-                        store.verifyCode();
-                      }
-                    },
+                    onPressed: store.loginState is AppStateLoading
+                        ? null
+                        : () {
+                            var formState = _formKey.currentState!;
+                            if (formState.validate()) {
+                              formState.save();
+                              print(store.code);
+                              store.loginWithSmsCode();
+                            }
+                          },
                   );
                 }),
               ),

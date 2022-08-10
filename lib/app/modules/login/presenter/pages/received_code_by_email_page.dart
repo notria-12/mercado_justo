@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:mercado_justo/app/modules/login/login_store.dart';
+
 import 'package:mercado_justo/app/modules/login/presenter/controllers/login_by_email_code_store.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/widgets/custom_text_input_widget.dart';
@@ -29,7 +29,7 @@ class _ReceivedCodePageState extends State<ReceivedCodeByEmailPage> {
             .showSnackBar(SnackBar(content: Text(stateError.error.message)));
       }
       if (_loginWithEmailCodeStore.loginState is AppStateSuccess) {
-        Modular.to.pushNamed('/login/receivedEmailCode/');
+        Modular.to.pushReplacementNamed("/home_auth/");
       }
     });
   }
@@ -81,34 +81,34 @@ class _ReceivedCodePageState extends State<ReceivedCodeByEmailPage> {
               const SizedBox(
                 height: 20,
               ),
-              Container(
-                height: 50,
-                width: double.maxFinite,
-                child: Observer(builder: (_) {
-                  return ElevatedButton(
-                    child:
-                        _loginWithEmailCodeStore.loginState is AppStateLoading
-                            ? const CircularProgressIndicator(
-                                color: Colors.white,
-                              )
-                            : const Text(
-                                'Entrar',
-                                style: TextStyle(fontSize: 16),
-                              ),
-                    style: ElevatedButton.styleFrom(primary: Colors.lightBlue),
-                    onPressed:
-                        _loginWithEmailCodeStore.loginState is AppStateLoading
-                            ? null
-                            : () {
-                                var formState = _formKey.currentState!;
-                                if (formState.validate()) {
-                                  formState.save();
-                                  _loginWithEmailCodeStore.loginWithEmailCode();
-                                }
-                              },
-                  );
-                }),
-              ),
+              Observer(builder: (_) {
+                return Container(
+                    height: 50,
+                    width: double.maxFinite,
+                    child: ElevatedButton(
+                      child:
+                          _loginWithEmailCodeStore.loginState is AppStateLoading
+                              ? const CircularProgressIndicator(
+                                  color: Colors.white,
+                                )
+                              : const Text(
+                                  'Entrar',
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                      style:
+                          ElevatedButton.styleFrom(primary: Colors.lightBlue),
+                      onPressed: _loginWithEmailCodeStore.loginState
+                              is AppStateLoading
+                          ? null
+                          : () {
+                              var formState = _formKey.currentState!;
+                              if (formState.validate()) {
+                                formState.save();
+                                _loginWithEmailCodeStore.loginWithEmailCode();
+                              }
+                            },
+                    ));
+              }),
               const SizedBox(
                 height: 30,
               ),

@@ -25,10 +25,58 @@ mixin _$LoginByEmailCodeStore on _LoginByEmailCodeStoreBase, Store {
     });
   }
 
+  final _$loginStateAtom = Atom(name: '_LoginByEmailCodeStoreBase.loginState');
+
+  @override
+  AppState get loginState {
+    _$loginStateAtom.reportRead();
+    return super.loginState;
+  }
+
+  @override
+  set loginState(AppState value) {
+    _$loginStateAtom.reportWrite(value, super.loginState, () {
+      super.loginState = value;
+    });
+  }
+
+  final _$emailAtom = Atom(name: '_LoginByEmailCodeStoreBase.email');
+
+  @override
+  String? get email {
+    _$emailAtom.reportRead();
+    return super.email;
+  }
+
+  @override
+  set email(String? value) {
+    _$emailAtom.reportWrite(value, super.email, () {
+      super.email = value;
+    });
+  }
+
+  final _$codeAtom = Atom(name: '_LoginByEmailCodeStoreBase.code');
+
+  @override
+  String? get code {
+    _$codeAtom.reportRead();
+    return super.code;
+  }
+
+  @override
+  set code(String? value) {
+    _$codeAtom.reportWrite(value, super.code, () {
+      super.code = value;
+    });
+  }
+
   @override
   String toString() {
     return '''
-sendLoginCodeState: ${sendLoginCodeState}
+sendLoginCodeState: ${sendLoginCodeState},
+loginState: ${loginState},
+email: ${email},
+code: ${code}
     ''';
   }
 }

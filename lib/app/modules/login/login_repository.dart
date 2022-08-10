@@ -49,8 +49,9 @@ class LoginRepository {
     // return await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
-  Future<String?> verifyPhoneNumber(String phoneNumber) async {
-    String? verificationId;
+  Future<void> verifyPhoneNumber(
+      {required String phoneNumber,
+      required void Function(String, int?) codeSent}) async {
     await FirebaseAuth.instance.verifyPhoneNumber(
         phoneNumber: "+55 " + phoneNumber,
         verificationCompleted: (PhoneAuthCredential credential) {},
@@ -59,12 +60,9 @@ class LoginRepository {
             print('The provided phone number is not valid.');
           }
         },
-        codeSent: (String verificationId, int? resendToken) async {
-          verificationId = verificationId;
-        },
+        codeSent: codeSent,
         codeAutoRetrievalTimeout: (String verificationId) {},
         timeout: Duration(seconds: 60));
-    return verificationId;
   }
 
   Future verifyCode(String verificationId, String smsCode) async {

@@ -25,4 +25,34 @@ class LoginRepositoryImpl implements ILoginRepository {
       rethrow;
     }
   }
+
+  @override
+  Future<void> verifyPhoneNumber(
+      {required String phoneNumber,
+      required void Function(String p1, int? p2) codeSent,
+      required Function(Exception e) verificationFailed}) async {
+    try {
+      await _datasource.verifyPhoneNumber(
+          phoneNumber: phoneNumber,
+          codeSent: codeSent,
+          verificationFailed: verificationFailed);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> loginWithSmsCode(
+      {required String verificationId,
+      required String smsCode,
+      required phoneNumber}) async {
+    try {
+      await _datasource.loginWithSmsCode(
+          verificationId: verificationId,
+          smsCode: smsCode,
+          phoneNumber: phoneNumber);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
