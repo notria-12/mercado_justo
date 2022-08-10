@@ -39,36 +39,6 @@ mixin _$LoginStore on _LoginStoreBase, Store {
     });
   }
 
-  final _$cpfAtom = Atom(name: '_LoginStoreBase.cpf');
-
-  @override
-  String? get cpf {
-    _$cpfAtom.reportRead();
-    return super.cpf;
-  }
-
-  @override
-  set cpf(String? value) {
-    _$cpfAtom.reportWrite(value, super.cpf, () {
-      super.cpf = value;
-    });
-  }
-
-  final _$passwordAtom = Atom(name: '_LoginStoreBase.password');
-
-  @override
-  String? get password {
-    _$passwordAtom.reportRead();
-    return super.password;
-  }
-
-  @override
-  set password(String? value) {
-    _$passwordAtom.reportWrite(value, super.password, () {
-      super.password = value;
-    });
-  }
-
   final _$verificationIdAtom = Atom(name: '_LoginStoreBase.verificationId');
 
   @override
@@ -99,15 +69,30 @@ mixin _$LoginStore on _LoginStoreBase, Store {
     });
   }
 
+  final _$sendLoginCodeStateAtom =
+      Atom(name: '_LoginStoreBase.sendLoginCodeState');
+
+  @override
+  AppState get sendLoginCodeState {
+    _$sendLoginCodeStateAtom.reportRead();
+    return super.sendLoginCodeState;
+  }
+
+  @override
+  set sendLoginCodeState(AppState value) {
+    _$sendLoginCodeStateAtom.reportWrite(value, super.sendLoginCodeState, () {
+      super.sendLoginCodeState = value;
+    });
+  }
+
   @override
   String toString() {
     return '''
 phoneNumber: ${phoneNumber},
 code: ${code},
-cpf: ${cpf},
-password: ${password},
 verificationId: ${verificationId},
-loginState: ${loginState}
+loginState: ${loginState},
+sendLoginCodeState: ${sendLoginCodeState}
     ''';
   }
 }

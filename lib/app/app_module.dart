@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mercado_justo/app/../shared/controllers/config_store.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/app/../shared/controllers/position_store.dart';

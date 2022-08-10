@@ -8,13 +8,15 @@
             "name": "mercado_justo",
             "request": "launch",
             "type": "dart",
-            "args": [ "--dart-define", "BASE_URL=https://mercado-justo-api.herokuapp.com/mercado-justo/api/v1/"]
+            "args": [ "--dart-define", "BASE_URL=https://mercado-justo.herokuapp.com/mercado-justo/api/v1/"]
         },
+        //http://localhost:3000/mercado-justo/api/v1/
+        //https://mercado-justo-api.herokuapp.com/mercado-justo/api/v1/
         {
             "name": "mercado_justo (profile mode)",
             "request": "launch",
             "type": "dart",
-            "args": [ "--dart-define", "BASE_URL=https://mercado-justo-api.herokuapp.com/mercado-justo/api/v1/"],
+            "args": [ "--dart-define", "BASE_URL=https://mercado-justo.herokuapp.com/mercado-justo/api/v1/"],
             "flutterMode": "profile"
         },
         {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/app/modules/home_auth/widgets/custom_button_widget.dart';
-import 'package:mercado_justo/app/modules/login/pages/code_by_email_page.dart';
+import 'package:mercado_justo/app/modules/login/presenter/pages/code_by_email_page.dart';
 import 'package:mercado_justo/shared/controllers/list_store.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/widgets/bottonsheets.dart';

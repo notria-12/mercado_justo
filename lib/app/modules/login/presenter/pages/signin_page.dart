@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:mercado_justo/app/modules/login/login_store.dart';
+import 'package:mercado_justo/app/modules/login/presenter/controllers/login_store.dart';
+
 import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/utils/input_formaters.dart';
-
 import 'package:mercado_justo/shared/widgets/custom_text_input_widget.dart';
+import 'package:mobx/mobx.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({Key? key}) : super(key: key);
@@ -15,14 +15,38 @@ class SignInPage extends StatefulWidget {
   State<SignInPage> createState() => _SignInPageState();
 }
 
-class _SignInPageState extends ModularState<SignInPage, LoginStore> {
+class _SignInPageState extends State<SignInPage> {
   final _formKey = GlobalKey<FormState>();
+  final _loginBySmsCode = Modular.get<LoginStore>();
+
+  late ReactionDisposer _disposer;
+
+  @override
+  void initState() {
+    super.initState();
+    _disposer = autorun((_) {
+      if (_loginBySmsCode.sendLoginCodeState is AppStateError) {
+        final stateError = _loginBySmsCode.sendLoginCodeState as AppStateError;
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(stateError.error.message)));
+      }
+      if (_loginBySmsCode.sendLoginCodeState is AppStateSuccess) {
+        Modular.to.pushNamed('/login/receivedCode/');
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _disposer();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Bem vindo!'),
+        title: const Text('Bem vindo!'),
         backgroundColor: Colors.green,
         centerTitle: true,
       ),
@@ -63,7 +87,7 @@ class _SignInPageState extends ModularState<SignInPage, LoginStore> {
                 label: 'Seu celular com DD',
                 hintText: 'DDD + número',
                 icon: const Icon(Icons.phone),
-                onSave: (input) => store.phoneNumber = input,
+                onSave: (input) => _loginBySmsCode.phoneNumber = input,
               ),
               const SizedBox(
                 height: 20,
@@ -72,8 +96,11 @@ class _SignInPageState extends ModularState<SignInPage, LoginStore> {
                 height: 50,
                 width: double.maxFinite,
                 child: Observer(builder: (_) {
-                  return store.loginState != AppStateLoading
-                      ? ElevatedButton(
+                  return _loginBySmsCode.sendLoginCodeState is AppStateLoading
+                      ? const Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : ElevatedButton(
                           child: const Text(
                             'Enviar código',
                             style: TextStyle(fontSize: 16),
@@ -82,13 +109,11 @@ class _SignInPageState extends ModularState<SignInPage, LoginStore> {
                             final formState = _formKey.currentState!;
                             if (formState.validate()) {
                               formState.save();
-                              store.verifyPhoneNumber().then((value) =>
-                                  Modular.to.pushNamed('/login/receivedCode/'));
+                              _loginBySmsCode
+                                  .verifyPhoneNumber()
+                                  .then((value) {});
                             }
                           },
-                        )
-                      : Center(
-                          child: CircularProgressIndicator(),
                         );
                 }),
               ),
@@ -128,7 +153,7 @@ class _SignInPageState extends ModularState<SignInPage, LoginStore> {
                     Modular.to.pushNamed('/login/codeEmail/');
                   },
                   child: const Text(
-                    'Não estou com acesso ao meu celular',
+                    'Acessar com meu email',
                     style: TextStyle(
                         decoration: TextDecoration.underline,
                         color: Colors.grey,

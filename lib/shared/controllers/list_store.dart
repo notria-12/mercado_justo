@@ -6,6 +6,7 @@ import 'package:mercado_justo/shared/models/market_model.dart';
 import 'package:mercado_justo/shared/models/product_list_model.dart';
 import 'package:mercado_justo/shared/models/product_model.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
+import 'package:mercado_justo/shared/utils/error.dart';
 import 'package:mobx/mobx.dart';
 
 import 'package:mercado_justo/shared/repositories/list_repository.dart';
@@ -165,7 +166,7 @@ abstract class _ListStoreBase with Store {
       product_list = await _repository.getAllLists();
       listState = AppStateSuccess();
     } catch (e) {
-      listState = AppStateError();
+      listState = AppStateError(error: Failure(title: '', message: ''));
       rethrow;
     }
   }
@@ -205,7 +206,8 @@ abstract class _ListStoreBase with Store {
       Modular.to.pop();
       prices = [];
     } catch (e) {
-      updateQuantityStatus = AppStateError();
+      updateQuantityStatus =
+          AppStateError(error: Failure(title: '', message: ''));
       rethrow;
     }
   }
@@ -263,7 +265,7 @@ abstract class _ListStoreBase with Store {
       // }
       productState = AppStateSuccess();
     } catch (e) {
-      productState = AppStateError();
+      productState = AppStateError(error: Failure(title: '', message: ''));
       rethrow;
     }
   }

@@ -9,6 +9,7 @@ class CustomTextInput extends StatefulWidget {
   TextInputType? inputType;
   final FormFieldValidator<String>? validator;
   final FormFieldValidator<String>? onSave;
+  final TextEditingController? controller;
   CustomTextInput(
       {Key? key,
       required this.label,
@@ -17,7 +18,8 @@ class CustomTextInput extends StatefulWidget {
       this.inputFotmatters,
       this.validator,
       this.inputType,
-      this.onSave})
+      this.onSave,
+      this.controller})
       : super(key: key);
 
   @override
@@ -40,6 +42,7 @@ class _CustomTextInputState extends State<CustomTextInput> {
         ),
         Container(
           child: TextFormField(
+            controller: widget.controller,
             onSaved: widget.onSave,
             inputFormatters: widget.inputFotmatters,
             keyboardType: widget.inputType,
