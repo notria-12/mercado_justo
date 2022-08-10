@@ -1,7 +1,5 @@
-import 'package:mercado_justo/app//modules/login/presenter/controllers/teste_store.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:mercado_justo/app//modules/login/presenter/controllers/login_by_sms_code_store.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/app/modules/login/domain/repositories/i_login_repository.dart';
 import 'package:mercado_justo/app/modules/login/domain/usecases/login_with_email_code_usecase.dart';
 import 'package:mercado_justo/app/modules/login/domain/usecases/login_with_sms_code_usecase.dart';
@@ -10,21 +8,18 @@ import 'package:mercado_justo/app/modules/login/domain/usecases/verify_phone_num
 import 'package:mercado_justo/app/modules/login/external/datasources/login_datasource.dart';
 import 'package:mercado_justo/app/modules/login/infra/datasources/i_login_datasource.dart';
 import 'package:mercado_justo/app/modules/login/infra/repositories/login_repository.dart';
-import 'package:mercado_justo/app/modules/login/login_repository.dart';
-import 'package:mercado_justo/app/modules/login/login_store.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/app/modules/login/presenter/controllers/login_by_email_code_store.dart';
+import 'package:mercado_justo/app/modules/login/presenter/controllers/login_store.dart';
 import 'package:mercado_justo/app/modules/login/presenter/pages/code_by_email_page.dart';
+import 'package:mercado_justo/app/modules/login/presenter/pages/received_code_by_email_page.dart';
 import 'package:mercado_justo/app/modules/login/presenter/pages/received_code_page.dart';
 import 'package:mercado_justo/app/modules/login/presenter/pages/signin_page.dart';
-import 'package:mercado_justo/app/modules/login/pages/signup_page.dart';
-import 'package:mercado_justo/app/modules/login/presenter/pages/received_code_by_email_page.dart';
+import 'package:mercado_justo/app/modules/login/presenter/pages/signup_page.dart';
 import 'package:mercado_justo/shared/auth/auth_controller.dart';
 
 class LoginModule extends Module {
   @override
   final List<Bind> binds = [
-    Bind.lazySingleton((i) => TesteStore()),
     //datasources
     Bind.lazySingleton((i) => LoginDatasourceImpl(
           i<Dio>(),
@@ -40,11 +35,7 @@ class LoginModule extends Module {
     //controllers
     Bind.lazySingleton((i) => LoginByEmailCodeStore(
         i<ISendLoginCodeByEmail>(), i<ILoginWithEmailCodeUsecase>())),
-
     Bind.lazySingleton((i) => LoginStore(i(), i())),
-
-    Bind.lazySingleton((i) => LoginRepository(i(), authController: i())),
-    // Bind.singleton((i) => FirebaseAuth.instance)
   ];
 
   @override

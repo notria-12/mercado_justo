@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:mercado_justo/app/modules/login/login_store.dart';
+import 'package:mercado_justo/app/modules/login/presenter/controllers/login_store.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/widgets/custom_text_input_widget.dart';
 import 'package:mobx/mobx.dart';

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:mercado_justo/app/modules/login/login_store.dart';
-import 'package:mercado_justo/app/modules/login/presenter/controllers/login_by_sms_code_store.dart';
-import 'package:mercado_justo/app/modules/login/presenter/controllers/teste_store.dart';
+import 'package:mercado_justo/app/modules/login/presenter/controllers/login_store.dart';
+
 import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/utils/input_formaters.dart';
 import 'package:mercado_justo/shared/widgets/custom_text_input_widget.dart';
@@ -19,7 +18,6 @@ class SignInPage extends StatefulWidget {
 class _SignInPageState extends State<SignInPage> {
   final _formKey = GlobalKey<FormState>();
   final _loginBySmsCode = Modular.get<LoginStore>();
-  // final _loginTeste = Modular.get<TesteStore>();
 
   late ReactionDisposer _disposer;
 
@@ -48,7 +46,7 @@ class _SignInPageState extends State<SignInPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Bem vindo!'),
+        title: const Text('Bem vindo!'),
         backgroundColor: Colors.green,
         centerTitle: true,
       ),
