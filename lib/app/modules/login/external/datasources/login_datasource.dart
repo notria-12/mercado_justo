@@ -53,17 +53,15 @@ class LoginDatasourceImpl implements ILoginDatasource {
       required void Function(String p1, int? p2) codeSent,
       required Function(Exception e) verificationFailed}) async {
     try {
-      await FirebaseAuth.instance
-          .verifyPhoneNumber(
-              phoneNumber: "+55 " + phoneNumber,
-              verificationCompleted: (PhoneAuthCredential credential) {},
-              verificationFailed: verificationFailed,
-              codeSent: codeSent,
-              codeAutoRetrievalTimeout: (String verificationId) {},
-              timeout: const Duration(seconds: 120))
-          .catchError((e) {
-        print(e);
-      });
+      await _dio
+          .post('auth/login/verifica-numero/', data: {'telefone': phoneNumber});
+      await FirebaseAuth.instance.verifyPhoneNumber(
+          phoneNumber: "+55 " + phoneNumber,
+          verificationCompleted: (PhoneAuthCredential credential) {},
+          verificationFailed: verificationFailed,
+          codeSent: codeSent,
+          codeAutoRetrievalTimeout: (String verificationId) {},
+          timeout: const Duration(seconds: 120));
     } on DioError catch (e) {
       throw Failure(title: 'Erro login', message: e.response!.data['mensagem']);
     } on Failure catch (e) {
