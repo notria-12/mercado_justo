@@ -1,3 +1,5 @@
+import 'package:mercado_justo/shared/models/user_model.dart';
+
 abstract class ILoginRepository {
   Future<void> sendLoginCodeByEmail({required String email});
   Future<void> loginWithEmailCode(
@@ -10,4 +12,5 @@ abstract class ILoginRepository {
       {required String verificationId,
       required String smsCode,
       required phoneNumber});
+  Future<void> signUpUsecase({required UserModel user});
 }

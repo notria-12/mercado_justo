@@ -54,6 +54,21 @@ mixin _$LoginStore on _LoginStoreBase, Store {
     });
   }
 
+  final _$signupStateAtom = Atom(name: '_LoginStoreBase.signupState');
+
+  @override
+  AppState get signupState {
+    _$signupStateAtom.reportRead();
+    return super.signupState;
+  }
+
+  @override
+  set signupState(AppState value) {
+    _$signupStateAtom.reportWrite(value, super.signupState, () {
+      super.signupState = value;
+    });
+  }
+
   final _$loginStateAtom = Atom(name: '_LoginStoreBase.loginState');
 
   @override
@@ -91,6 +106,7 @@ mixin _$LoginStore on _LoginStoreBase, Store {
 phoneNumber: ${phoneNumber},
 code: ${code},
 verificationId: ${verificationId},
+signupState: ${signupState},
 loginState: ${loginState},
 sendLoginCodeState: ${sendLoginCodeState}
     ''';

@@ -1,5 +1,6 @@
 import 'package:mercado_justo/app/modules/login/domain/repositories/i_login_repository.dart';
 import 'package:mercado_justo/app/modules/login/infra/datasources/i_login_datasource.dart';
+import 'package:mercado_justo/shared/models/user_model.dart';
 
 class LoginRepositoryImpl implements ILoginRepository {
   final ILoginDatasource _datasource;
@@ -51,6 +52,15 @@ class LoginRepositoryImpl implements ILoginRepository {
           verificationId: verificationId,
           smsCode: smsCode,
           phoneNumber: phoneNumber);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> signUpUsecase({required UserModel user}) async {
+    try {
+      await _datasource.signUpUsecase(user: user);
     } catch (e) {
       rethrow;
     }

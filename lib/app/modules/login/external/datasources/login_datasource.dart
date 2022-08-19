@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:mercado_justo/app/modules/login/infra/datasources/i_login_datasource.dart';
 import 'package:mercado_justo/shared/auth/auth_controller.dart';
+import 'package:mercado_justo/shared/models/user_model.dart';
 import 'package:mercado_justo/shared/utils/error.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -98,6 +99,19 @@ class LoginDatasourceImpl implements ILoginDatasource {
       throw Failure(
           title: 'Erro login',
           message: 'Erro! Verique se você preencheu o código corretamente!');
+    }
+  }
+
+  @override
+  Future<void> signUpUsecase({required UserModel user}) async {
+    try {
+      await _dio.post('usuarios/app/', data: user.toJson());
+    } on DioError catch (e) {
+      throw Failure(title: 'Erro login', message: e.response!.data['mensagem']);
+    } catch (e) {
+      throw Failure(
+          title: 'Erro login',
+          message: 'Não foi possível realizar o cadastro!');
     }
   }
 }
