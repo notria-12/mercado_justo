@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:mercado_justo/app/modules/login/infra/datasources/i_login_datasource.dart';
 import 'package:mercado_justo/shared/auth/auth_controller.dart';
+import 'package:mercado_justo/shared/models/user_model.dart';
 import 'package:mercado_justo/shared/utils/error.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -53,17 +54,15 @@ class LoginDatasourceImpl implements ILoginDatasource {
       required void Function(String p1, int? p2) codeSent,
       required Function(Exception e) verificationFailed}) async {
     try {
-      await FirebaseAuth.instance
-          .verifyPhoneNumber(
-              phoneNumber: "+55 " + phoneNumber,
-              verificationCompleted: (PhoneAuthCredential credential) {},
-              verificationFailed: verificationFailed,
-              codeSent: codeSent,
-              codeAutoRetrievalTimeout: (String verificationId) {},
-              timeout: const Duration(seconds: 120))
-          .catchError((e) {
-        print(e);
-      });
+      await _dio
+          .post('auth/login/verifica-numero/', data: {'telefone': phoneNumber});
+      await FirebaseAuth.instance.verifyPhoneNumber(
+          phoneNumber: "+55 " + phoneNumber,
+          verificationCompleted: (PhoneAuthCredential credential) {},
+          verificationFailed: verificationFailed,
+          codeSent: codeSent,
+          codeAutoRetrievalTimeout: (String verificationId) {},
+          timeout: const Duration(seconds: 120));
     } on DioError catch (e) {
       throw Failure(title: 'Erro login', message: e.response!.data['mensagem']);
     } on Failure catch (e) {
@@ -100,6 +99,19 @@ class LoginDatasourceImpl implements ILoginDatasource {
       throw Failure(
           title: 'Erro login',
           message: 'Erro! Verique se você preencheu o código corretamente!');
+    }
+  }
+
+  @override
+  Future<void> signUpUsecase({required UserModel user}) async {
+    try {
+      await _dio.post('usuarios/app/', data: user.toJson());
+    } on DioError catch (e) {
+      throw Failure(title: 'Erro login', message: e.response!.data['mensagem']);
+    } catch (e) {
+      throw Failure(
+          title: 'Erro login',
+          message: 'Não foi possível realizar o cadastro!');
     }
   }
 }

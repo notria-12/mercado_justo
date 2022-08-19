@@ -11,7 +11,7 @@ class CustomDioBrowser extends DioForBrowser {
         defaultValue:
             "https://mercado-justo-api.herokuapp.com/mercado-justo/api/v1/");
     options.baseUrl = baseUrl;
-    options.headers.addAll({"X-App-Origem": "ADMIN_MERCADO_JUSTO"});
+    options.headers.addAll({"X-App-Origem": "APP_MERCADO_JUSTO"});
     interceptors.addAll([
       AppLogInterceptor(),
       TokenInterceptor(),

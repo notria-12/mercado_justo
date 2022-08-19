@@ -9,7 +9,7 @@ class CustomDioNative extends DioForNative {
   CustomDioNative() {
     const baseUrl = String.fromEnvironment("BASE_URL");
     options.baseUrl = baseUrl;
-    options.headers.addAll({"X-App-Origem": "ADMIN_MERCADO_JUSTO"});
+    options.headers.addAll({"X-App-Origem": "APP_MERCADO_JUSTO"});
     interceptors.addAll([
       AppLogInterceptor(),
       TokenInterceptor(),
