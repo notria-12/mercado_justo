@@ -13,8 +13,14 @@ abstract class _PriceStoreBase with Store {
     required this.repository,
   });
 
-  @override
+  @observable
   AppState priceStatus = AppStateEmpty();
+
+  @observable
+  AppState allPriceStatus = AppStateEmpty();
+
+  @observable
+  List<List<String>> prices = [];
 
   Future<String> getProductPriceByMarket(
       {required int marketId, required String barCode}) async {
@@ -26,6 +32,21 @@ abstract class _PriceStoreBase with Store {
       return price.price;
     } catch (e) {
       priceStatus = AppStateError(error: Failure(title: '', message: ''));
+      rethrow;
+    }
+  }
+
+  Future<void> getProductPriceByMarkets(
+      {required List<String> productIds, required List<int> marketIds}) async {
+    try {
+      allPriceStatus = AppStateLoading();
+      var pricesAux = await repository.getProductPricesByMarkets(
+          productIds: productIds, marketIds: marketIds);
+      prices = pricesAux!
+          .map((element) => element.map((e) => e.price).toList())
+          .toList();
+      allPriceStatus = AppStateSuccess();
+    } catch (e) {
       rethrow;
     }
   }

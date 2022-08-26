@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:mercado_justo/shared/models/price_model.dart';
 import 'package:mercado_justo/shared/models/product_model.dart';
+import 'package:mercado_justo/shared/utils/error.dart';
 
 class PriceRepository {
   Dio dio;
@@ -32,6 +33,33 @@ class PriceRepository {
     } catch (e) {
       //TODO
       rethrow;
+    }
+  }
+
+  Future<List<List<Price>>?> getProductPricesByMarkets(
+      {required List<String> productIds, required List<int> marketIds}) async {
+    try {
+      String ids =
+          marketIds.toString().replaceAll('[', "").replaceAll(']', "").trim();
+      String products = productIds
+          .toString()
+          .replaceAll('[', "")
+          .replaceAll(']', "")
+          .replaceAll(' ', "");
+      var result = await dio
+          .get('precos/specifics-prices?productIds=$products&marketIds=$ids');
+      List pricesAux = result.data['dados'] as List;
+      // var pricesByProducts = pricesAux;
+      List<List<Price>> prices = pricesAux
+          .map((element) => (element as List).map((e) {
+                return Price.fromMap(e);
+              }).toList())
+          .toList();
+
+      return prices;
+    } catch (e) {
+      Failure(
+          message: 'Não foi possível listar os preços', title: 'Erro preços');
     }
   }
 }

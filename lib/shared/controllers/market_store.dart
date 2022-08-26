@@ -56,6 +56,7 @@ abstract class _MarketStoreBase with Store {
 
   void setMarkets() {
     markets = groupMarkets.map((e) => getShorterDistance(e)).toList();
+    markets.sort((a, b) => a.id - b.id);
   }
 
   Market getShorterDistance(List<Market> markets) {

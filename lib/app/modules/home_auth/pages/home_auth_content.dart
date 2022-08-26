@@ -7,6 +7,7 @@ import 'package:mercado_justo/shared/controllers/market_store.dart';
 import 'package:mercado_justo/shared/controllers/price_store.dart';
 import 'package:mercado_justo/shared/controllers/product_store.dart';
 import 'package:mercado_justo/shared/controllers/product_to_list_store.dart';
+import 'package:mercado_justo/shared/models/price_model.dart';
 import 'package:mercado_justo/shared/models/product_model.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/widgets/bottonsheets.dart';
@@ -26,6 +27,8 @@ class HomeAuthContent extends StatefulWidget {
 class _HomeAuthContentState extends State<HomeAuthContent> {
   final productStore = Modular.get<ProductStore>();
   final marketStore = Modular.get<MarketStore>();
+  PriceStore priceStore = Modular.get<PriceStore>();
+
   final TextEditingController _quantityController =
       TextEditingController(text: '1');
 
@@ -168,117 +171,159 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                   );
                 } else {
                   if (productStore.products.isNotEmpty) {
-                    return CustomDataTable(
-                      loadMoreWidget:
-                          productStore.productState is AppStateLoading
-                              ? Container(
-                                  height: 40,
-                                  child: Center(
-                                    child: CircularProgressIndicator(),
-                                  ),
-                                )
-                              : LoadMoreButton(loadMoreItens: (() {
-                                  productStore.onlyButtonLoadMore = true;
-                                  if (productStore.isSearch) {
-                                    productStore.getProductsByDescription(
-                                        description: _searchController.text,
-                                        isNewSearch: false);
-                                  } else {
-                                    productStore.getAllProducts();
-                                  }
-                                })),
-                      loadMoreColumns: () {
-                        // marketStore.getAllMarkets();
-                      },
-                      loadMore: productStore.canLoadMore,
-                      cellHeight: 135,
-                      fixedCornerCell: FixedCorner(),
-                      rowsCells: [
-                        ...List.generate(productStore.products.length, (index) {
-                          return [
-                            Text(productStore.products[index].description),
-                            ...marketStore.markets
-                                .map((e) => GetPrice(
-                                      marketId: e.id,
-                                      productBarCode: productStore
-                                          .products[index].barCode.first,
-                                    ))
-                                .toList()
-                          ];
-                        })
-                      ],
-                      fixedColCells: List.generate(
-                          productStore.products.length,
-                          (index) => InkWell(
-                                onTap: () {
-                                  showDialogProductDetail(
-                                      context, productStore.products[index]);
-                                },
-                                child: Container(
-                                    width: 80,
-                                    child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Container(
-                                            height: 90,
-                                            child: Image.network(
-                                              productStore
-                                                  .products[index].imagePath!,
-                                              errorBuilder:
-                                                  (context, error, stackTrace) {
-                                                return Image.asset(
-                                                    'assets/img/image_not_found.jpg');
-                                              },
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: 12,
-                                          ),
-                                          Row(
+                    priceStore.getProductPriceByMarkets(
+                        productIds:
+                            productStore.products.map((e) => e.id).toList(),
+                        marketIds:
+                            marketStore.markets.map((m) => m.id).toList());
+                    return Observer(
+                      builder: (_) {
+                        if (priceStore.allPriceStatus is AppStateLoading) {
+                          return Center(
+                            child: Column(
+                              children: [
+                                Text(
+                                    "Aguarde enquanto os preços são carregados..."),
+                                SizedBox(
+                                  height: 8,
+                                ),
+                                CircularProgressIndicator()
+                              ],
+                              mainAxisAlignment: MainAxisAlignment.center,
+                            ),
+                          );
+                        }
+                        return CustomDataTable(
+                          loadMoreWidget:
+                              productStore.productState is AppStateLoading
+                                  ? Container(
+                                      height: 40,
+                                      child: Center(
+                                        child: CircularProgressIndicator(),
+                                      ),
+                                    )
+                                  : LoadMoreButton(loadMoreItens: (() {
+                                      productStore.onlyButtonLoadMore = true;
+                                      if (productStore.isSearch) {
+                                        productStore.getProductsByDescription(
+                                            description: _searchController.text,
+                                            isNewSearch: false);
+                                      } else {
+                                        productStore.getAllProducts();
+                                      }
+                                    })),
+                          loadMoreColumns: () {
+                            // marketStore.getAllMarkets();
+                          },
+                          loadMore: productStore.canLoadMore,
+                          cellHeight: 135,
+                          fixedCornerCell: FixedCorner(),
+                          rowsCells: [
+                            ...List.generate(productStore.products.length,
+                                (index) {
+                              return [
+                                Text(productStore.products[index].description),
+                                // Observer(
+                                //   builder: (_) {
+                                //     if (store.priceStatus is AppStateSuccess)
+                                //       return List.generate(
+                                //           store.prices.length,
+                                //           (index) => Text(
+                                //               store.prices[index] ?? 'Em falta'));
+                                //     return Container();
+                                //   },
+                                // )
+                                // if (store.priceStatus is AppStateLoading)
+                                //   ...marketStore.markets
+                                //       .map((e) => Center(
+                                //             child: CircularProgressIndicator(),
+                                //           ))
+                                //       .toList(),
+
+                                ...priceStore.prices[index].map((e) => Center(
+                                    child: Text(e.isEmpty || e == 'R\$ 0,00'
+                                        ? 'Em Falta'
+                                        : e)))
+                              ];
+                            })
+                          ],
+                          fixedColCells: List.generate(
+                              productStore.products.length,
+                              (index) => InkWell(
+                                    onTap: () {
+                                      showDialogProductDetail(context,
+                                          productStore.products[index]);
+                                    },
+                                    child: Container(
+                                        width: 80,
+                                        child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
                                             children: [
                                               Container(
-                                                height: 20,
-                                                width: 20,
-                                                decoration: BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    color: Colors.lightBlue),
-                                                child: Center(
-                                                    child: Icon(
-                                                  Icons.add,
-                                                  color: Colors.white,
-                                                  size: 18,
-                                                )),
+                                                height: 90,
+                                                child: Image.network(
+                                                  productStore.products[index]
+                                                      .imagePath!,
+                                                  errorBuilder: (context, error,
+                                                      stackTrace) {
+                                                    return Image.asset(
+                                                        'assets/img/image_not_found.jpg');
+                                                  },
+                                                ),
                                               ),
                                               SizedBox(
-                                                width: 4,
+                                                height: 12,
                                               ),
-                                              Text('Add Lista')
-                                            ],
-                                          )
-                                        ])),
-                              )),
-                      fixedRowCells: [
-                        Container(),
-                        ...List.generate(
-                            marketStore.markets.length,
-                            (index) => InkWell(
-                                  onTap: () {
-                                    Modular.to.pushNamed('/home/marketDetail/',
-                                        arguments: marketStore.markets[index]);
-                                  },
-                                  child: Container(
-                                    width: 100,
-                                    child: Image.network(
-                                        marketStore.markets[index].imagePath!),
-                                  ),
-                                ))
-                      ],
-                      cellBuilder: (data) {
-                        return Center(
-                          child: Text(
-                            '$data',
-                          ),
+                                              Row(
+                                                children: [
+                                                  Container(
+                                                    height: 20,
+                                                    width: 20,
+                                                    decoration: BoxDecoration(
+                                                        shape: BoxShape.circle,
+                                                        color:
+                                                            Colors.lightBlue),
+                                                    child: Center(
+                                                        child: Icon(
+                                                      Icons.add,
+                                                      color: Colors.white,
+                                                      size: 18,
+                                                    )),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 4,
+                                                  ),
+                                                  Text('Add Lista')
+                                                ],
+                                              )
+                                            ])),
+                                  )),
+                          fixedRowCells: [
+                            Container(),
+                            ...List.generate(
+                                marketStore.markets.length,
+                                (index) => InkWell(
+                                      onTap: () {
+                                        Modular.to.pushNamed(
+                                            '/home/marketDetail/',
+                                            arguments:
+                                                marketStore.markets[index]);
+                                      },
+                                      child: Container(
+                                        width: 100,
+                                        child: Image.network(marketStore
+                                            .markets[index].imagePath!),
+                                      ),
+                                    ))
+                          ],
+                          cellBuilder: (data) {
+                            return Center(
+                              child: Text(
+                                '$data',
+                              ),
+                            );
+                          },
                         );
                       },
                     );

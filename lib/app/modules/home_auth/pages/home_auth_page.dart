@@ -38,6 +38,12 @@ class HomeAuthPageState extends ModularState<HomeAuthPage, HomeAuthStore> {
   }
 
   @override
+  void dispose() {
+    _disposer();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Observer(
       builder: (_) {
