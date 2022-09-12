@@ -1,8 +1,10 @@
 import 'package:mercado_justo/shared/controllers/market_store.dart';
 import 'package:mercado_justo/shared/controllers/price_store.dart';
 import 'package:mercado_justo/shared/models/market_model.dart';
+import 'package:mercado_justo/shared/models/price_model.dart';
 import 'package:mercado_justo/shared/models/product_model.dart';
 import 'package:mercado_justo/shared/repositories/list_repository.dart';
+import 'package:mercado_justo/shared/repositories/price_repository.dart';
 import 'package:mobx/mobx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -12,11 +14,13 @@ class CompareStore = _CompareStoreBase with _$CompareStore;
 
 abstract class _CompareStoreBase with Store {
   ListRepository repository;
-  final PriceStore priceStore;
+  final PriceRepository priceRepository;
+  // final PriceStore priceStore;
   final MarketStore marketStore;
   _CompareStoreBase({
     required this.repository,
-    required this.priceStore,
+    // required this.priceStore,
+    required this.priceRepository,
     required this.marketStore,
   });
 
@@ -66,23 +70,36 @@ abstract class _CompareStoreBase with Store {
     List<List<Map<String, dynamic>>> listPricesAux = [];
 
     try {
-      for (int i = 0; i < products.length; i++) {
+      List<List<Price>>? pricesAux =
+          await priceRepository.getProductPricesByMarkets(
+              productIds: products.map((e) => e.id).toList(),
+              marketIds: marketStore.filteredMarkets
+                  .where(
+                    (element) => element.isSelectable,
+                  )
+                  .map((e) => e.id)
+                  .toList());
+      for (int i = 0; i < pricesAux!.length; i++) {
         List<Map<String, dynamic>> pricesByProducts = [];
-        for (Market market in marketStore.filteredMarkets
-            .where((element) => element.isSelectable == true)
-            .toList()) {
-          String? price = await priceStore.getProductPriceByMarket(
-              marketId: market.id, barCode: products[i].barCode.first);
+        for (Price currentPrice in pricesAux[i]) {
           int quantity = await getQuantity(listId!, products[i].productId!);
+          String marketId = marketStore.filteredMarkets
+              .where(
+                (element) => element.isSelectable,
+              )
+              .firstWhere((element) => element.id == currentPrice.idMarket,
+                  orElse: () => marketStore.filteredMarkets[0])
+              .hashId;
           pricesByProducts.add({
-            "market_id": market.hashId,
-            "value": price,
+            "market_id": marketId,
+            "value": currentPrice.price,
             "product_id": products[i].toMap(),
             "quantity": quantity
           });
         }
         listPricesAux.add([...pricesByProducts]);
       }
+
       prices = listPricesAux;
     } catch (e) {
       rethrow;
@@ -152,7 +169,7 @@ abstract class _CompareStoreBase with Store {
     return groupProducts;
   }
 
-  double _parseToDouble(String value) => value.isEmpty
+  double _parseToDouble(String value) => value.isEmpty || value == 'Em Falta'
       ? 0
       : double.parse(value.replaceAll(r'R$ ', '').replaceAll(r',', '.'));
 

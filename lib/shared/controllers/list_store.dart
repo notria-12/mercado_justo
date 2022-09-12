@@ -319,6 +319,7 @@ abstract class _ListStoreBase with Store {
       prices = listPricesAux!
           .map((element) => element.map((e) => e.price).toList())
           .toList();
+      print(prices);
     } catch (e) {
       rethrow;
     }

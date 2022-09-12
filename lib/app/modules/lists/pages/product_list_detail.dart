@@ -636,7 +636,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                                 const SizedBox(
                                   height: 20,
                                 ),
-                                e.isEmpty || e == 'R\$ 0,00'
+                                e.isEmpty || e == 'R\$ 0,00' || e == 'Em Falta'
                                     ? const Text(
                                         'Sugestão?',
                                         style: TextStyle(
