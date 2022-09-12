@@ -36,8 +36,11 @@ class LoginDatasourceImpl implements ILoginDatasource {
           data: {"token": code, "email": email},
           options: Options(headers: {"X-App-Origem": "SWAGGER_MERCADO_JUSTO"}));
       _authController.updateToken(result.data['dados']['access_token']);
+      UserModel? user = UserModel.fromMap(result.data['dados']['usuario']);
+      _authController.setUser(user);
       SharedPreferences preferences = await SharedPreferences.getInstance();
       preferences.setString('token', _authController.token);
+      preferences.setString('user', user.toJson());
       _authController.update(AuthState.authenticated);
     } on DioError catch (e) {
       throw Failure(title: 'Erro login', message: e.response!.data['mensagem']);
@@ -91,8 +94,11 @@ class LoginDatasourceImpl implements ILoginDatasource {
         data: {"firebase_token": token, "phone": phoneNumber},
       );
       _authController.updateToken(result.data['dados']['access_token']);
+      UserModel? user = UserModel.fromMap(result.data['dados']['usuario']);
+      _authController.setUser(user);
       SharedPreferences preferences = await SharedPreferences.getInstance();
       preferences.setString('token', _authController.token);
+      preferences.setString('user', user.toJson());
       _authController.update(AuthState.authenticated);
     } catch (e) {
       throw Failure(

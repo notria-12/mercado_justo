@@ -159,7 +159,7 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                     !productStore.onlyButtonLoadMore) {
                   return Center(
                     child: Column(
-                      children: [
+                      children: const [
                         Text("Os produtos estão sendo carregados..."),
                         SizedBox(
                           height: 8,
@@ -181,7 +181,7 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                         if (priceStore.allPriceStatus is AppStateLoading) {
                           return Center(
                             child: Column(
-                              children: [
+                              children: const [
                                 Text(
                                     "Aguarde enquanto os preços são carregados..."),
                                 SizedBox(

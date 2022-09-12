@@ -300,7 +300,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                           switch (snapshot.connectionState) {
                             case ConnectionState.none:
                             case ConnectionState.waiting:
-                              return Center(
+                              return const Center(
                                 child: CircularProgressIndicator(),
                               );
                             case ConnectionState.done:
@@ -405,20 +405,18 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                 });
               },
             ),
-            Observer(builder: (_) {
-              return ButtonOptionsListDetail(
-                label: 'Meu Preço Justo',
-                tapped: storeProductList.isFairPrice,
-                onTap: () {
-                  storeProductList.isFairPrice = !storeProductList.isFairPrice;
-                  if (storeProductList.isFairPrice) {
-                    storeProductList.marketSelected = -1;
-                  } else {
-                    storeProductList.marketSelected = 0;
-                  }
-                },
-              );
-            }),
+            ButtonOptionsListDetail(
+              label: 'Meu Preço Justo',
+              tapped: storeProductList.isFairPrice,
+              onTap: () {
+                storeProductList.isFairPrice = !storeProductList.isFairPrice;
+                if (storeProductList.isFairPrice) {
+                  storeProductList.marketSelected = -1;
+                } else {
+                  storeProductList.marketSelected = 0;
+                }
+              },
+            ),
             ButtonOptionsListDetail(
               label: 'Editar',
               onTap: () {

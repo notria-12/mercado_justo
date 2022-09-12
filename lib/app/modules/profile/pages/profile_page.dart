@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/app/modules/profile/widgets/button_profile_option.dart';
+import 'package:mercado_justo/shared/auth/auth_controller.dart';
 import 'package:mercado_justo/shared/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -13,6 +14,7 @@ class ProfilePage extends StatefulWidget {
 }
 
 class ProfilePageState extends State<ProfilePage> {
+  final _authController = Modular.get<AuthController>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,14 +51,14 @@ class ProfilePageState extends State<ProfilePage> {
                 height: 20,
               ),
               Text(
-                'Rodrigo Luiz',
+                _authController.user!.name,
                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
               ),
               SizedBox(
                 height: 10,
               ),
               Text(
-                'rodrigoacad@gmail.com',
+                _authController.user!.email,
                 style: TextStyle(
                     color: Colors.black26, fontWeight: FontWeight.w500),
               ),
