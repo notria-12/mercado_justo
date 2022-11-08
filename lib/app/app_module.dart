@@ -8,6 +8,8 @@ import 'package:mercado_justo/app/modules/profile/profile_module.dart';
 import 'package:mercado_justo/app/modules/signature/signature_module.dart';
 import 'package:mercado_justo/app/splash_page.dart';
 import 'package:mercado_justo/shared/auth/auth_controller.dart';
+import 'package:mercado_justo/shared/controllers/signature_store.dart';
+import 'package:mercado_justo/shared/repositories/signature_repository.dart';
 
 import '../shared/services/dio/custom_dio.dart'
     if (dart.library.io) '../shared/services/dio/custom_dio_native.dart'
@@ -22,7 +24,9 @@ class AppModule extends Module {
     Bind.lazySingleton((i) => FilterStore()),
     Bind.lazySingleton((i) => PositionStore()),
     Bind.singleton((i) => getDioInstance()),
-    Bind.singleton((i) => AuthController()),
+    Bind.singleton((i) => AuthController(signatureStore: i())),
+    Bind.singleton((i) => SignatureStore(i())),
+    Bind.singleton((i) => SignatureRepository(i()))
   ];
 
   @override

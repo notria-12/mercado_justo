@@ -1,4 +1,5 @@
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:mercado_justo/shared/controllers/signature_store.dart';
 import 'package:mercado_justo/shared/models/user_model.dart';
 import 'package:mobx/mobx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -11,7 +12,8 @@ enum AuthState { authenticated, unauthenticated }
 
 abstract class _AuthControllerBase extends Disposable with Store {
   late ReactionDisposer disposer;
-  _AuthControllerBase() {
+  SignatureStore signatureStore;
+  _AuthControllerBase({required this.signatureStore}) {
     init();
     disposer = autorun((_) {
       if (state == AuthState.authenticated) {
@@ -59,6 +61,7 @@ abstract class _AuthControllerBase extends Disposable with Store {
     if (preferences.containsKey("token") && preferences.containsKey('user')) {
       updateToken(preferences.getString("token")!);
       setUser(UserModel.fromJson(preferences.getString('user')!));
+      signatureStore.getSignature(userId: user!.id);
       update(AuthState.authenticated);
     } else {
       update(AuthState.unauthenticated);

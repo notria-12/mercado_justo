@@ -7,8 +7,10 @@ import 'package:mercado_justo/app/modules/home_auth/home_auth_store.dart';
 import 'package:mercado_justo/app/modules/home_auth/pages/home_auth_content.dart';
 import 'package:mercado_justo/app/modules/home_auth/widgets/custom_drawer.dart';
 import 'package:mercado_justo/app/modules/lists/pages/product_list_page.dart';
+import 'package:mercado_justo/shared/auth/auth_controller.dart';
 import 'package:mercado_justo/shared/controllers/market_store.dart';
 import 'package:mercado_justo/shared/controllers/position_store.dart';
+import 'package:mercado_justo/shared/controllers/signature_store.dart';
 import 'package:mercado_justo/shared/models/market_model.dart';
 import 'package:mobx/mobx.dart';
 
@@ -35,6 +37,8 @@ class HomeAuthPageState extends ModularState<HomeAuthPage, HomeAuthStore> {
     _disposer = reaction((_) => storePosition.position, (_) {
       Modular.get<MarketStore>().setMarkets();
     });
+    Modular.get<SignatureStore>()
+        .getSignature(userId: Modular.get<AuthController>().user!.id);
   }
 
   @override

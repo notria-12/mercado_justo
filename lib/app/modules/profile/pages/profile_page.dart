@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/app/modules/profile/widgets/button_profile_option.dart';
 import 'package:mercado_justo/shared/auth/auth_controller.dart';
+import 'package:mercado_justo/shared/controllers/signature_store.dart';
 import 'package:mercado_justo/shared/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -15,6 +16,8 @@ class ProfilePage extends StatefulWidget {
 
 class ProfilePageState extends State<ProfilePage> {
   final _authController = Modular.get<AuthController>();
+  final _signatureController = Modular.get<SignatureStore>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,7 +73,10 @@ class ProfilePageState extends State<ProfilePage> {
                     color: Colors.lightBlue,
                     borderRadius: BorderRadius.circular(4)),
                 child: Text(
-                  'CONTA FREE',
+                  _signatureController.signature != null &&
+                          _signatureController.signature!.status
+                      ? 'CONTA PREMIUM'
+                      : 'CONTA FREE',
                   style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w500,
@@ -115,50 +121,77 @@ class ProfilePageState extends State<ProfilePage> {
               SizedBox(
                 height: 15,
               ),
-              InkWell(
-                onTap: () {
-                  Modular.to.pushNamed('/signature/');
-                },
-                child: Container(
-                  height: 50,
-                  width: 300,
-                  decoration: BoxDecoration(
-                      color: Colors.green,
-                      borderRadius: BorderRadius.circular(4)),
-                  child: Center(
-                      child: Text('Seja Premium',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16))),
-                ),
-              ),
+              _signatureController.signature != null &&
+                      _signatureController.signature!.status
+                  ? Text('Sua assinatura está ativa:',
+                      style: TextStyle(
+                          color: Colors.black26, fontWeight: FontWeight.w500))
+                  : InkWell(
+                      onTap: () {
+                        Modular.to.pushNamed('/signature/');
+                      },
+                      child: Container(
+                        height: 50,
+                        width: 300,
+                        decoration: BoxDecoration(
+                            color: Colors.green,
+                            borderRadius: BorderRadius.circular(4)),
+                        child: Center(
+                            child: Text('Seja Premium',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 16))),
+                      ),
+                    ),
               SizedBox(
                 height: 15,
               ),
-              RichText(
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.ellipsis,
-                  text: TextSpan(
-                      children: [
-                        TextSpan(
-                            text: ' 5 dias ',
-                            style: TextStyle(
-                                color: Colors.red,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600)),
-                        TextSpan(
-                            text: 'de uso gratuito!',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600))
-                      ],
-                      text: 'Restam',
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600)))
+              FutureBuilder<double>(
+                builder: (context, snapshot) {
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.waiting:
+                    case ConnectionState.none:
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+
+                    case ConnectionState.done:
+                      if (snapshot.hasData) {
+                        return RichText(
+                            textAlign: TextAlign.center,
+                            overflow: TextOverflow.ellipsis,
+                            text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                      text: ' ${snapshot.data!.ceil()} dias ',
+                                      style: TextStyle(
+                                          color: Colors.red,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600)),
+                                  TextSpan(
+                                      text: 'de uso!',
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600))
+                                ],
+                                text: 'Restam',
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600)));
+                      } else {
+                        return Container();
+                      }
+
+                    default:
+                      return Container();
+                  }
+                },
+                future: _signatureController.getRemainingDays(
+                    userId: _authController.user!.id),
+              )
             ],
           ),
         ),

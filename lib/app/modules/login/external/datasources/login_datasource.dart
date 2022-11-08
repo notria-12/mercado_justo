@@ -40,7 +40,7 @@ class LoginDatasourceImpl implements ILoginDatasource {
       _authController.setUser(user);
       SharedPreferences preferences = await SharedPreferences.getInstance();
       preferences.setString('token', _authController.token);
-      preferences.setString('user', user.toJson());
+      preferences.setString('user', user.toJsonStorage());
       _authController.update(AuthState.authenticated);
     } on DioError catch (e) {
       throw Failure(title: 'Erro login', message: e.response!.data['mensagem']);
@@ -98,7 +98,7 @@ class LoginDatasourceImpl implements ILoginDatasource {
       _authController.setUser(user);
       SharedPreferences preferences = await SharedPreferences.getInstance();
       preferences.setString('token', _authController.token);
-      preferences.setString('user', user.toJson());
+      preferences.setString('user', user.toJsonStorage());
       _authController.update(AuthState.authenticated);
     } catch (e) {
       throw Failure(

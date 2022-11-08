@@ -158,6 +158,7 @@ class SignUpPageState extends State<SignUpPage> {
                                     if (formState.validate()) {
                                       signUpStore.signUp(
                                           user: UserModel(
+                                              id: '',
                                               name: _nameController.text,
                                               cpf: _cpfController.text,
                                               email: _emailController.text,
