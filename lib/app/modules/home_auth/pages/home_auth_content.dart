@@ -7,6 +7,7 @@ import 'package:mercado_justo/shared/controllers/market_store.dart';
 import 'package:mercado_justo/shared/controllers/price_store.dart';
 import 'package:mercado_justo/shared/controllers/product_store.dart';
 import 'package:mercado_justo/shared/controllers/product_to_list_store.dart';
+import 'package:mercado_justo/shared/controllers/signature_store.dart';
 import 'package:mercado_justo/shared/models/price_model.dart';
 import 'package:mercado_justo/shared/models/product_model.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
@@ -240,10 +241,18 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                                 //           ))
                                 //       .toList(),
 
-                                ...priceStore.prices[index].map((e) => Center(
-                                    child: Text(e.isEmpty || e == 'R\$ 0,00'
-                                        ? 'Em Falta'
-                                        : e)))
+                                ...priceStore.prices[index].map((e) =>
+                                    Modular.get<SignatureStore>().signature !=
+                                                null &&
+                                            Modular.get<SignatureStore>()
+                                                .signature!
+                                                .status
+                                        ? Center(
+                                            child: Text(
+                                                e.isEmpty || e == 'R\$ 0,00'
+                                                    ? 'Em Falta'
+                                                    : e))
+                                        : const Icon(Icons.lock))
                               ];
                             })
                           ],

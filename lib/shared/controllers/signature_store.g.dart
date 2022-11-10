@@ -24,10 +24,68 @@ mixin _$SignatureStore on _SignatureStoreBase, Store {
     });
   }
 
+  final _$paymentByPixAtom = Atom(name: '_SignatureStoreBase.paymentByPix');
+
+  @override
+  bool get paymentByPix {
+    _$paymentByPixAtom.reportRead();
+    return super.paymentByPix;
+  }
+
+  @override
+  set paymentByPix(bool value) {
+    _$paymentByPixAtom.reportWrite(value, super.paymentByPix, () {
+      super.paymentByPix = value;
+    });
+  }
+
+  final _$paymentByCreditCardAtom =
+      Atom(name: '_SignatureStoreBase.paymentByCreditCard');
+
+  @override
+  bool get paymentByCreditCard {
+    _$paymentByCreditCardAtom.reportRead();
+    return super.paymentByCreditCard;
+  }
+
+  @override
+  set paymentByCreditCard(bool value) {
+    _$paymentByCreditCardAtom.reportWrite(value, super.paymentByCreditCard, () {
+      super.paymentByCreditCard = value;
+    });
+  }
+
+  final _$_SignatureStoreBaseActionController =
+      ActionController(name: '_SignatureStoreBase');
+
+  @override
+  dynamic setPaymentByCreditCard(bool value) {
+    final _$actionInfo = _$_SignatureStoreBaseActionController.startAction(
+        name: '_SignatureStoreBase.setPaymentByCreditCard');
+    try {
+      return super.setPaymentByCreditCard(value);
+    } finally {
+      _$_SignatureStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  dynamic setPaymentByPix(bool value) {
+    final _$actionInfo = _$_SignatureStoreBaseActionController.startAction(
+        name: '_SignatureStoreBase.setPaymentByPix');
+    try {
+      return super.setPaymentByPix(value);
+    } finally {
+      _$_SignatureStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
   @override
   String toString() {
     return '''
-signature: ${signature}
+signature: ${signature},
+paymentByPix: ${paymentByPix},
+paymentByCreditCard: ${paymentByCreditCard}
     ''';
   }
 }

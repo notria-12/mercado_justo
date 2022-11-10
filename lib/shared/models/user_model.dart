@@ -40,7 +40,8 @@ class UserModel {
       'cpf': cpf,
       'email': email,
       'telefone': phone,
-      'idade': age,
+      'id': id,
+      // 'idade': age,
     };
   }
 
@@ -51,7 +52,7 @@ class UserModel {
       'cpf': cpf,
       'email': email,
       'telefone': phone,
-      'idade': age,
+      // 'idade': age,
     };
   }
 

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+import 'package:mercado_justo/shared/controllers/signature_store.dart';
 
 class ChooseSignaturePage extends StatefulWidget {
   const ChooseSignaturePage({Key? key}) : super(key: key);
@@ -10,6 +13,7 @@ class ChooseSignaturePage extends StatefulWidget {
 class _ChooseSignaturePageState extends State<ChooseSignaturePage> {
   bool pixValue = false;
   bool cardValue = true;
+  final _signatureStore = Modular.get<SignatureStore>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,16 +78,17 @@ class _ChooseSignaturePageState extends State<ChooseSignaturePage> {
                               topRight: Radius.circular(4),
                               topLeft: Radius.circular(4))),
                       height: 60,
-                      child: SwitchListTile(
-                          controlAffinity: ListTileControlAffinity.leading,
-                          value: cardValue,
-                          onChanged: (value) {
-                            setState(() {
-                              cardValue = value;
-                            });
-                          },
-                          title: Text('Cartão de crédito',
-                              style: TextStyle(fontWeight: FontWeight.w600))),
+                      child: Observer(
+                        builder: (_) {
+                          return SwitchListTile(
+                              controlAffinity: ListTileControlAffinity.leading,
+                              value: _signatureStore.paymentByCreditCard,
+                              onChanged: _signatureStore.setPaymentByCreditCard,
+                              title: Text('Cartão de crédito',
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.w600)));
+                        },
+                      ),
                     ),
                     Container(
                         decoration: BoxDecoration(
@@ -94,19 +99,17 @@ class _ChooseSignaturePageState extends State<ChooseSignaturePage> {
                                 bottomLeft: Radius.circular(4),
                                 bottomRight: Radius.circular(4))),
                         height: 60,
-                        child: SwitchListTile(
-                          title: Text(
-                            'Pix',
-                            style: TextStyle(fontWeight: FontWeight.w600),
-                          ),
-                          controlAffinity: ListTileControlAffinity.leading,
-                          value: pixValue,
-                          onChanged: (value) {
-                            setState(() {
-                              pixValue = value;
-                            });
-                          },
-                        )),
+                        child: Observer(builder: (_) {
+                          return SwitchListTile(
+                            title: Text(
+                              'Pix',
+                              style: TextStyle(fontWeight: FontWeight.w600),
+                            ),
+                            controlAffinity: ListTileControlAffinity.leading,
+                            value: _signatureStore.paymentByPix,
+                            onChanged: _signatureStore.setPaymentByPix,
+                          );
+                        })),
                   ],
                 ),
               ),
@@ -114,6 +117,11 @@ class _ChooseSignaturePageState extends State<ChooseSignaturePage> {
                 height: 30,
               ),
               InkWell(
+                onTap: () {
+                  if (_signatureStore.paymentByPix) {
+                    Modular.to.pushNamed('/signature/pix/');
+                  }
+                },
                 child: Container(
                   decoration: BoxDecoration(
                       color: Colors.lightBlue,

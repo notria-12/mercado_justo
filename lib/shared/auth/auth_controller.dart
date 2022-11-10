@@ -43,6 +43,7 @@ abstract class _AuthControllerBase extends Disposable with Store {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.remove('token');
     preferences.remove('user');
+    setUser(null);
     update(AuthState.unauthenticated);
   }
 
