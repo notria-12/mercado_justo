@@ -120,6 +120,9 @@ class _ChooseSignaturePageState extends State<ChooseSignaturePage> {
                 onTap: () {
                   if (_signatureStore.paymentByPix) {
                     Modular.to.pushNamed('/signature/pix/');
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text('EM DESENVOLVIMENTO, USE O PIX')));
                   }
                 },
                 child: Container(
