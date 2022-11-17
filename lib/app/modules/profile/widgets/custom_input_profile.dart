@@ -4,12 +4,14 @@ class CustomInputProfile extends StatefulWidget {
   String label;
   String? hintText;
   Icon? icon;
-  CustomInputProfile({
-    Key? key,
-    required this.label,
-    this.hintText,
-    this.icon,
-  }) : super(key: key);
+  TextEditingController? controller;
+  CustomInputProfile(
+      {Key? key,
+      required this.label,
+      this.hintText,
+      this.icon,
+      this.controller})
+      : super(key: key);
 
   @override
   State<CustomInputProfile> createState() => _CustomInputProfileState();
@@ -33,6 +35,7 @@ class _CustomInputProfileState extends State<CustomInputProfile> {
           padding: EdgeInsets.all(8),
           height: 40,
           child: TextFormField(
+            controller: widget.controller,
             decoration: InputDecoration(
                 hintText: widget.hintText,
                 border: InputBorder.none,

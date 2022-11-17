@@ -3,10 +3,15 @@ import 'package:mercado_justo/app/modules/profile/pages/edit_profile_page.dart';
 import 'package:mercado_justo/app/modules/profile/pages/maps_page.dart';
 
 import 'package:mercado_justo/app/modules/profile/pages/profile_page.dart';
+import 'package:mercado_justo/app/modules/profile/profile_controller.dart';
+import 'package:mercado_justo/app/modules/profile/profile_repository.dart';
 
 class ProfileModule extends Module {
   @override
-  final List<Bind> binds = [];
+  final List<Bind> binds = [
+    Bind.singleton((i) => ProfileRepository(i())),
+    Bind.singleton((i) => ProfileStore(i()))
+  ];
 
   @override
   final List<ModularRoute> routes = [
