@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:mercado_justo/app/modules/profile/city_model.dart';
 import 'package:mercado_justo/app/modules/profile/state_model.dart';
+import 'package:mercado_justo/shared/models/user_model.dart';
 import 'package:mercado_justo/shared/utils/error.dart';
 
 class ProfileRepository {
@@ -26,6 +27,15 @@ class ProfileRepository {
       return listCities.map((e) => CityModel.fromMap(e)).toList();
     } catch (e) {
       throw Failure(title: 'Busca cidades', message: 'Falha ao buscar cidades');
+    }
+  }
+
+  Future<UserModel> getUser({required String userId}) async {
+    try {
+      var result = await _dio.get('/usuarios/$userId');
+      return UserModel.fromMap(result.data['dados']);
+    } catch (e) {
+      throw Failure(title: 'Erro Usuário', message: 'Erro ao buscar usuário');
     }
   }
 }
