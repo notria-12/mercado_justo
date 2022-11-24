@@ -48,7 +48,8 @@ class UserModel {
       'telefone': phone,
       'id': id,
       'idade': age,
-      'orientacao': genre
+      'orientacao': genre,
+      if (address != null) 'endereco': address!.toMap()
     };
   }
 
@@ -151,13 +152,13 @@ class AddressModel {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'state': state,
-      'city': city,
-      'street': street,
-      'neighborhood': neighborhood,
-      'number': number,
-      'cep': cep,
-      'complement': complement,
+      'uf': state,
+      'cidade': city,
+      if (street != null) 'rua': street,
+      if (neighborhood != null) 'bairro': neighborhood,
+      if (number != null) 'numero': number,
+      if (cep != null) 'cep': cep,
+      if (complement != null) 'complemento': complement,
     };
   }
 

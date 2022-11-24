@@ -38,4 +38,18 @@ class ProfileRepository {
       throw Failure(title: 'Erro Usuário', message: 'Erro ao buscar usuário');
     }
   }
+
+  Future<UserModel> updateUser({required UserModel user}) async {
+    try {
+      var data = user.toJson();
+      var result = await _dio.put('/usuarios/${user.id}', data: data);
+      return UserModel.fromMap(result.data['dados']);
+    } on DioError catch (e) {
+      throw Failure(
+          title: 'Erro Usuário', message: e.response!.data['dados'][0]);
+    } catch (e) {
+      throw Failure(
+          title: 'Erro Usuário', message: 'Erro ao atualizar usuário');
+    }
+  }
 }

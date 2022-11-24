@@ -118,7 +118,7 @@ class SignUpPageState extends State<SignUpPage> {
                       ),
                       CustomTextInput(
                           controller: _phoneController,
-                          inputFotmatters: [InputFormater.phoneMask],
+                          inputFotmatters: [InputFormater.phoneMask()],
                           inputType: TextInputType.phone,
                           label: 'Celular',
                           hintText: 'DDD + número',

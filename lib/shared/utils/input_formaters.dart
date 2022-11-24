@@ -3,10 +3,21 @@ import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:intl/intl.dart';
 
 class InputFormater {
-  static MaskTextInputFormatter get phoneMask => MaskTextInputFormatter(
-        mask: '(##) #####-####',
-        filter: {"#": RegExp(r'[0-9]')},
-      );
+  static MaskTextInputFormatter phoneMask({String? initialText}) {
+    return MaskTextInputFormatter(
+      mask: '(##) #####-####',
+      initialText: initialText,
+      filter: {"#": RegExp(r'[0-9]')},
+    );
+  }
+
+  static MaskTextInputFormatter cepMask({String? initialText}) {
+    return MaskTextInputFormatter(
+      mask: '#####-###',
+      initialText: initialText,
+      filter: {"#": RegExp(r'[0-9]')},
+    );
+  }
 
   static MaskTextInputFormatter get cpfMask => MaskTextInputFormatter(
         mask: '###.###.###-##',
