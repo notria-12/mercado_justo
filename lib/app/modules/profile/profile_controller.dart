@@ -121,7 +121,9 @@ abstract class _ProfileStoreBase with Store {
       cities = ObservableList.of(await _repository.getCities(selectedState!));
 
       selectedCity =
-          user!.address!.state == selectedState ? user!.address!.city : null;
+          user!.address != null && user!.address!.state == selectedState
+              ? user!.address!.city
+              : null;
       cityStatus = AppStateSuccess();
     } on Failure catch (e) {
       cityStatus = AppStateError(error: e);
@@ -135,10 +137,12 @@ abstract class _ProfileStoreBase with Store {
       setName(user!.name);
       setPhone(user!.phone);
       setEmail(user!.email);
-      setStreet(user!.address!.street);
-      setNeighborhood(user!.address!.neighborhood);
-      setComplement(user!.address!.complement);
-      setCEP(user!.address!.cep);
+      if (user!.address != null) {
+        setStreet(user!.address!.street);
+        setNeighborhood(user!.address!.neighborhood);
+        setComplement(user!.address!.complement);
+        setCEP(user!.address!.cep);
+      }
       if (user!.genre != null) {
         selectedGenre = user!.genre!.substring(0, 1).toUpperCase() +
             user!.genre!.substring(1);
@@ -185,15 +189,21 @@ abstract class _ProfileStoreBase with Store {
     return (user!.name != inputName ||
         user!.phone != inputPhone ||
         user!.email != inputEmail ||
-        user!.address!.state != selectedState ||
+        (user!.address != null && user!.address!.state != selectedState) ||
         user!.genre !=
             (selectedGenre != null ? selectedGenre!.toLowerCase() : null) ||
-        user!.address!.city != selectedCity ||
-        (user!.address!.street != inputStreet && inputStreet!.isNotEmpty) ||
-        (user!.address!.neighborhood != inputNeighborhood &&
+        (user!.address != null && user!.address!.city != selectedCity) ||
+        (user!.address != null &&
+            user!.address!.street != inputStreet &&
+            inputStreet!.isNotEmpty) ||
+        (user!.address != null &&
+            user!.address!.neighborhood != inputNeighborhood &&
             inputNeighborhood!.isNotEmpty) ||
-        (user!.address!.complement != inputComplement &&
+        (user!.address != null &&
+            user!.address!.complement != inputComplement &&
             inputComplement!.isNotEmpty) ||
-        (user!.address!.cep != inputCEP && inputCEP!.isNotEmpty));
+        (user!.address != null &&
+            user!.address!.cep != inputCEP &&
+            inputCEP!.isNotEmpty));
   }
 }
