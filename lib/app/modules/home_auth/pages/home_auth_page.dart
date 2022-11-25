@@ -10,6 +10,7 @@ import 'package:mercado_justo/app/modules/lists/pages/product_list_page.dart';
 import 'package:mercado_justo/shared/auth/auth_controller.dart';
 import 'package:mercado_justo/shared/controllers/market_store.dart';
 import 'package:mercado_justo/shared/controllers/position_store.dart';
+import 'package:mercado_justo/shared/controllers/product_store.dart';
 import 'package:mercado_justo/shared/controllers/signature_store.dart';
 import 'package:mercado_justo/shared/models/market_model.dart';
 import 'package:mobx/mobx.dart';
@@ -96,7 +97,13 @@ class HomeAuthPageState extends ModularState<HomeAuthPage, HomeAuthStore> {
             bottomNavigationBar: BottomNavigationBar(
               type: BottomNavigationBarType.fixed,
               currentIndex: store.currentIndex,
-              onTap: store.onTabTapped,
+              onTap: (index) {
+                if (store.currentIndex == 0 && index == 0) {
+                  Modular.get<ProductStore>()
+                      .getAllProducts(initialProducts: true);
+                }
+                store.onTabTapped(index);
+              },
               items: const [
                 BottomNavigationBarItem(
                     icon: Icon(Icons.home_outlined), label: 'Início'),

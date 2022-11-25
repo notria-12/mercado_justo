@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:mercado_justo/app/modules/home_auth/controllers/category_controller.dart';
+import 'package:mercado_justo/app/modules/home_auth/models/category_model.dart';
 import 'package:mercado_justo/app/modules/home_auth/widgets/get_price_widget.dart';
 import 'package:mercado_justo/shared/controllers/market_store.dart';
 import 'package:mercado_justo/shared/controllers/price_store.dart';
@@ -29,6 +31,7 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
   final productStore = Modular.get<ProductStore>();
   final marketStore = Modular.get<MarketStore>();
   PriceStore priceStore = Modular.get<PriceStore>();
+  FocusNode searchFocus = FocusNode();
 
   final TextEditingController _quantityController =
       TextEditingController(text: '1');
@@ -65,12 +68,15 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                         )),
                     child: TextFormField(
                       controller: _searchController,
+                      focusNode: searchFocus,
                       onFieldSubmitted: (value) {
                         if (_formKey.currentState!.validate()) {
                           productStore.onlyButtonLoadMore = false;
                           productStore.getProductsByDescription(
                               description: value);
                           // dialogResultSearchProducts(context);
+                          _searchController.text = '';
+                          searchFocus.unfocus();
                         }
                       },
                       validator: (input) {
@@ -91,6 +97,8 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                                     productStore.getProductsByDescription(
                                         description: _searchController.text);
                                     // dialogResultSearchProducts(context);
+                                    _searchController.text = '';
+                                    searchFocus.unfocus();
                                   }
                                 },
                                 child: Icon(
@@ -143,12 +151,46 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 8,
                 ),
-                Text(
-                  'Categorias',
-                  style: TextStyle(fontWeight: FontWeight.w500),
+                InkWell(
+                  onTap: () {
+                    PageController pageController = PageController();
+
+                    List<Widget> pages = [
+                      GeneralCategoriesWidget(
+                        controller: pageController,
+                      ),
+                      SecondaryCategoriesWidget(
+                        pageController: pageController,
+                        productStore: productStore,
+                      )
+                    ];
+
+                    showModalBottomSheet(
+                        context: context,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                        builder: (ctx) {
+                          Modular.get<CategoryStore>().canUpdate = false;
+                          return PageView(
+                            controller: pageController,
+                            children: pages,
+                          );
+                        }).then((value) {
+                      if (Modular.get<CategoryStore>().canUpdate) {
+                        productStore.getProductsByCategories(
+                            categoryName: Modular.get<CategoryStore>()
+                                .selectedCategory!
+                                .description);
+                      }
+                    });
+                  },
+                  child: const Text(
+                    'Categorias',
+                    style: TextStyle(fontWeight: FontWeight.w500),
+                  ),
                 )
               ],
             ),
@@ -606,4 +648,212 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
   //         );
   //       });
   // }
+}
+
+class SecondaryCategoriesWidget extends StatelessWidget {
+  SecondaryCategoriesWidget(
+      {Key? key, required this.pageController, required this.productStore})
+      : super(key: key);
+
+  final PageController pageController;
+  final ProductStore productStore;
+  final _categoryStore = Modular.get<CategoryStore>();
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        height: MediaQuery.of(context).size.height,
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.arrow_back),
+                  onPressed: () {
+                    pageController.previousPage(
+                        duration: Duration(seconds: 1), curve: Curves.ease);
+                  },
+                ),
+                IconButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: () {
+                      Modular.get<CategoryStore>().canUpdate = false;
+                      Navigator.of(context).pop();
+                    },
+                    icon: Icon(Icons.close))
+              ],
+            ),
+            Expanded(child: Observer(
+              builder: (context) {
+                if (_categoryStore.secondaryCategoriesStatus
+                    is AppStateSuccess) {
+                  if (_categoryStore.secodaryCategories.isEmpty) {
+                    Modular.to.pop();
+                    _categoryStore.canUpdate = true;
+                  }
+                  return ListView.builder(
+                    itemBuilder: (buildContext, index) {
+                      return InkWell(
+                        onTap: () {
+                          _categoryStore.canUpdate = true;
+                          _categoryStore.selectedCategory =
+                              _categoryStore.secodaryCategories[index];
+
+                          Modular.to.pop();
+                        },
+                        child: Container(
+                          margin:
+                              EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.blueGrey),
+                              borderRadius: BorderRadius.circular(8)),
+                          padding: EdgeInsets.all(16),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  Modular.get<CategoryStore>()
+                                      .secodaryCategories[index]
+                                      .description,
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              const Icon(
+                                Icons.arrow_right_outlined,
+                                color: Colors.lightBlue,
+                              )
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                    itemCount:
+                        Modular.get<CategoryStore>().secodaryCategories.length,
+                  );
+                }
+                if (Modular.get<CategoryStore>().secondaryCategoriesStatus
+                    is AppStateLoading) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+
+                return Container();
+              },
+            ))
+          ],
+        ));
+  }
+}
+
+class GeneralCategoriesWidget extends StatelessWidget {
+  PageController controller;
+
+  GeneralCategoriesWidget({
+    required this.controller,
+    Key? key,
+  }) : super(key: key);
+
+  final _categoryStore = Modular.get<CategoryStore>();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: MediaQuery.of(context).size.height,
+      child: FutureBuilder<List<CategoryModel>>(
+        future: _categoryStore.getMainCategories(),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+            case ConnectionState.waiting:
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            case ConnectionState.done:
+              if (snapshot.hasError) {
+                return Container(
+                  child: Text('Erro ao carregar categorias'),
+                );
+              }
+              if (snapshot.hasData) {
+                return Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Text(
+                            'Selecione uma categoria',
+                            style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey),
+                          ),
+                        ),
+                        IconButton(
+                            padding: EdgeInsets.zero,
+                            onPressed: () {
+                              Modular.get<CategoryStore>().canUpdate = false;
+                              Navigator.of(context).pop();
+                            },
+                            icon: Icon(Icons.close))
+                      ],
+                    ),
+                    Expanded(
+                      child: ListView.builder(
+                        itemBuilder: (buildContext, index) {
+                          return InkWell(
+                            onTap: () {
+                              _categoryStore.selectedCategory =
+                                  snapshot.data![index];
+                              _categoryStore.getSecondaryCategories(
+                                  snapshot.data![index].id);
+                              controller.nextPage(
+                                  duration: Duration(seconds: 1),
+                                  curve: Curves.ease);
+                            },
+                            child: Container(
+                              margin: EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.blueGrey),
+                                  borderRadius: BorderRadius.circular(8)),
+                              padding: EdgeInsets.all(16),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      snapshot.data![index].description,
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  const Icon(
+                                    Icons.arrow_right_outlined,
+                                    color: Colors.lightBlue,
+                                  )
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                        itemCount: snapshot.data!.length,
+                      ),
+                    ),
+                  ],
+                );
+              } else {
+                return Container();
+              }
+            default:
+              return Container();
+          }
+        },
+      ),
+    );
+  }
 }

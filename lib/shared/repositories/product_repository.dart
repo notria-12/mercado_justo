@@ -28,6 +28,25 @@ class ProductRepository {
     }
   }
 
+  Future<List<Product>> getProductsByCategory(
+      {required String categoryName}) async {
+    try {
+      final String name = categoryName.replaceAll(' ', '%20');
+      final result = await dio.get('/produtos/category/$name');
+
+      List list = result.data['dados'] as List;
+      List<Product> products = list.map((e) => Product.fromMap(e)).toList();
+      for (int i = 0; i < products.length; i++) {
+        String imagePath = await getProductImage(products[i].barCode.first);
+        products[i] = products[i].copyWith(imagePath: imagePath);
+      }
+
+      return products;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<List<Product>> getProductsByDescription(
       {required String description, required int page}) async {
     try {

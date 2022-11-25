@@ -32,8 +32,12 @@ abstract class _ProductStoreBase with Store {
   @observable
   int page = 1;
 
-  Future getAllProducts() async {
+  Future getAllProducts({bool initialProducts = false}) async {
     try {
+      if (initialProducts) {
+        products.clear();
+        page = 1;
+      }
       isSearch = false;
       productState = AppStateLoading();
       var productsResult = await repository.getAllProducts(page: page);
@@ -88,6 +92,21 @@ abstract class _ProductStoreBase with Store {
         products = [...products, ...productsResult];
       }
 
+      productState = AppStateSuccess();
+    } catch (e) {
+      productState = AppStateError(error: Failure(title: '', message: ''));
+      rethrow;
+    }
+  }
+
+  void getProductsByCategories({required String categoryName}) async {
+    try {
+      productState = AppStateLoading();
+      var productsResult =
+          await repository.getProductsByCategory(categoryName: categoryName);
+
+      products = productsResult;
+      canLoadMore = false;
       productState = AppStateSuccess();
     } catch (e) {
       productState = AppStateError(error: Failure(title: '', message: ''));
