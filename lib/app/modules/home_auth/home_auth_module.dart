@@ -3,10 +3,12 @@ import 'package:mercado_justo/app/modules/common_questions/presenter/common_ques
 import 'package:mercado_justo/app/modules/compare/compare_store.dart';
 import 'package:mercado_justo/app/modules/config/config_page.dart';
 import 'package:mercado_justo/app/modules/home_auth/controllers/category_controller.dart';
+import 'package:mercado_justo/app/modules/home_auth/controllers/problem_controller.dart';
 import 'package:mercado_justo/app/modules/home_auth/home_auth_store.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/app/modules/home_auth/pages/home_auth_page.dart';
 import 'package:mercado_justo/app/modules/home_auth/repositories/category_repository.dart';
+import 'package:mercado_justo/app/modules/home_auth/repositories/problem_repository.dart';
 import 'package:mercado_justo/app/modules/lists/lists_module.dart';
 import 'package:mercado_justo/app/modules/terms_and_conditions/terms_and_conditions_module.dart';
 import 'package:mercado_justo/shared/controllers/config_store.dart';
@@ -40,7 +42,9 @@ class HomeAuthModule extends Module {
     Bind.lazySingleton((i) => ProductToListStore(i())),
     Bind.lazySingleton((i) => ProductToListRepository()),
     Bind.lazySingleton((i) => CategoryStore(i())),
-    Bind.lazySingleton((i) => CategoryRepository(i()))
+    Bind.lazySingleton((i) => CategoryRepository(i())),
+    Bind.lazySingleton((i) => ProblemStore(i())),
+    Bind.lazySingleton((i) => ProblemRepository(i()))
   ];
 
   @override

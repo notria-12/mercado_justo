@@ -3,7 +3,9 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:mercado_justo/app/modules/home_auth/controllers/category_controller.dart';
+import 'package:mercado_justo/app/modules/home_auth/controllers/problem_controller.dart';
 import 'package:mercado_justo/app/modules/home_auth/models/category_model.dart';
+import 'package:mercado_justo/app/modules/home_auth/models/problem_model.dart';
 import 'package:mercado_justo/app/modules/home_auth/widgets/get_price_widget.dart';
 import 'package:mercado_justo/shared/controllers/market_store.dart';
 import 'package:mercado_justo/shared/controllers/price_store.dart';
@@ -19,6 +21,7 @@ import 'package:mercado_justo/shared/widgets/dialogs.dart';
 import 'package:mercado_justo/shared/widgets/fixed_corner_table_widget.dart';
 import 'package:mercado_justo/shared/widgets/load_more_button.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:mobx/mobx.dart';
 
 class HomeAuthContent extends StatefulWidget {
   const HomeAuthContent({Key? key}) : super(key: key);
@@ -41,9 +44,14 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
   final _formKey = GlobalKey<FormState>();
   @override
   void initState() {
+    super.initState();
+    autorun((_) {
+      if (Modular.get<ProblemStore>().problemStatus is AppStateSuccess) {
+        CustomBottonSheets().reportProblemSuccessfull(context);
+      }
+    });
     productStore.getAllProducts();
     marketStore.getGroupMarkets();
-    super.initState();
   }
 
   @override
@@ -429,16 +437,28 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                     },
                   ),
                 ),
-                TextButton(
-                    style: TextButton.styleFrom(
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        minimumSize: Size.zero,
-                        padding: EdgeInsets.zero),
-                    onPressed: () {},
-                    child: Text(
-                      'Achou algum erro? clique aqui.',
-                      style: TextStyle(color: Colors.red, fontSize: 12),
-                    )),
+                Observer(builder: (_) {
+                  return Modular.get<ProblemStore>().problemStatus
+                          is AppStateLoading
+                      ? Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : TextButton(
+                          style: TextButton.styleFrom(
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              minimumSize: Size.zero,
+                              padding: EdgeInsets.zero),
+                          onPressed: () {
+                            Modular.get<ProblemStore>().reportProblem(
+                                ProblemModel(
+                                    bardCode: product.barCode[0],
+                                    errorType: 'erro_tela_leitor'));
+                          },
+                          child: Text(
+                            'Achou algum erro? clique aqui.',
+                            style: TextStyle(color: Colors.red, fontSize: 12),
+                          ));
+                }),
                 SizedBox(
                   height: 8,
                 ),
