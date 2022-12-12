@@ -16,12 +16,14 @@ import 'package:mercado_justo/shared/models/price_model.dart';
 import 'package:mercado_justo/shared/models/product_model.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/widgets/bottonsheets.dart';
+import 'package:mercado_justo/shared/widgets/button_share.dart';
 import 'package:mercado_justo/shared/widgets/custom_table_widget.dart';
 import 'package:mercado_justo/shared/widgets/dialogs.dart';
 import 'package:mercado_justo/shared/widgets/fixed_corner_table_widget.dart';
 import 'package:mercado_justo/shared/widgets/load_more_button.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:mobx/mobx.dart';
+import 'package:share_plus/share_plus.dart';
 
 class HomeAuthContent extends StatefulWidget {
   const HomeAuthContent({Key? key}) : super(key: key);
@@ -263,34 +265,16 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                                         productStore.getAllProducts();
                                       }
                                     })),
-                          loadMoreColumns: () {
-                            // marketStore.getAllMarkets();
-                          },
                           loadMore: productStore.canLoadMore,
                           cellHeight: 135,
-                          fixedCornerCell: FixedCorner(),
+                          fixedCornerCell: ButtonShare(
+                            onPressed: sharePrices,
+                          ),
                           rowsCells: [
                             ...List.generate(productStore.products.length,
                                 (index) {
                               return [
                                 Text(productStore.products[index].description),
-                                // Observer(
-                                //   builder: (_) {
-                                //     if (store.priceStatus is AppStateSuccess)
-                                //       return List.generate(
-                                //           store.prices.length,
-                                //           (index) => Text(
-                                //               store.prices[index] ?? 'Em falta'));
-                                //     return Container();
-                                //   },
-                                // )
-                                // if (store.priceStatus is AppStateLoading)
-                                //   ...marketStore.markets
-                                //       .map((e) => Center(
-                                //             child: CircularProgressIndicator(),
-                                //           ))
-                                //       .toList(),
-
                                 ...priceStore.prices[index].map((e) =>
                                     Modular.get<SignatureStore>().signature !=
                                                 null &&
@@ -361,18 +345,18 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                           fixedRowCells: [
                             Container(),
                             ...List.generate(
-                                marketStore.markets.length,
+                                marketStore.filteredMarkets.length,
                                 (index) => InkWell(
                                       onTap: () {
                                         Modular.to.pushNamed(
                                             '/home/marketDetail/',
-                                            arguments:
-                                                marketStore.markets[index]);
+                                            arguments: marketStore
+                                                .filteredMarkets[index]);
                                       },
                                       child: Container(
                                         width: 100,
                                         child: Image.network(marketStore
-                                            .markets[index].imagePath!),
+                                            .filteredMarkets[index].imagePath!),
                                       ),
                                     ))
                           ],
@@ -406,6 +390,29 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
         ],
       ),
     );
+  }
+
+  sharePrices() {
+    String pricesString = '*Mercado Justo* \n';
+    String marketsInfo = '';
+    for (var i = 0; i < productStore.products.length; i++) {
+      pricesString =
+          pricesString + '\n _${productStore.products[i].description}_ \n';
+      List<String> prices = priceStore.prices[i];
+
+      for (var j = 0; j < prices.length; j++) {
+        pricesString = pricesString +
+            '${marketStore.markets[j].name}.........${prices[j]}\n';
+      }
+    }
+    for (var k = 0; k < marketStore.markets.length; k++) {
+      marketsInfo +=
+          '\n${marketStore.markets[k].siteAddress}\nCep de Referência....${marketStore.markets[k].address.split(',')[marketStore.markets[k].address.split(',').length - 1]}\n';
+    }
+    pricesString += marketsInfo;
+
+    Share.share(pricesString +
+        '\n\nAcesse o nosso app e tenha uma visualização completa dos melhores preços.');
   }
 
   Future<dynamic> showDialogProductDetail(

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 
 class ButtonShare extends StatelessWidget {
   double size;
-  ButtonShare({Key? key, this.size = 28}) : super(key: key);
+  void Function()? onPressed;
+  ButtonShare({Key? key, this.size = 28, this.onPressed}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +15,7 @@ class ButtonShare extends StatelessWidget {
         color: Colors.grey,
         size: size,
       ),
-      onPressed: () {},
+      onPressed: onPressed,
     );
   }
 }

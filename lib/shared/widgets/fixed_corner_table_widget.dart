@@ -10,7 +10,9 @@ class FixedCorner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: [const IncrementFont(), ButtonShare()],
+      children: [
+        ButtonShare(),
+      ],
     );
   }
 }
