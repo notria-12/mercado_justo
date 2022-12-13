@@ -70,7 +70,7 @@ class ProductRepository {
     try {
       final result;
       result = await dio.get(
-          "https://mercado-justo-api.herokuapp.com/mercado-justo/api/v1/produtos?itens_pagina=20&pagina=1&ordernar=_id,1&procurar=%5B%7B%22termo%22%3A%22codigo_barras%22%2C%22valor%22%3A%22$barcode%22%7D%5D");
+          "produtos?itens_pagina=20&pagina=1&ordernar=_id,1&procurar=%5B%7B%22termo%22%3A%22codigo_barras%22%2C%22valor%22%3A%22$barcode%22%7D%5D");
       List list = result.data['dados'] as List;
       if (list.isNotEmpty) {
         Product product = Product.fromMap(list.first);
