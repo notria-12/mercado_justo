@@ -6,6 +6,7 @@ import 'package:mercado_justo/app/modules/home_auth/controllers/category_control
 import 'package:mercado_justo/app/modules/home_auth/controllers/problem_controller.dart';
 import 'package:mercado_justo/app/modules/home_auth/models/category_model.dart';
 import 'package:mercado_justo/app/modules/home_auth/models/problem_model.dart';
+import 'package:mercado_justo/app/modules/home_auth/widgets/custom_dialog_selection_markets.dart';
 import 'package:mercado_justo/app/modules/home_auth/widgets/get_price_widget.dart';
 import 'package:mercado_justo/shared/controllers/market_store.dart';
 import 'package:mercado_justo/shared/controllers/price_store.dart';
@@ -224,11 +225,18 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                   );
                 } else {
                   if (productStore.products.isNotEmpty) {
+                    if (marketStore.filteredMarkets.isEmpty) {
+                      return Center(
+                        child: Text(
+                            'Não há mercados no disponíveis para sua localização'),
+                      );
+                    }
                     priceStore.getProductPriceByMarkets(
                         productIds:
                             productStore.products.map((e) => e.id).toList(),
-                        marketIds:
-                            marketStore.markets.map((m) => m.id).toList());
+                        marketIds: marketStore.filteredMarkets
+                            .map((m) => m.id)
+                            .toList());
                     return Observer(
                       builder: (_) {
                         if (priceStore.allPriceStatus is AppStateLoading) {
@@ -393,26 +401,48 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
   }
 
   sharePrices() {
-    String pricesString = '*Mercado Justo* \n';
-    String marketsInfo = '';
-    for (var i = 0; i < productStore.products.length; i++) {
-      pricesString =
-          pricesString + '\n _${productStore.products[i].description}_ \n';
-      List<String> prices = priceStore.prices[i];
+    List<int> selectedMarkets = [];
 
-      for (var j = 0; j < prices.length; j++) {
-        pricesString = pricesString +
-            '${marketStore.markets[j].name}.........${prices[j]}\n';
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return DialogSelectionMarkets(
+            selectedMarkets: selectedMarkets,
+          );
+        }).then((value) {
+      if (selectedMarkets.isNotEmpty) {
+        String pricesString = '*Mercado Justo* \n';
+        String marketsInfo = '';
+        for (var i = 0;
+            i <
+                (productStore.products.length > 15
+                    ? 15
+                    : productStore.products.length);
+            i++) {
+          pricesString =
+              pricesString + '\n _${productStore.products[i].description}_ \n';
+          List<String> prices = priceStore.prices[i];
+
+          for (var j = 0; j < prices.length; j++) {
+            if (selectedMarkets.contains(j)) {
+              pricesString = pricesString +
+                  '${marketStore.filteredMarkets[j].name}.........${prices[j] == 'R\$ 0,00' ? 'Em Falta' : prices[j]}\n';
+            }
+          }
+        }
+        for (var k = 0; k < marketStore.filteredMarkets.length; k++) {
+          if (selectedMarkets.contains(k)) {
+            marketsInfo +=
+                '\n${marketStore.filteredMarkets[k].siteAddress}\nCep de Referência....${marketStore.filteredMarkets[k].address.split(',')[marketStore.filteredMarkets[k].address.split(',').length - 1]}\n';
+          }
+        }
+        pricesString += marketsInfo;
+
+        Share.share(pricesString +
+            '\n\nAcesse o nosso app e tenha uma visualização completa dos melhores preços.');
       }
-    }
-    for (var k = 0; k < marketStore.markets.length; k++) {
-      marketsInfo +=
-          '\n${marketStore.markets[k].siteAddress}\nCep de Referência....${marketStore.markets[k].address.split(',')[marketStore.markets[k].address.split(',').length - 1]}\n';
-    }
-    pricesString += marketsInfo;
-
-    Share.share(pricesString +
-        '\n\nAcesse o nosso app e tenha uma visualização completa dos melhores preços.');
+    });
   }
 
   Future<dynamic> showDialogProductDetail(
