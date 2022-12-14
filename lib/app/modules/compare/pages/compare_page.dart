@@ -13,6 +13,7 @@ import 'package:mercado_justo/shared/models/product_model.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/widgets/button_share.dart';
 import 'package:mobx/mobx.dart';
+import 'package:share_plus/share_plus.dart';
 
 class ComparePage extends StatefulWidget {
   const ComparePage({Key? key}) : super(key: key);
@@ -70,7 +71,9 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                             .then((value) => store.reloadList());
                       },
                     ),
-                    ButtonShare(),
+                    ButtonShare(
+                        onPressed:
+                            store.getFairPrice.isNotEmpty ? sharePrices : null),
                     InkWell(
                       onTap: () {
                         if (store.getFairPrice.isNotEmpty)
@@ -226,8 +229,8 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                                   itemBuilder: (context, index) {
                                     Market market = Modular.get<MarketStore>()
                                         .filteredMarkets
-                                        .where((element) =>
-                                            element.isSelectable == true)
+                                        .where(
+                                            (element) => element.isSelectable)
                                         .toList()
                                         .firstWhere((market) =>
                                             store.getFairPrice[index][0]
@@ -430,6 +433,33 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
         ],
       ),
     );
+  }
+
+  sharePrices() {
+    String pricesString = '*Mercado Justo* \n';
+    String marketsInfo = '';
+    for (int i = 0; i < store.getFairPrice.length; i++) {
+      Market market = Modular.get<MarketStore>()
+          .filteredMarkets
+          .where((element) => element.isSelectable)
+          .toList()
+          .firstWhere((market) =>
+              store.getFairPrice[i][0]['market_id'] == market.hashId);
+      marketsInfo +=
+          '\n${market.siteAddress}\nCep de Referência....${market.address.split(',')[market.address.split(',').length - 1]}\n';
+      pricesString += '\n *${market.name}*\n';
+      for (int j = 0; j < store.getFairPrice[i].length; j++) {
+        Product product =
+            Product.fromMap(store.getFairPrice[i][j]['product_id']);
+        pricesString += '\n _${product.description}_\n';
+        pricesString +=
+            'R\$ ${(store.getFairPrice[i][j]['value'] as double).toStringAsFixed(2).replaceAll('.', ',')}\n';
+      }
+    }
+    pricesString += '\nSite e/ou local de referência:\n';
+    pricesString += marketsInfo;
+    Share.share(pricesString +
+        '\n\nAcesse o nosso app e tenha uma visualização completa dos melhores preços.');
   }
 
   DataTable productsTable(List<Product> products, int index) {

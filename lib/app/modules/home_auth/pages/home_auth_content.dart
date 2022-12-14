@@ -323,7 +323,7 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                                                   },
                                                 ),
                                               ),
-                                              SizedBox(
+                                              const SizedBox(
                                                 height: 12,
                                               ),
                                               Row(
@@ -381,7 +381,7 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                   } else {
                     return Center(
                       child: Column(
-                        children: [
+                        children: const [
                           Text("Nenhum produto encontrado!"),
                           SizedBox(
                             height: 8,
