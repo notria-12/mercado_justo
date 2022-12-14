@@ -3,6 +3,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/app/modules/compare/compare_store.dart';
 import 'package:mercado_justo/app/modules/home_auth/home_auth_store.dart';
+import 'package:mercado_justo/app/modules/home_auth/widgets/custom_dialog_selection_markets.dart';
 import 'package:mercado_justo/shared/controllers/fair_price_store.dart';
 import 'package:mercado_justo/shared/controllers/list_store.dart';
 import 'package:mercado_justo/shared/controllers/market_name_store.dart';
@@ -10,10 +11,12 @@ import 'package:mercado_justo/shared/controllers/market_store.dart';
 import 'package:mercado_justo/shared/models/list_model.dart';
 import 'package:mercado_justo/shared/models/market_model.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
+import 'package:mercado_justo/shared/widgets/button_share.dart';
 import 'package:mercado_justo/shared/widgets/custom_table_widget.dart';
 import 'package:mercado_justo/shared/widgets/dialogs.dart';
 import 'package:mercado_justo/shared/widgets/fixed_corner_table_widget.dart';
 import 'package:mobx/mobx.dart';
+import 'package:share_plus/share_plus.dart';
 
 class ProductListDetailsPage extends StatefulWidget {
   ListModel listModel;
@@ -433,7 +436,9 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
             child: Container(
                 child: CustomDataTable(
           loadMore: false,
-          fixedCornerCell: const FixedCorner(),
+          fixedCornerCell: ButtonShare(
+            onPressed: sharePrices,
+          ),
           cellHeight: 130,
           fixedColCells: storeProductList.products
               .map((e) => Stack(children: [
@@ -664,6 +669,51 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
         )))
       ],
     );
+  }
+
+  sharePrices() {
+    List<int> selectedMarkets = [];
+
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) {
+          return DialogSelectionMarkets(
+            selectedMarkets: selectedMarkets,
+          );
+        }).then((value) {
+      if (selectedMarkets.isNotEmpty) {
+        String pricesString = '*Mercado Justo* \n';
+        String marketsInfo = '';
+        for (var i = 0;
+            i <
+                (storeProductList.products.length > 15
+                    ? 15
+                    : storeProductList.products.length);
+            i++) {
+          pricesString = pricesString +
+              '\n _${storeProductList.products[i].description}_ \n';
+          List<String> prices = storeProductList.prices[i];
+
+          for (var j = 0; j < prices.length; j++) {
+            if (selectedMarkets.contains(j)) {
+              pricesString = pricesString +
+                  '${filteredMarkets[j].name}.........${prices[j] == 'R\$ 0,00' ? 'Em Falta' : prices[j]}\n';
+            }
+          }
+        }
+        for (var k = 0; k < filteredMarkets.length; k++) {
+          if (selectedMarkets.contains(k)) {
+            marketsInfo +=
+                '\n${filteredMarkets[k].siteAddress}\nCep de Referência....${filteredMarkets[k].address.split(',')[filteredMarkets[k].address.split(',').length - 1]}\n';
+          }
+        }
+        pricesString += marketsInfo;
+
+        Share.share(pricesString +
+            '\n\nAcesse o nosso app e tenha uma visualização completa dos melhores preços.');
+      }
+    });
   }
 }
 
