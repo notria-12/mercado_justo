@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mercado_justo/app/../shared/controllers/config_store.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/app/../shared/controllers/position_store.dart';
@@ -8,6 +9,7 @@ import 'package:mercado_justo/app/modules/profile/profile_module.dart';
 import 'package:mercado_justo/app/modules/signature/signature_module.dart';
 import 'package:mercado_justo/app/splash_page.dart';
 import 'package:mercado_justo/shared/auth/auth_controller.dart';
+import 'package:mercado_justo/shared/controllers/ad_store.dart';
 import 'package:mercado_justo/shared/controllers/signature_store.dart';
 import 'package:mercado_justo/shared/repositories/signature_repository.dart';
 
@@ -26,7 +28,8 @@ class AppModule extends Module {
     Bind.singleton((i) => getDioInstance()),
     Bind.singleton((i) => AuthController(signatureStore: i())),
     Bind.singleton((i) => SignatureStore(i())),
-    Bind.singleton((i) => SignatureRepository(i()))
+    Bind.singleton((i) => SignatureRepository(i())),
+    Bind.singleton((i) => AdStore(adState: MobileAds.instance.initialize()))
   ];
 
   @override
