@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -8,23 +9,18 @@ import 'package:mercado_justo/app/modules/home_auth/controllers/problem_controll
 import 'package:mercado_justo/app/modules/home_auth/models/category_model.dart';
 import 'package:mercado_justo/app/modules/home_auth/models/problem_model.dart';
 import 'package:mercado_justo/app/modules/home_auth/widgets/custom_dialog_selection_markets.dart';
-import 'package:mercado_justo/app/modules/home_auth/widgets/get_price_widget.dart';
 import 'package:mercado_justo/shared/controllers/ad_store.dart';
 import 'package:mercado_justo/shared/controllers/market_store.dart';
 import 'package:mercado_justo/shared/controllers/price_store.dart';
 import 'package:mercado_justo/shared/controllers/product_store.dart';
 import 'package:mercado_justo/shared/controllers/product_to_list_store.dart';
 import 'package:mercado_justo/shared/controllers/signature_store.dart';
-import 'package:mercado_justo/shared/models/price_model.dart';
 import 'package:mercado_justo/shared/models/product_model.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/widgets/bottonsheets.dart';
 import 'package:mercado_justo/shared/widgets/button_share.dart';
 import 'package:mercado_justo/shared/widgets/custom_table_widget.dart';
-import 'package:mercado_justo/shared/widgets/dialogs.dart';
-import 'package:mercado_justo/shared/widgets/fixed_corner_table_widget.dart';
 import 'package:mercado_justo/shared/widgets/load_more_button.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:mobx/mobx.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -47,6 +43,8 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
   final productToListStore = Modular.get<ProductToListStore>();
   final TextEditingController _searchController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+
+  final _signatureStore = Modular.get<SignatureStore>();
 
   BannerAd? _bottomBanner;
   BannerAd? _topBanner;
@@ -82,16 +80,15 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
               width: MediaQuery.of(context).size.width.truncate(), height: 50),
           request: AdRequest(),
           listener: BannerAdListener(),
-        );
-        _bottomBanner!.load();
+        )..load();
+
         _topBanner = BannerAd(
           adUnitId: adState.bannerAdUnitId,
           size: AdSize(
               width: MediaQuery.of(context).size.width.round(), height: 50),
           request: AdRequest(),
           listener: BannerAdListener(),
-        );
-        _topBanner!.load();
+        )..load();
       });
     });
   }
@@ -100,12 +97,14 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
-      child: Stack(
+      child: Column(
         children: [
-          Column(
-            children: [
-              if (_topBanner != null)
-                Align(
+          if (_topBanner != null)
+            Observer(builder: (_) {
+              return Visibility(
+                visible: !(_signatureStore.signature != null &&
+                    _signatureStore.signature!.status),
+                child: Align(
                   child: Container(
                     alignment: Alignment.center,
                     child: AdWidget(ad: _topBanner!),
@@ -113,205 +112,203 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                     height: _topBanner!.size.height.toDouble(),
                   ),
                 ),
-              Padding(
-                padding: const EdgeInsets.only(
-                    top: 16, left: 24, right: 24, bottom: 24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Form(
-                      key: _formKey,
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 8),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
-                            border: Border.all(
-                              color: Colors.grey,
-                            )),
-                        child: TextFormField(
-                          controller: _searchController,
-                          focusNode: searchFocus,
-                          onFieldSubmitted: (value) {
-                            if (_formKey.currentState!.validate()) {
-                              productStore.onlyButtonLoadMore = false;
-                              productStore.getProductsByDescription(
-                                  description: value);
-                              // dialogResultSearchProducts(context);
-                              _searchController.text = '';
-                              searchFocus.unfocus();
-                            }
-                          },
-                          validator: (input) {
-                            if (input!.isEmpty) {
-                              return 'Informe o nome do produto';
-                            }
-                          },
-                          decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: 'Buscar por algo...',
-                              suffixIcon: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  InkWell(
-                                    onTap: () {
-                                      if (_formKey.currentState!.validate()) {
-                                        productStore.onlyButtonLoadMore = false;
-                                        productStore.getProductsByDescription(
-                                            description:
-                                                _searchController.text);
-                                        // dialogResultSearchProducts(context);
-                                        _searchController.text = '';
-                                        searchFocus.unfocus();
-                                      }
-                                    },
-                                    child: Icon(
-                                      Icons.search,
-                                      size: 30,
-                                    ),
-                                  ),
-                                  IconButton(
-                                      onPressed: () async {
-                                        String barcodeScanRes =
-                                            await FlutterBarcodeScanner
-                                                .scanBarcode(
-                                                    '#FFFFFF',
-                                                    'Cancelar',
-                                                    false,
-                                                    ScanMode.BARCODE);
-                                        productStore
-                                            .getProductByBarcode(
-                                                barcode: barcodeScanRes)
-                                            .then((value) {
-                                          if (value != null) {
-                                            showDialogProductDetail(
-                                                context, value);
-                                          } else {
-                                            showDialog(
-                                                context: context,
-                                                builder: (context) {
-                                                  return AlertDialog(
-                                                    title: Text(
-                                                        'Produto não cadastrado'),
-                                                    content: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      children: [
-                                                        Text(
-                                                          'Não existe um produto cadastrado com o código de barra lido($barcodeScanRes)',
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                        )
-                                                      ],
-                                                    ),
-                                                  );
-                                                });
-                                          }
-                                        });
-                                      },
-                                      icon: Icon(MdiIcons.barcodeScan)),
-                                ],
-                              )),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    InkWell(
-                      onTap: () {
-                        PageController pageController = PageController();
-
-                        List<Widget> pages = [
-                          GeneralCategoriesWidget(
-                            controller: pageController,
-                          ),
-                          SecondaryCategoriesWidget(
-                            pageController: pageController,
-                            productStore: productStore,
-                          )
-                        ];
-
-                        showModalBottomSheet(
-                            context: context,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12)),
-                            builder: (ctx) {
-                              Modular.get<CategoryStore>().canUpdate = false;
-                              return PageView(
-                                controller: pageController,
-                                children: pages,
-                              );
-                            }).then((value) {
-                          if (Modular.get<CategoryStore>().canUpdate) {
-                            productStore.getProductsByCategories(
-                                categoryName: Modular.get<CategoryStore>()
-                                    .selectedCategory!
-                                    .description);
-                          }
-                        });
+              );
+            }),
+          Padding(
+            padding:
+                const EdgeInsets.only(top: 16, left: 24, right: 24, bottom: 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Form(
+                  key: _formKey,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 8),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        border: Border.all(
+                          color: Colors.grey,
+                        )),
+                    child: TextFormField(
+                      controller: _searchController,
+                      focusNode: searchFocus,
+                      onFieldSubmitted: (value) {
+                        if (_formKey.currentState!.validate()) {
+                          productStore.onlyButtonLoadMore = false;
+                          productStore.getProductsByDescription(
+                              description: value);
+                          // dialogResultSearchProducts(context);
+                          _searchController.text = '';
+                          searchFocus.unfocus();
+                        }
                       },
-                      child: const Text(
-                        'Categorias',
-                        style: TextStyle(fontWeight: FontWeight.w500),
-                      ),
-                    )
-                  ],
+                      validator: (input) {
+                        if (input!.isEmpty) {
+                          return 'Informe o nome do produto';
+                        }
+                      },
+                      decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Buscar por algo...',
+                          suffixIcon: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  if (_formKey.currentState!.validate()) {
+                                    productStore.onlyButtonLoadMore = false;
+                                    productStore.getProductsByDescription(
+                                        description: _searchController.text);
+                                    // dialogResultSearchProducts(context);
+                                    _searchController.text = '';
+                                    searchFocus.unfocus();
+                                  }
+                                },
+                                child: Icon(
+                                  Icons.search,
+                                  size: 30,
+                                ),
+                              ),
+                              IconButton(
+                                  onPressed: () async {
+                                    String barcodeScanRes =
+                                        await FlutterBarcodeScanner.scanBarcode(
+                                            '#FFFFFF',
+                                            'Cancelar',
+                                            false,
+                                            ScanMode.BARCODE);
+                                    productStore
+                                        .getProductByBarcode(
+                                            barcode: barcodeScanRes)
+                                        .then((value) {
+                                      if (value != null) {
+                                        showDialogProductDetail(context, value);
+                                      } else {
+                                        showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return AlertDialog(
+                                                title: Text(
+                                                    'Produto não cadastrado'),
+                                                content: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    Text(
+                                                      'Não existe um produto cadastrado com o código de barra lido($barcodeScanRes)',
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                    )
+                                                  ],
+                                                ),
+                                              );
+                                            });
+                                      }
+                                    });
+                                  },
+                                  icon: Icon(MdiIcons.barcodeScan)),
+                            ],
+                          )),
+                    ),
+                  ),
                 ),
-              ),
-              Expanded(
-                child: Observer(
-                  builder: (_) {
-                    if (productStore.productState is AppStateLoading &&
-                        !productStore.onlyButtonLoadMore) {
-                      return Center(
-                        child: Column(
-                          children: const [
-                            Text("Os produtos estão sendo carregados..."),
-                            SizedBox(
-                              height: 8,
-                            ),
-                            CircularProgressIndicator()
-                          ],
-                          mainAxisAlignment: MainAxisAlignment.center,
+                const SizedBox(
+                  height: 8,
+                ),
+                InkWell(
+                  onTap: () {
+                    PageController pageController = PageController();
+
+                    List<Widget> pages = [
+                      GeneralCategoriesWidget(
+                        controller: pageController,
+                      ),
+                      SecondaryCategoriesWidget(
+                        pageController: pageController,
+                        productStore: productStore,
+                      )
+                    ];
+
+                    showModalBottomSheet(
+                        context: context,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                        builder: (ctx) {
+                          Modular.get<CategoryStore>().canUpdate = false;
+                          return PageView(
+                            controller: pageController,
+                            children: pages,
+                          );
+                        }).then((value) {
+                      if (Modular.get<CategoryStore>().canUpdate) {
+                        productStore.getProductsByCategories(
+                            categoryName: Modular.get<CategoryStore>()
+                                .selectedCategory!
+                                .description);
+                      }
+                    });
+                  },
+                  child: const Text(
+                    'Categorias',
+                    style: TextStyle(fontWeight: FontWeight.w500),
+                  ),
+                )
+              ],
+            ),
+          ),
+          Expanded(
+            child: Observer(
+              builder: (_) {
+                if (productStore.productState is AppStateLoading &&
+                    !productStore.onlyButtonLoadMore) {
+                  return Center(
+                    child: Column(
+                      children: const [
+                        Text("Os produtos estão sendo carregados..."),
+                        SizedBox(
+                          height: 8,
                         ),
+                        CircularProgressIndicator()
+                      ],
+                      mainAxisAlignment: MainAxisAlignment.center,
+                    ),
+                  );
+                } else {
+                  if (productStore.products.isNotEmpty) {
+                    if (marketStore.filteredMarkets.isEmpty) {
+                      return Center(
+                        child: Text(
+                            'Não há mercados no disponíveis para sua localização'),
                       );
-                    } else {
-                      if (productStore.products.isNotEmpty) {
-                        if (marketStore.filteredMarkets.isEmpty) {
+                    }
+                    priceStore.getProductPriceByMarkets(
+                        productIds:
+                            productStore.products.map((e) => e.id).toList(),
+                        marketIds: marketStore.filteredMarkets
+                            .map((m) => m.id)
+                            .toList());
+                    return Observer(
+                      builder: (_) {
+                        if (priceStore.allPriceStatus is AppStateLoading) {
                           return Center(
-                            child: Text(
-                                'Não há mercados no disponíveis para sua localização'),
+                            child: Column(
+                              children: const [
+                                Text(
+                                    "Aguarde enquanto os preços são carregados..."),
+                                SizedBox(
+                                  height: 8,
+                                ),
+                                CircularProgressIndicator()
+                              ],
+                              mainAxisAlignment: MainAxisAlignment.center,
+                            ),
                           );
                         }
-                        priceStore.getProductPriceByMarkets(
-                            productIds:
-                                productStore.products.map((e) => e.id).toList(),
-                            marketIds: marketStore.filteredMarkets
-                                .map((m) => m.id)
-                                .toList());
-                        return Observer(
-                          builder: (_) {
-                            if (priceStore.allPriceStatus is AppStateLoading) {
-                              return Center(
-                                child: Column(
-                                  children: const [
-                                    Text(
-                                        "Aguarde enquanto os preços são carregados..."),
-                                    SizedBox(
-                                      height: 8,
-                                    ),
-                                    CircularProgressIndicator()
-                                  ],
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                ),
-                              );
-                            }
-                            return CustomDataTable(
-                              loadMoreWidget: productStore.productState
-                                      is AppStateLoading
+                        return CustomDataTable(
+                          loadMoreWidget:
+                              productStore.productState is AppStateLoading
                                   ? Container(
                                       height: 40,
                                       child: Center(
@@ -328,151 +325,141 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                                         productStore.getAllProducts();
                                       }
                                     })),
-                              loadMore: productStore.canLoadMore,
-                              cellHeight: 135,
-                              fixedCornerCell: ButtonShare(
-                                onPressed: sharePrices,
-                              ),
-                              rowsCells: [
-                                ...List.generate(productStore.products.length,
-                                    (index) {
-                                  return [
-                                    Text(productStore
-                                        .products[index].description),
-                                    ...priceStore.prices[index].map((e) =>
-                                        Modular.get<SignatureStore>()
-                                                        .signature !=
-                                                    null &&
-                                                Modular.get<SignatureStore>()
-                                                    .signature!
-                                                    .status
-                                            ? Center(
-                                                child: Text(
-                                                    e.isEmpty || e == 'R\$ 0,00'
-                                                        ? 'Em Falta'
-                                                        : e))
-                                            : const Icon(Icons.lock))
-                                  ];
-                                })
-                              ],
-                              fixedColCells: List.generate(
-                                  productStore.products.length,
-                                  (index) => InkWell(
-                                        onTap: () {
-                                          showDialogProductDetail(context,
-                                              productStore.products[index]);
-                                        },
-                                        child: Container(
-                                            width: 80,
-                                            child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
+                          loadMore: productStore.canLoadMore,
+                          cellHeight: 135,
+                          fixedCornerCell: ButtonShare(
+                            onPressed: sharePrices,
+                          ),
+                          rowsCells: [
+                            ...List.generate(productStore.products.length,
+                                (index) {
+                              return [
+                                Text(productStore.products[index].description),
+                                ...priceStore.prices[index].map((e) => Center(
+                                    child: Text(e.isEmpty || e == 'R\$ 0,00'
+                                        ? 'Em Falta'
+                                        : e)))
+                              ];
+                            })
+                          ],
+                          fixedColCells: List.generate(
+                              productStore.products.length,
+                              (index) => InkWell(
+                                    onTap: () {
+                                      showDialogProductDetail(context,
+                                          productStore.products[index]);
+                                    },
+                                    child: Container(
+                                        width: 80,
+                                        child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Container(
+                                                height: 90,
+                                                child: Image.network(
+                                                  productStore.products[index]
+                                                      .imagePath!,
+                                                  errorBuilder: (context, error,
+                                                      stackTrace) {
+                                                    return Image.asset(
+                                                        'assets/img/image_not_found.jpg');
+                                                  },
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                height: 12,
+                                              ),
+                                              Row(
                                                 children: [
                                                   Container(
-                                                    height: 90,
-                                                    child: Image.network(
-                                                      productStore
-                                                          .products[index]
-                                                          .imagePath!,
-                                                      errorBuilder: (context,
-                                                          error, stackTrace) {
-                                                        return Image.asset(
-                                                            'assets/img/image_not_found.jpg');
-                                                      },
-                                                    ),
+                                                    height: 20,
+                                                    width: 20,
+                                                    decoration: BoxDecoration(
+                                                        shape: BoxShape.circle,
+                                                        color:
+                                                            Colors.lightBlue),
+                                                    child: Center(
+                                                        child: Icon(
+                                                      Icons.add,
+                                                      color: Colors.white,
+                                                      size: 18,
+                                                    )),
                                                   ),
-                                                  const SizedBox(
-                                                    height: 12,
+                                                  SizedBox(
+                                                    width: 4,
                                                   ),
-                                                  Row(
-                                                    children: [
-                                                      Container(
-                                                        height: 20,
-                                                        width: 20,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                color: Colors
-                                                                    .lightBlue),
-                                                        child: Center(
-                                                            child: Icon(
-                                                          Icons.add,
-                                                          color: Colors.white,
-                                                          size: 18,
-                                                        )),
-                                                      ),
-                                                      SizedBox(
-                                                        width: 4,
-                                                      ),
-                                                      Text('Add Lista')
-                                                    ],
-                                                  )
-                                                ])),
-                                      )),
-                              fixedRowCells: [
-                                Container(),
-                                ...List.generate(
-                                    marketStore.filteredMarkets.length,
-                                    (index) => InkWell(
-                                          onTap: () {
-                                            Modular.to.pushNamed(
-                                                '/home/marketDetail/',
-                                                arguments: marketStore
-                                                    .filteredMarkets[index]);
-                                          },
-                                          child: Container(
-                                            width: 100,
-                                            child: Image.network(marketStore
-                                                .filteredMarkets[index]
-                                                .imagePath!),
-                                          ),
-                                        ))
-                              ],
-                              cellBuilder: (data) {
-                                return Center(
-                                  child: Text(
-                                    '$data',
-                                  ),
-                                );
-                              },
+                                                  Text('Add Lista')
+                                                ],
+                                              )
+                                            ])),
+                                  )),
+                          fixedRowCells: [
+                            Container(),
+                            ...List.generate(
+                                marketStore.filteredMarkets.length,
+                                (index) => InkWell(
+                                      onTap: () {
+                                        Modular.to.pushNamed(
+                                            '/home/marketDetail/',
+                                            arguments: marketStore
+                                                .filteredMarkets[index]);
+                                      },
+                                      child: Container(
+                                        width: 100,
+                                        child: Image.network(marketStore
+                                            .filteredMarkets[index].imagePath!),
+                                      ),
+                                    ))
+                          ],
+                          cellBuilder: (data) {
+                            return Center(
+                              child: Text(
+                                '$data',
+                              ),
                             );
                           },
                         );
-                      } else {
-                        return Center(
-                          child: Column(
-                            children: const [
-                              Text("Nenhum produto encontrado!"),
-                              SizedBox(
-                                height: 8,
-                              ),
-                            ],
-                            mainAxisAlignment: MainAxisAlignment.center,
+                      },
+                    );
+                  } else {
+                    return Center(
+                      child: Column(
+                        children: const [
+                          Text("Nenhum produto encontrado!"),
+                          SizedBox(
+                            height: 8,
                           ),
-                        );
-                      }
-                    }
-                  },
-                ),
-              ),
-            ],
-          ),
-          if (_bottomBanner != null)
-            Align(
-              alignment: Alignment.bottomLeft,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    alignment: Alignment.center,
-                    child: AdWidget(ad: _bottomBanner!),
-                    width: _bottomBanner!.size.width.toDouble(),
-                    height: _bottomBanner!.size.height.toDouble(),
-                  ),
-                ],
-              ),
+                        ],
+                        mainAxisAlignment: MainAxisAlignment.center,
+                      ),
+                    );
+                  }
+                }
+              },
             ),
+          ),
+          if (_topBanner != null)
+            Observer(builder: (_) {
+              return Visibility(
+                visible: !(_signatureStore.signature != null &&
+                    _signatureStore.signature!.status),
+                child: Align(
+                  alignment: Alignment.bottomLeft,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        alignment: Alignment.center,
+                        child: AdWidget(ad: _bottomBanner!),
+                        width: _bottomBanner!.size.width.toDouble(),
+                        height: _bottomBanner!.size.height.toDouble(),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }),
         ],
       ),
     );
