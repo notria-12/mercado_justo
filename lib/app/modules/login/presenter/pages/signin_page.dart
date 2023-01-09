@@ -83,7 +83,7 @@ class _SignInPageState extends State<SignInPage> {
                   }
                 }),
                 inputType: TextInputType.phone,
-                inputFotmatters: [InputFormater.phoneMask],
+                inputFotmatters: [InputFormater.phoneMask()],
                 label: 'Seu celular com DD',
                 hintText: 'DDD + número',
                 icon: const Icon(Icons.phone),

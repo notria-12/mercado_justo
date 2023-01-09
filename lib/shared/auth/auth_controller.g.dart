@@ -17,6 +17,21 @@ mixin _$AuthController on _AuthControllerBase, Store {
               name: '_AuthControllerBase.isUserAutenticated'))
       .value;
 
+  final _$userAtom = Atom(name: '_AuthControllerBase.user');
+
+  @override
+  UserModel? get user {
+    _$userAtom.reportRead();
+    return super.user;
+  }
+
+  @override
+  set user(UserModel? value) {
+    _$userAtom.reportWrite(value, super.user, () {
+      super.user = value;
+    });
+  }
+
   final _$stateAtom = Atom(name: '_AuthControllerBase.state');
 
   @override
@@ -49,6 +64,7 @@ mixin _$AuthController on _AuthControllerBase, Store {
   @override
   String toString() {
     return '''
+user: ${user},
 state: ${state},
 isUserAutenticated: ${isUserAutenticated}
     ''';

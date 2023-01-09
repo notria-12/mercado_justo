@@ -1,5 +1,6 @@
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/app/modules/signature/pages/choose_signature_page.dart';
+import 'package:mercado_justo/app/modules/signature/pages/pix_payment_page.dart';
 
 class SignatureModule extends Module {
   @override
@@ -10,6 +11,7 @@ class SignatureModule extends Module {
     ChildRoute(
       '/',
       child: (context, args) => ChooseSignaturePage(),
-    )
+    ),
+    ChildRoute('/pix/', child: ((context, args) => PixPaymentPage()))
   ];
 }

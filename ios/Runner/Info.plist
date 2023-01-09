@@ -47,5 +47,9 @@
 	<string>This app needs access to location when open.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>This app needs access to location when in the background.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Camera permission is required for barcode scanning.</string>
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-6371060274459228/9069254971</string>
 </dict>
 </plist>

@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:mercado_justo/app/modules/home_auth/controllers/problem_controller.dart';
+import 'package:mercado_justo/app/modules/home_auth/models/problem_model.dart';
 import 'package:mercado_justo/shared/controllers/fair_price_store.dart';
 import 'package:mercado_justo/shared/controllers/list_store.dart';
 import 'package:mercado_justo/shared/controllers/market_name_store.dart';
 
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
+import 'package:mercado_justo/shared/utils/app_state.dart';
 
 class Dialogs {
   Future addNewMarketName(BuildContext context,
@@ -213,10 +217,11 @@ class Dialogs {
   }
 
   void addNewList(BuildContext context, {String? value, int? listId}) {
-    final TextEditingController _nameController = TextEditingController();
+    final TextEditingController _problemTextController =
+        TextEditingController();
     final _formKey = GlobalKey<FormState>();
     if (value != null) {
-      _nameController.text = value;
+      _problemTextController.text = value;
     }
     showDialog(
         context: context,
@@ -246,7 +251,7 @@ class Dialogs {
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         width: 300,
                         child: TextFormField(
-                          controller: _nameController,
+                          controller: _problemTextController,
                           decoration: const InputDecoration(
                               border: InputBorder.none,
                               hintText: 'Digite o nome da nova lista',
@@ -279,12 +284,12 @@ class Dialogs {
                               if (value != null) {
                                 Modular.get<ListStore>().updateListName(
                                     listId: listId!,
-                                    newName: _nameController.text);
+                                    newName: _problemTextController.text);
                                 Modular.to.pop();
                                 Modular.to.pop();
                               } else {
                                 Modular.get<ListStore>()
-                                    .createNewList(_nameController.text);
+                                    .createNewList(_problemTextController.text);
                                 Modular.to.pop();
                               }
                             }
@@ -295,6 +300,101 @@ class Dialogs {
                               style: const TextStyle(fontSize: 20),
                             ),
                           ),
+                          style: ElevatedButton.styleFrom(
+                              primary: Colors.lightBlue,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8))),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ));
+  }
+
+  void reportProblem(BuildContext context, {required String barCode}) {
+    final TextEditingController _problemTextController =
+        TextEditingController();
+    final _formKey = GlobalKey<FormState>();
+
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Problema'),
+                  IconButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: () {
+                        Modular.to.pop();
+                      },
+                      icon: const Icon(Icons.close))
+                ],
+              ),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
+              content: Container(
+                padding: const EdgeInsets.all(16),
+                height: 260,
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        width: 300,
+                        child: TextFormField(
+                          controller: _problemTextController,
+                          maxLines: 5,
+                          decoration: const InputDecoration(
+                              border: InputBorder.none,
+                              hintText: 'Informe o problema',
+                              hintStyle:
+                                  TextStyle(color: Colors.black, fontSize: 16)),
+                          validator: (input) {
+                            if (input!.isEmpty) {
+                              return 'O campo não pode está vazio';
+                            }
+                            if (input.length < 5) {
+                              return 'O nome precisa ter pelo menos 5 letras';
+                            }
+                          },
+                        ),
+                        decoration: BoxDecoration(
+                            color: Colors.blueGrey[50],
+                            borderRadius: BorderRadius.circular(10)),
+                      ),
+                      const SizedBox(
+                        height: 50,
+                      ),
+                      SizedBox(
+                        height: 50,
+                        width: 300,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            final formState = _formKey.currentState!;
+                            if (formState.validate()) {
+                              Modular.get<ProblemStore>().reportProblem(
+                                  ProblemModel(
+                                      bardCode: barCode,
+                                      errorType: _problemTextController.text));
+                            }
+                          },
+                          child: Observer(builder: (_) {
+                            return Modular.get<ProblemStore>().problemStatus
+                                    is AppStateLoading
+                                ? const Center(
+                                    child: CircularProgressIndicator(),
+                                  )
+                                : Center(
+                                    child: Text(
+                                      'Reportar',
+                                      style: const TextStyle(fontSize: 20),
+                                    ),
+                                  );
+                          }),
                           style: ElevatedButton.styleFrom(
                               primary: Colors.lightBlue,
                               shape: RoundedRectangleBorder(

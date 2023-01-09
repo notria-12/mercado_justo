@@ -275,6 +275,57 @@ class CustomBottonSheets {
         });
   }
 
+  void reportProblemSuccessfull(BuildContext context) {
+    showModalBottomSheet(
+        context: context,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        builder: (context) {
+          return Container(
+            padding: EdgeInsets.all(16),
+            child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  const Text(
+                    "O problema foi reportado com sucesso!",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          Modular.to.pop();
+                        },
+                        child: Container(
+                          width: 170,
+                          padding: EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                              color: Colors.lightBlue,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5))),
+                          child: Center(
+                            child: Text(
+                              'OK',
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 18),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                ]),
+          );
+        });
+  }
+
   void optionsList(BuildContext context,
       {required int listId, required String name}) {
     showModalBottomSheet(

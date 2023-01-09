@@ -7,13 +7,13 @@ class Price {
   int idMarket;
   String price;
   String updateAt;
-  Product product;
+  Product? product;
   Price({
     required this.id,
     required this.idMarket,
     required this.price,
     required this.updateAt,
-    required this.product,
+    this.product,
   });
 
   Price copyWith({
@@ -38,7 +38,7 @@ class Price {
       'idMarket': idMarket,
       'price': price,
       'updateAt': updateAt,
-      'product': product.toMap(),
+      // 'product': product.toMap(),
     };
   }
 
@@ -51,7 +51,7 @@ class Price {
       idMarket: map['id']?.toInt() ?? 0,
       price: map['preco'] ?? '',
       updateAt: map['atualizado_em'] ?? '',
-      product: Product.fromMap(map['produto']),
+      // product: Product.fromMap(map['produto']),
     );
   }
 

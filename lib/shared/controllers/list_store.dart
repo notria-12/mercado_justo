@@ -3,8 +3,10 @@ import 'package:mercado_justo/shared/controllers/market_store.dart';
 import 'package:mercado_justo/shared/controllers/price_store.dart';
 import 'package:mercado_justo/shared/models/list_model.dart';
 import 'package:mercado_justo/shared/models/market_model.dart';
+import 'package:mercado_justo/shared/models/price_model.dart';
 import 'package:mercado_justo/shared/models/product_list_model.dart';
 import 'package:mercado_justo/shared/models/product_model.dart';
+import 'package:mercado_justo/shared/repositories/price_repository.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/utils/error.dart';
 import 'package:mobx/mobx.dart';
@@ -16,11 +18,12 @@ part 'list_store.g.dart';
 class ListStore = _ListStoreBase with _$ListStore;
 
 abstract class _ListStoreBase with Store {
-  final PriceStore priceStore;
+  // final PriceStore priceStore;
+  final PriceRepository priceRepository;
   final MarketStore marketStore;
   final ListRepository _repository;
   _ListStoreBase(this._repository,
-      {required this.priceStore, required this.marketStore});
+      {required this.priceRepository, required this.marketStore});
 
   @observable
   List<ListModel> product_list = [];
@@ -136,8 +139,10 @@ abstract class _ListStoreBase with Store {
     double average = 0;
     if (marketSelected >= 0) {
       for (var i = 0; i < prices.length; i++) {
+        var priceAux = prices[i][marketSelected];
         if (prices[i][marketSelected].isEmpty ||
-            prices[i][marketSelected] == 'R\$ 0,00') {
+            prices[i][marketSelected] == 'R\$ 0,00' ||
+            prices[i][marketSelected] == 'Em Falta') {
           missingItens++;
           average += (prices[i]
                   .map((e) => _parseToDouble(e))
@@ -156,9 +161,11 @@ abstract class _ListStoreBase with Store {
     };
   }
 
-  double _parseToDouble(String value) => value.isEmpty
-      ? 0
-      : double.parse(value.replaceAll(r'R$ ', '').replaceAll(r',', '.'));
+  double _parseToDouble(String value) {
+    return value.isEmpty || value == 'Em Falta'
+        ? 0
+        : double.parse(value.replaceAll(r'R$ ', '').replaceAll(r',', '.'));
+  }
 
   Future getAllLists() async {
     try {
@@ -288,21 +295,31 @@ abstract class _ListStoreBase with Store {
   }
 
   Future getProductsPrices() async {
-    List<List<String>> listPricesAux = [];
+    // List<List<String>> listPricesAux = [];
 
     try {
-      for (int i = 0; i < products.length; i++) {
-        List<String> pricesByProducts = [];
-        for (Market market in marketStore.filteredMarkets
-            .where((element) => element.isSelectable == true)
-            .toList()) {
-          String? price = await priceStore.getProductPriceByMarket(
-              marketId: market.id, barCode: products[i].barCode.first);
-          pricesByProducts.add(price);
-        }
-        listPricesAux.add([...pricesByProducts]);
-      }
-      prices = listPricesAux;
+      List<List<Price>>? listPricesAux =
+          await priceRepository.getProductPricesByMarkets(
+              productIds: products.map((e) => e.id).toList(),
+              marketIds: marketStore.filteredMarkets
+                  .where((element) => element.isSelectable == true)
+                  .map((e) => e.id)
+                  .toList());
+      // for (int i = 0; i < products.length; i++) {
+      //   List<String> pricesByProducts = [];
+      //   for (Market market in marketStore.filteredMarkets
+      //       .where((element) => element.isSelectable == true)
+      //       .toList()) {
+      //     String? price = await priceStore.getProductPriceByMarket(
+      //         marketId: market.id, barCode: products[i].barCode.first);
+      //     pricesByProducts.add(price);
+      //   }
+      //   listPricesAux.add([...pricesByProducts]);
+      // }
+      prices = listPricesAux!
+          .map((element) => element.map((e) => e.price).toList())
+          .toList();
+      print(prices);
     } catch (e) {
       rethrow;
     }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/app/modules/home_auth/widgets/drawer_item.dart';
 import 'package:mercado_justo/shared/auth/auth_controller.dart';
+import 'package:mercado_justo/shared/controllers/signature_store.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({
@@ -48,20 +49,22 @@ class CustomDrawer extends StatelessWidget {
             onTap: () {
               Modular.to.pushNamed('/profile/');
             }),
-        DrawerItem(
-          child: Container(
-            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-            color: Colors.green,
-            child: const Text('Seja Premium',
-                style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white)),
+        if (Modular.get<SignatureStore>().signature == null ||
+            !Modular.get<SignatureStore>().signature!.status)
+          DrawerItem(
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+              color: Colors.green,
+              child: const Text('Seja Premium',
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white)),
+            ),
+            onTap: () {
+              Modular.to.pushNamed('/signature/');
+            },
           ),
-          onTap: () {
-            Modular.to.pushNamed('/signature/');
-          },
-        ),
         DrawerItem(
             child: const Text(
           'Redes Sociais',
