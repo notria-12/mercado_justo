@@ -4,6 +4,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:mercado_justo/app/modules/home_auth/controllers/average_price_controller.dart';
 import 'package:mercado_justo/app/modules/home_auth/controllers/category_controller.dart';
 import 'package:mercado_justo/app/modules/home_auth/controllers/problem_controller.dart';
 import 'package:mercado_justo/app/modules/home_auth/models/category_model.dart';
@@ -512,6 +513,10 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
 
   Future<dynamic> showDialogProductDetail(
       BuildContext context, Product product) {
+    final averagePriceController = Modular.get<AveragePriceStore>();
+    averagePriceController.getAveragePrice(
+        productId: product.id,
+        marketIds: marketStore.filteredMarkets.map((e) => e.id).toList());
     return showModalBottomSheet(
         context: context,
         isScrollControlled: true,
@@ -569,21 +574,31 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 8,
                 ),
                 Text("Ref: ${product.barCode.first}"),
-                SizedBox(
+                const SizedBox(
                   height: 8,
                 ),
-                Text(
-                  'Valor médio: R\$ 7,85',
-                  style: TextStyle(
-                      // color: Colors.blue,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600),
-                ),
-                SizedBox(
+                Observer(builder: (_) {
+                  if (averagePriceController.status is AppStateLoading) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  if (averagePriceController.status is AppStateSuccess) {
+                    return Text(
+                      'Valor médio: R\$ ${averagePriceController.averagePrice.toStringAsFixed(2).replaceAll('.', ',')}',
+                      style: const TextStyle(
+                          // color: Colors.blue,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600),
+                    );
+                  }
+                  return Container();
+                }),
+                const SizedBox(
                   height: 120,
                 ),
                 Observer(builder: (_) {
