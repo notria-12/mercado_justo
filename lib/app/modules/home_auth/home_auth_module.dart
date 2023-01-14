@@ -8,6 +8,7 @@ import 'package:mercado_justo/app/modules/home_auth/controllers/problem_controll
 import 'package:mercado_justo/app/modules/home_auth/home_auth_store.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/app/modules/home_auth/pages/home_auth_page.dart';
+import 'package:mercado_justo/app/modules/home_auth/pages/market_detail_page.dart';
 import 'package:mercado_justo/app/modules/home_auth/repositories/average_price_repository.dart';
 import 'package:mercado_justo/app/modules/home_auth/repositories/category_repository.dart';
 import 'package:mercado_justo/app/modules/home_auth/repositories/problem_repository.dart';
@@ -57,6 +58,10 @@ class HomeAuthModule extends Module {
     ChildRoute('/config/', child: (_, args) => const ConfigPage()),
     ModuleRoute('/faq/', module: CommonQuestionsModule()),
     ModuleRoute('/list/', module: ListsModule()),
-    ModuleRoute('/terms/', module: TermsAndConditionsModule())
+    ModuleRoute('/terms/', module: TermsAndConditionsModule()),
+    ChildRoute('/marketDetail/',
+        child: (_, args) => MarketDetail(
+              market: args.data,
+            ))
   ];
 }

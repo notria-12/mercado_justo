@@ -401,8 +401,7 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                                 marketStore.filteredMarkets.length,
                                 (index) => InkWell(
                                       onTap: () {
-                                        Modular.to.pushNamed(
-                                            '/home/marketDetail/',
+                                        Modular.to.pushNamed('marketDetail/',
                                             arguments: marketStore
                                                 .filteredMarkets[index]);
                                       },

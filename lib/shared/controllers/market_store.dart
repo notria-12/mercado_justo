@@ -1,12 +1,9 @@
 import 'package:geolocator/geolocator.dart';
-import 'package:mobx/mobx.dart';
-
 import 'package:mercado_justo/app/modules/lists/filter_store.dart';
 import 'package:mercado_justo/shared/controllers/position_store.dart';
 import 'package:mercado_justo/shared/models/market_model.dart';
 import 'package:mercado_justo/shared/repositories/market_repository.dart';
-import 'package:mercado_justo/shared/utils/app_state.dart';
-import 'package:mercado_justo/shared/utils/utils.dart';
+import 'package:mobx/mobx.dart';
 
 part 'market_store.g.dart';
 
@@ -33,16 +30,6 @@ abstract class _MarketStoreBase with Store {
 
   @observable
   String? marketId;
-
-  // Future getAllMarkets() async {
-  //   try {
-  //     List<Market> auxMarkets = await repository.getAllMarkets(page: page);
-  //     markets = [...markets, ...auxMarkets];
-  //     page++;
-  //   } catch (e) {
-  //     rethrow;
-  //   }
-  // }
 
   Future getGroupMarkets() async {
     try {

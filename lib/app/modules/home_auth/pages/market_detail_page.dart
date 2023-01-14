@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:mercado_justo/app/modules/home/controllers/initial_controller.dart';
 import 'package:mercado_justo/shared/controllers/market_store.dart';
 import 'package:mercado_justo/shared/controllers/position_store.dart';
 import 'package:mercado_justo/shared/models/market_model.dart';
@@ -12,7 +11,7 @@ import 'package:mercado_justo/shared/utils/utils.dart';
 class MarketDetail extends StatelessWidget {
   Market market;
   MarketDetail({Key? key, required this.market}) : super(key: key);
-  final initialStore = Modular.get<InitialStore>();
+  final marketStore = Modular.get<MarketStore>();
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +77,7 @@ class MarketDetail extends StatelessWidget {
               SizedBox(
                 height: 20,
               ),
-              ...initialStore
+              ...marketStore
                   .getMarketsByName(market.name)
                   .map((e) => AddressWidget(market: e))
                   .toList()
