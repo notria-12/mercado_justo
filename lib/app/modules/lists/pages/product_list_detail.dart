@@ -734,13 +734,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                                   e.isEmpty ||
                                           e == 'R\$ 0,00' ||
                                           e == 'Em Falta'
-                                      ? const Text(
-                                          'Sugestão?',
-                                          style: TextStyle(
-                                              color: Colors.lightBlue,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16),
-                                        )
+                                      ? Container()
                                       : Text(
                                           'R\$ ${(double.parse(e.replaceAll(r'R$ ', '').replaceAll(r',', '.')) * storeProductList.quantities[index]).toStringAsFixed(2)}',
                                           style: const TextStyle(
