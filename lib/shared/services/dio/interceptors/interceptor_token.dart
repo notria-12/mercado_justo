@@ -9,7 +9,7 @@ class TokenInterceptor extends InterceptorsWrapper {
       final token = Modular.get<AuthController>().token;
       options.headers.addAll({
         "Authorization": "Bearer $token",
-        "X-App-Origem": "SWAGGER_MERCADO_JUSTO"
+        "X-App-Origem": "APP_MERCADO_JUSTO"
       });
     }
 

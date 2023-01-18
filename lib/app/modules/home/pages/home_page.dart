@@ -9,8 +9,10 @@ import 'package:mercado_justo/shared/controllers/market_store.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/widgets/button_share.dart';
 import 'package:mercado_justo/shared/widgets/custom_table_widget.dart';
+import 'package:mobx/mobx.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../../../shared/controllers/position_store.dart';
 import '../controllers/initial_controller.dart';
 
 class HomePage extends StatefulWidget {
@@ -24,12 +26,22 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends ModularState<HomePage, HomeStore> {
   final marketStore = Modular.get<MarketStore>();
   final initialStore = Modular.get<InitialStore>();
-
+  late ReactionDisposer _disposer;
+  final storePosition = Modular.get<PositionStore>();
   @override
   void initState() {
     super.initState();
+    _disposer = reaction((_) => storePosition.position, (_) {
+      initialStore.getPublicMarkets();
+    });
     initialStore.getPublicsProducts();
     initialStore.getPublicMarkets();
+  }
+
+  @override
+  void dispose() {
+    _disposer();
+    super.dispose();
   }
 
   @override

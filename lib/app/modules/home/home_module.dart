@@ -15,7 +15,7 @@ class HomeModule extends Module {
       (i) => HomeStore(),
     ),
     Bind.lazySingleton((i) => InitialRepository(i())),
-    Bind.lazySingleton((i) => InitialStore(i())),
+    Bind.lazySingleton((i) => InitialStore(i(), i())),
     Bind.lazySingleton((i) => MarketRepository(i())),
     Bind.lazySingleton((i) =>
         MarketStore(repository: i(), filterStore: i(), positionStore: i())),

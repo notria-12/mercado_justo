@@ -34,7 +34,7 @@ class LoginDatasourceImpl implements ILoginDatasource {
     try {
       var result = await _dio.post("auth/login-email/",
           data: {"token": code, "email": email},
-          options: Options(headers: {"X-App-Origem": "SWAGGER_MERCADO_JUSTO"}));
+          options: Options(headers: {"X-App-Origem": "APP_MERCADO_JUSTO"}));
       _authController.updateToken(result.data['dados']['access_token']);
       UserModel? user = UserModel.fromMap(result.data['dados']['usuario']);
       _authController.setUser(user);
