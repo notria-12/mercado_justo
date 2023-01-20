@@ -68,15 +68,17 @@ class _ReceivedCodePageState
                 height: 30,
               ),
               CustomTextInput(
-                  validator: (input) {
-                    if (input!.length < 6) {
-                      return "Informe um código válido";
-                    }
-                  },
-                  onSave: (input) => store.code = input,
-                  label: 'Código recebido',
-                  hintText: 'Informe o código',
-                  icon: const Icon(Icons.lock)),
+                validator: (input) {
+                  if (input!.length < 6) {
+                    return "Informe um código válido";
+                  }
+                },
+                onSave: (input) => store.code = input,
+                label: 'Código recebido',
+                hintText: 'Informe o código',
+                icon: const Icon(Icons.lock),
+                inputType: TextInputType.number,
+              ),
               const SizedBox(
                 height: 20,
               ),

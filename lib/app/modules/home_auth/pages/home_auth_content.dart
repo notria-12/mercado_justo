@@ -185,6 +185,11 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                                       if (value != null) {
                                         showDialogProductDetail(context, value);
                                       } else {
+                                        Modular.get<ProblemStore>()
+                                            .reportProblem(ProblemModel(
+                                                bardCode: barcodeScanRes,
+                                                errorType:
+                                                    'produto_sem_cadastro'));
                                         showDialog(
                                             context: context,
                                             builder: (context) {
