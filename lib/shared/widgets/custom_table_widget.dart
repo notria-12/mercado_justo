@@ -56,30 +56,24 @@ class CustomDataTableState<T> extends State<CustomDataTable<T>> {
                 children: [Expanded(child: data as Widget)],
               ));
 
-  Widget _buildFixedCol() => widget.fixedColCells == null
-      ? SizedBox.shrink()
-      : Material(
-          color: Colors.white,
-          child: DataTable(
-              // border:
-              //     TableBorder(right: BorderSide(color: Colors.grey, width: 1)),
-              horizontalMargin: widget.cellMargin,
-              columnSpacing: widget.cellSpacing,
-              headingRowHeight: widget.headingHeight,
-              dataRowHeight: widget.cellHeight,
-              columns: [
-                DataColumn(
-                    label: _buildChild(
-                        widget.fixedColWidth, widget.fixedColCells.first))
-              ],
-              rows: widget.fixedColCells
-                  .sublist(widget.fixedRowCells == null ? 1 : 0)
-                  .map((c) => DataRow(cells: [
-                        DataCell(_buildChild(widget.fixedColWidth, c,
-                            isNotSubTable: true))
-                      ]))
-                  .toList()),
-        );
+  Widget _buildFixedCol() => Material(
+        color: Colors.white,
+        child: DataTable(
+            // border:
+            //     TableBorder(right: BorderSide(color: Colors.grey, width: 1)),
+            horizontalMargin: widget.cellMargin,
+            columnSpacing: widget.cellSpacing,
+            headingRowHeight: widget.headingHeight,
+            dataRowHeight: widget.cellHeight,
+            columns: [DataColumn(label: Container())],
+            rows: widget.fixedColCells
+                .sublist(widget.fixedRowCells == null ? 1 : 0)
+                .map((c) => DataRow(cells: [
+                      DataCell(_buildChild(widget.fixedColWidth, c,
+                          isNotSubTable: true))
+                    ]))
+                .toList()),
+      );
 
   Widget _buildFixedRow() => widget.fixedRowCells == null
       ? SizedBox.shrink()

@@ -185,6 +185,11 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                                       if (value != null) {
                                         showDialogProductDetail(context, value);
                                       } else {
+                                        Modular.get<ProblemStore>()
+                                            .reportProblem(ProblemModel(
+                                                bardCode: barcodeScanRes,
+                                                errorType:
+                                                    'produto_sem_cadastro'));
                                         showDialog(
                                             context: context,
                                             builder: (context) {
@@ -401,8 +406,7 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                                 marketStore.filteredMarkets.length,
                                 (index) => InkWell(
                                       onTap: () {
-                                        Modular.to.pushNamed(
-                                            '/home/marketDetail/',
+                                        Modular.to.pushNamed('marketDetail/',
                                             arguments: marketStore
                                                 .filteredMarkets[index]);
                                       },

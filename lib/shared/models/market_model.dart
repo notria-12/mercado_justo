@@ -108,19 +108,7 @@ class Market {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is Market &&
-        other.id == id &&
-        other.hashId == hashId &&
-        other.order == order &&
-        other.isVisible == isVisible &&
-        other.latitude == latitude &&
-        other.longitude == longitude &&
-        other.cnpj == cnpj &&
-        other.phoneNumber == phoneNumber &&
-        other.name == name &&
-        other.imagePath == imagePath &&
-        other.siteAddress == siteAddress &&
-        other.address == address;
+    return other is Market && other.name == name;
   }
 
   @override

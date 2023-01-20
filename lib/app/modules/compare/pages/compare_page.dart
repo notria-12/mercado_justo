@@ -539,6 +539,7 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                   children: [
                     Text(
                       'O seu comparativo está vazio.',
+                      textAlign: TextAlign.center,
                       style:
                           TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                     ),
