@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mercado_justo/app/modules/compare/compare_store.dart';
@@ -103,7 +104,7 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
               });
             }
             return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: EdgeInsets.symmetric(horizontal: 14.sp),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -125,7 +126,7 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                               Text(
                                 'Valor total bloqueado',
                                 style: TextStyle(
-                                    color: Colors.lightBlue, fontSize: 18),
+                                    color: Colors.lightBlue, fontSize: 16.sp),
                               )
                             ],
                           ),
@@ -142,11 +143,13 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                         },
                       ),
                       ButtonShare(
-                          onPressed: store.getFairPrice.isNotEmpty &&
-                                  (_signatureStore.signature != null &&
-                                      _signatureStore.signature!.status)
-                              ? sharePrices
-                              : null),
+                        onPressed: store.getFairPrice.isNotEmpty &&
+                                (_signatureStore.signature != null &&
+                                    _signatureStore.signature!.status)
+                            ? sharePrices
+                            : null,
+                        size: 20.sp,
+                      ),
                       InkWell(
                         onTap: () {
                           if (store.getFairPrice.isNotEmpty)
@@ -240,9 +243,9 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                                   );
                                 });
                         },
-                        child: const Icon(
+                        child: Icon(
                           Icons.delete_outline_outlined,
-                          size: 28,
+                          size: 25.sp,
                         ),
                       )
                     ],
@@ -395,7 +398,8 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                                                                         as double;
                                                                   }).reduce((value, element) => value + element).toStringAsFixed(2).replaceAll(r'.', ',')}',
                                                               style: TextStyle(
-                                                                  fontSize: 20,
+                                                                  fontSize:
+                                                                      18.sp,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold,
@@ -476,7 +480,8 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                                                                             _signatureStore
                                                                                 .signature!.status)
                                                                         ? Text(
-                                                                            ' R\$ ${store.getFairPrice[index].where((element) => element['product_id']['categoria_1'] == e[0].category).map((e) => e['quantity'] * e['value'] as double).reduce((value, element) => value + element).toStringAsFixed(2).replaceAll(r'.', ',')}')
+                                                                            ' R\$ ${store.getFairPrice[index].where((element) => element['product_id']['categoria_1'] == e[0].category).map((e) => e['quantity'] * e['value'] as double).reduce((value, element) => value + element).toStringAsFixed(2).replaceAll(r'.', ',')}',
+                                                                          )
                                                                         : Icon(Icons
                                                                             .lock),
                                                                   ],
@@ -628,7 +633,7 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                 Align(
                   alignment: Alignment.center,
                   child: Container(
-                    width: 100,
+                    width: 90.w,
                     height: 80,
                     child: Image.network(
                       products[i].imagePath!,
@@ -678,9 +683,10 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                 (_signatureStore.signature != null &&
                         _signatureStore.signature!.status)
                     ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'R\$ ${(row['value'] as double).toStringAsFixed(2)}',
+                            'R\$ ${(row['value'] as double).toStringAsFixed(2).replaceAll(r'.', ',')}',
                             style: TextStyle(
                                 color: Colors.black54,
                                 fontWeight: FontWeight.w500),
@@ -691,7 +697,7 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                           Text(
                             'R\$ ${(row['value'] * row['quantity'] as double).toStringAsFixed(2).replaceAll(r'.', ',')}',
                             style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
+                                fontSize: 18.sp, fontWeight: FontWeight.bold),
                           )
                         ],
                       )
@@ -703,7 +709,7 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
             ),
           )),
           DataCell(Container(
-            width: 120,
+            width: 110.w,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [

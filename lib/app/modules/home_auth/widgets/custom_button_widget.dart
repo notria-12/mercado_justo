@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomButtom extends StatelessWidget {
   String label;
@@ -15,8 +16,8 @@ class CustomButtom extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 50,
-      width: 300,
+      height: 45.h,
+      width: 290.w,
       child: ElevatedButton(
         child: subTitle != null
             ? Column(

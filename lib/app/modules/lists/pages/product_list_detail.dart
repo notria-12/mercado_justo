@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mercado_justo/app/modules/compare/compare_store.dart';
 import 'package:mercado_justo/app/modules/home_auth/home_auth_store.dart';
@@ -156,7 +157,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                     );
                   } else {
                     return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      padding: EdgeInsets.symmetric(horizontal: 12.sp),
                       child: productsAndPricesTable(filteredMarkets),
                     );
                   }
@@ -235,10 +236,10 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                                 const TextSpan(text: 'item')
                               ],
                                   text: 'Falta',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                       color: Colors.red,
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 16))),
+                                      fontSize: 16.sp))),
                           RichText(
                               text: TextSpan(
                                   children: [
@@ -247,9 +248,10 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                                         ' R\$ ${storeProductList.getAverageMissingProducts(storeFairPrice.fairPricesFromList.map((e) => e['product_id'] as int).toList()).toStringAsFixed(2)} '),
                               ],
                                   text: 'Valor médio',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                       color: Colors.red,
-                                      fontWeight: FontWeight.bold)))
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12.sp)))
                         ],
                       ),
                     );
@@ -273,10 +275,10 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                         const TextSpan(text: 'item')
                       ],
                           text: 'Falta',
-                          style: const TextStyle(
+                          style: TextStyle(
                               color: Colors.red,
                               fontWeight: FontWeight.bold,
-                              fontSize: 16))),
+                              fontSize: 16.sp))),
                   RichText(
                       text: TextSpan(
                           children: [
@@ -285,8 +287,10 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                                 ' R\$ ${storeProductList.missingProducts['average']} '),
                       ],
                           text: 'Valor médio',
-                          style: const TextStyle(
-                              color: Colors.red, fontWeight: FontWeight.bold)))
+                          style: TextStyle(
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12.sp)))
                 ],
               ),
             )
@@ -376,8 +380,8 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                     storeProductList.setMarketSelected(-1);
                   },
                 ),
-                const SizedBox(
-                  width: 5,
+                SizedBox(
+                  width: 2.w,
                 ),
                 Observer(builder: (_) {
                   if (storeProductList.marketSelected == -1) {
@@ -453,7 +457,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                   } else {
                     return Container(
                       height: 60,
-                      width: 100,
+                      width: 90.w,
                       child: Image.network(
                         filteredMarkets[storeProductList.marketSelected]
                             .imagePath!,
@@ -464,8 +468,8 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                     );
                   }
                 }),
-                const SizedBox(
-                  width: 5,
+                SizedBox(
+                  width: 2.w,
                 ),
                 InkWell(
                     child: Icon(Icons.chevron_right),
@@ -626,7 +630,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                 filteredMarkets.length,
                 (index) => InkWell(
                       onTap: () {
-                        Modular.to.pushNamed('/home/marketDetail/',
+                        Modular.to.pushNamed('/home_auth/marketDetail/',
                             arguments: filteredMarkets[index]);
                       },
                       child: Container(
@@ -823,7 +827,7 @@ class ButtonOptionsListDetail extends StatelessWidget {
         decoration: BoxDecoration(
             color: tapped! ? Colors.green : Color.fromARGB(255, 240, 241, 241),
             borderRadius: BorderRadius.circular(10)),
-        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 15.sp),
         child: Text(
           label,
           style: TextStyle(

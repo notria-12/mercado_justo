@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:mercado_justo/shared/controllers/market_store.dart';
 import 'package:mercado_justo/shared/controllers/position_store.dart';
@@ -18,7 +19,7 @@ class MarketDetail extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(backgroundColor: Colors.green),
       body: Container(
-          padding: EdgeInsets.all(16),
+          padding: EdgeInsets.all(12.sp),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -30,7 +31,7 @@ class MarketDetail extends StatelessWidget {
                 children: [
                   Container(
                     height: 80,
-                    width: 110,
+                    width: 100.w,
                     child: Image.network(market.imagePath!),
                   ),
                   Column(
@@ -50,7 +51,7 @@ class MarketDetail extends StatelessWidget {
                           Text(
                             'Visitar o site:',
                             style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.w400),
+                                fontSize: 17.sp, fontWeight: FontWeight.w400),
                           ),
                           TextButton(
                               onPressed: () {
@@ -58,8 +59,8 @@ class MarketDetail extends StatelessWidget {
                               },
                               child: Text(
                                 'Clique Aqui!',
-                                style:
-                                    TextStyle(color: Colors.red, fontSize: 20),
+                                style: TextStyle(
+                                    color: Colors.red, fontSize: 17.sp),
                               ))
                         ],
                       )
@@ -75,12 +76,16 @@ class MarketDetail extends StatelessWidget {
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
               ),
               SizedBox(
-                height: 20,
+                height: 15.h,
               ),
-              ...marketStore
-                  .getMarketsByName(market.name)
-                  .map((e) => AddressWidget(market: e))
-                  .toList()
+              Expanded(
+                  child: ListView.builder(
+                      itemCount:
+                          marketStore.getMarketsByName(market.name).length,
+                      itemBuilder: (context, index) => AddressWidget(
+                            market: marketStore
+                                .getMarketsByName(market.name)[index],
+                          )))
             ],
           )),
     );

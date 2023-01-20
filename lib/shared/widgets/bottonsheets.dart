@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mercado_justo/app/modules/home_auth/widgets/custom_button_widget.dart';
 import 'package:mercado_justo/shared/controllers/list_store.dart';
 import 'package:mercado_justo/shared/controllers/product_to_list_store.dart';
@@ -30,7 +31,8 @@ class CustomBottonSheets {
                   Text(
                     'Selecione ou Adicione uma lista',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+                    style:
+                        TextStyle(fontSize: 19.sp, fontWeight: FontWeight.w600),
                   ),
                   IconButton(
                       onPressed: () {
