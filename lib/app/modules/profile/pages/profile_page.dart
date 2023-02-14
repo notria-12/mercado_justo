@@ -121,11 +121,52 @@ class ProfilePageState extends State<ProfilePage> {
               SizedBox(
                 height: 15,
               ),
-              _signatureController.signature != null &&
-                      _signatureController.signature!.status
-                  ? Text('Sua assinatura está ativa:',
-                      style: TextStyle(
-                          color: Colors.black26, fontWeight: FontWeight.w500))
+              (_signatureController.signature != null &&
+                          _signatureController.signature!.status ||
+                      _signatureController.signature != null &&
+                          _signatureController.signature!.pendingPayment)
+                  ? _signatureController.signature!.paymentType == 'card'
+                      ? InkWell(
+                          onTap: () {
+                            Modular.to.pushNamed('/signature/card');
+                          },
+                          child: Container(
+                            height: 50,
+                            width: 300,
+                            decoration: BoxDecoration(
+                                color: Colors.green,
+                                borderRadius: BorderRadius.circular(4)),
+                            child: Center(
+                                child: Text('Ver assinatura',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 16))),
+                          ),
+                        )
+                      : _signatureController.signature!.pendingPayment
+                          ? InkWell(
+                              onTap: () {
+                                Modular.to.pushNamed('/signature/pix/');
+                              },
+                              child: Container(
+                                height: 50,
+                                width: 300,
+                                decoration: BoxDecoration(
+                                    color: Colors.green,
+                                    borderRadius: BorderRadius.circular(4)),
+                                child: Center(
+                                    child: Text('Ver assinatura',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 16))),
+                              ),
+                            )
+                          : Text('Sua assinatura está ativa:',
+                              style: TextStyle(
+                                  color: Colors.black26,
+                                  fontWeight: FontWeight.w500))
                   : InkWell(
                       onTap: () {
                         Modular.to.pushNamed('/signature/');
@@ -147,50 +188,55 @@ class ProfilePageState extends State<ProfilePage> {
               SizedBox(
                 height: 15,
               ),
-              FutureBuilder<double>(
-                builder: (context, snapshot) {
-                  switch (snapshot.connectionState) {
-                    case ConnectionState.waiting:
-                    case ConnectionState.none:
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
+              Visibility(
+                visible: _signatureController.signature != null &&
+                    _signatureController.signature!.status &&
+                    _signatureController.signature!.paymentType != 'card',
+                child: FutureBuilder<double>(
+                  builder: (context, snapshot) {
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.waiting:
+                      case ConnectionState.none:
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
 
-                    case ConnectionState.done:
-                      if (snapshot.hasData) {
-                        return RichText(
-                            textAlign: TextAlign.center,
-                            overflow: TextOverflow.ellipsis,
-                            text: TextSpan(
-                                children: [
-                                  TextSpan(
-                                      text: ' ${snapshot.data!.ceil()} dias ',
-                                      style: TextStyle(
-                                          color: Colors.red,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600)),
-                                  TextSpan(
-                                      text: 'de uso!',
-                                      style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600))
-                                ],
-                                text: 'Restam',
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600)));
-                      } else {
+                      case ConnectionState.done:
+                        if (snapshot.hasData) {
+                          return RichText(
+                              textAlign: TextAlign.center,
+                              overflow: TextOverflow.ellipsis,
+                              text: TextSpan(
+                                  children: [
+                                    TextSpan(
+                                        text: ' ${snapshot.data!.ceil()} dias ',
+                                        style: TextStyle(
+                                            color: Colors.red,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600)),
+                                    TextSpan(
+                                        text: 'de uso!',
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600))
+                                  ],
+                                  text: 'Restam',
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600)));
+                        } else {
+                          return Container();
+                        }
+
+                      default:
                         return Container();
-                      }
-
-                    default:
-                      return Container();
-                  }
-                },
-                future: _signatureController.getRemainingDays(
-                    userId: _authController.user!.id),
+                    }
+                  },
+                  future: _signatureController.getRemainingDays(
+                      userId: _authController.user!.id),
+                ),
               )
             ],
           ),
