@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mercado_justo/app/modules/home_auth/widgets/custom_button_widget.dart';
 import 'package:mercado_justo/app/modules/login/presenter/pages/code_by_email_page.dart';
@@ -81,7 +82,7 @@ class _ProductListPageState extends ModularState<ProductListPage, ListStore> {
         Text(
           'Selecione ou Adicione uma lista',
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+          style: TextStyle(fontSize: 22.sp, fontWeight: FontWeight.w600),
         ),
         SizedBox(
           height: 30,
@@ -93,17 +94,17 @@ class _ProductListPageState extends ModularState<ProductListPage, ListStore> {
               child: Observer(
                 builder: (_) {
                   if (store.listState is AppStateLoading) {
-                    return Center(
+                    return const Center(
                       child: CircularProgressIndicator(),
                     );
                   } else if (store.listState is AppStateError) {
-                    return Center(
+                    return const Center(
                       child:
                           Text('Encontramos problemas ao carregar suas listas'),
                     );
                   }
                   if (store.product_list.isEmpty) {
-                    return Center(
+                    return const Center(
                       child: Text('Você ainda não criou nenhuma lista!'),
                     );
                   } else {
@@ -123,7 +124,7 @@ class _ProductListPageState extends ModularState<ProductListPage, ListStore> {
                                           "${snapshot.data!} Produtos",
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
-                                              fontSize: 14,
+                                              fontSize: 14.sp,
                                               color: Colors.white70),
                                         );
                                       }
@@ -185,8 +186,8 @@ class _ProductListPageState extends ModularState<ProductListPage, ListStore> {
       onTap: () =>
           CustomBottonSheets().optionsList(context, listId: listId, name: name),
       child: Container(
-        height: 50,
-        width: 45,
+        height: 45.h,
+        width: 40.w,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5), color: Colors.lightBlue),
         child: const Center(

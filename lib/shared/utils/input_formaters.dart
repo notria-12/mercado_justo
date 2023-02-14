@@ -11,6 +11,30 @@ class InputFormater {
     );
   }
 
+  static MaskTextInputFormatter cardMask({String? initialText}) {
+    return MaskTextInputFormatter(
+      mask: '#### #### #### ####',
+      initialText: initialText,
+      filter: {"#": RegExp(r'[0-9]')},
+    );
+  }
+
+  static MaskTextInputFormatter cardValidity({String? initialText}) {
+    return MaskTextInputFormatter(
+      mask: '##/####',
+      initialText: initialText,
+      filter: {"#": RegExp(r'[0-9]')},
+    );
+  }
+
+  static MaskTextInputFormatter cvvMask({String? initialText}) {
+    return MaskTextInputFormatter(
+      mask: '###',
+      initialText: initialText,
+      filter: {"#": RegExp(r'[0-9]')},
+    );
+  }
+
   static MaskTextInputFormatter cepMask({String? initialText}) {
     return MaskTextInputFormatter(
       mask: '#####-###',

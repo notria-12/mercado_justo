@@ -24,6 +24,7 @@ import 'package:mercado_justo/shared/widgets/custom_table_widget.dart';
 import 'package:mercado_justo/shared/widgets/load_more_button.dart';
 import 'package:mobx/mobx.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class HomeAuthContent extends StatefulWidget {
   const HomeAuthContent({Key? key}) : super(key: key);
@@ -313,6 +314,7 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                           );
                         }
                         return CustomDataTable(
+                          fixedColWidth: 80.w,
                           loadMoreWidget:
                               productStore.productState is AppStateLoading
                                   ? Container(
@@ -395,7 +397,11 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                                                   SizedBox(
                                                     width: 4,
                                                   ),
-                                                  Text('Add Lista')
+                                                  Text(
+                                                    'Add Lista',
+                                                    style: TextStyle(
+                                                        fontSize: 12.sp),
+                                                  )
                                                 ],
                                               )
                                             ])),
@@ -680,10 +686,10 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                   height: 50,
                   width: 240,
                   child: ElevatedButton(
-                    child: const Center(
+                    child: Center(
                       child: Text(
                         'Selecione ou Adicione uma Lista',
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(color: Colors.white, fontSize: 12.sp),
                       ),
                     ),
                     onPressed: () {

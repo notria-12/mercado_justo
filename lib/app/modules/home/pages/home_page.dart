@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mercado_justo/app/modules/home/home_store.dart';
 import 'package:mercado_justo/app/modules/home/widgets/custom_dialog_selection_markets.dart';
 import 'package:mercado_justo/app/modules/home_auth/widgets/custom_dialog_selection_markets.dart';
@@ -56,57 +57,57 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
           color: Colors.white,
           child: Column(
             children: [
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    children: [
-                      Image.asset('assets/img/logo.png'),
-                      SizedBox(
-                        height: 8,
-                      ),
-                      RichText(
-                          text: const TextSpan(
-                              text: 'Economia de verdade',
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    Image.asset('assets/img/logo.png'),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    RichText(
+                        text: const TextSpan(
+                            text: 'Economia de verdade',
+                            style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 16,
+                                color: Colors.black),
+                            children: [
+                          TextSpan(
+                              text: ' é aqui!',
                               style: TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 16,
-                                  color: Colors.black),
-                              children: [
-                            TextSpan(
-                                text: ' é aqui!',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 16,
-                                ))
-                          ])),
-                      const Text(
-                        'Entre, e compare os preços da sua lista de compras!',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                        ),
+                                fontWeight: FontWeight.normal,
+                                fontSize: 16,
+                              ))
+                        ])),
+                    const Text(
+                      'Entre, e compare os preços da sua lista de compras!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
                       ),
-                      SizedBox(
-                        height: 12,
-                      ),
-                      Container(
-                        width: 300,
-                        height: 45,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              primary: Colors.lightBlue),
-                          child: Text('Entrar / Cadastrar'),
-                          onPressed: () {
-                            Modular.to.pushNamed('/login/');
-                          },
+                    ),
+                    SizedBox(
+                      height: 12,
+                    ),
+                    Container(
+                      width: 290.w,
+                      height: 45,
+                      child: ElevatedButton(
+                        style:
+                            ElevatedButton.styleFrom(primary: Colors.lightBlue),
+                        child: Text(
+                          'Entrar / Cadastrar',
+                          style: TextStyle(fontSize: 14.sp),
                         ),
-                      )
-                    ],
-                  ),
+                        onPressed: () {
+                          Modular.to.pushNamed('/login/');
+                        },
+                      ),
+                    )
+                  ],
                 ),
-                flex: 4,
               ),
               Expanded(
                   flex: 6,

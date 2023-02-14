@@ -121,8 +121,7 @@ class _ChooseSignaturePageState extends State<ChooseSignaturePage> {
                   if (_signatureStore.paymentByPix) {
                     Modular.to.pushNamed('/signature/pix/');
                   } else {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text('EM DESENVOLVIMENTO, USE O PIX')));
+                    Modular.to.pushNamed('/signature/create-signature/');
                   }
                 },
                 child: Container(
