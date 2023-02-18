@@ -6,6 +6,7 @@ import 'package:mercado_justo/shared/auth/auth_controller.dart';
 import 'package:mercado_justo/shared/controllers/signature_store.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/utils/extensions.dart';
+import 'package:mobx/mobx.dart';
 // import 'package:mercado_pago_mobile_checkout/mercado_pago_mobile_checkout.dart';
 
 class CreditCardPaymentPage extends StatefulWidget {
@@ -25,6 +26,23 @@ class _CreditCardPaymentPageState extends State<CreditCardPaymentPage> {
       _cardInvoiceStore.getInvoice(id: _signatureStore.signature!.paymentId);
     }
     _cardInvoiceStore.getCard(id: Modular.get<AuthController>().user!.id);
+
+    autorun((fn) {
+      if (_cardInvoiceStore.cancelState is AppStateError) {
+        var e = _cardInvoiceStore.cancelState as AppStateError;
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(e.error.message),
+          backgroundColor: Colors.redAccent,
+        ));
+      }
+      if (_cardInvoiceStore.cancelState is AppStateSuccess) {
+        Modular.to.pushNamedAndRemoveUntil('/', (p0) => false);
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Assinatura via cartão cancelada'),
+          backgroundColor: Colors.green,
+        ));
+      }
+    });
   }
 
   @override
@@ -143,7 +161,11 @@ class _CreditCardPaymentPageState extends State<CreditCardPaymentPage> {
                             width: 10,
                           ),
                           TextButton.icon(
-                              onPressed: () {},
+                              onPressed: () {
+                                Modular.to.pushReplacementNamed(
+                                    '/signature/create-signature/',
+                                    arguments: true);
+                              },
                               icon: const Icon(
                                 Icons.change_circle_sharp,
                                 color: Colors.lightBlue,
@@ -154,13 +176,20 @@ class _CreditCardPaymentPageState extends State<CreditCardPaymentPage> {
                     ),
                     const SizedBox(height: 5),
                     Align(
-                      child: TextButton(
-                        child: const Text(
-                          'Cancelar Assinatura',
-                          style: TextStyle(color: Colors.red),
-                        ),
-                        onPressed: () {},
-                      ),
+                      child: _cardInvoiceStore.cancelState is AppStateLoading
+                          ? Center(
+                              child: CircularProgressIndicator(),
+                            )
+                          : TextButton(
+                              child: const Text(
+                                'Cancelar Assinatura',
+                                style: TextStyle(color: Colors.red),
+                              ),
+                              onPressed: () {
+                                _cardInvoiceStore.cancelSignature(
+                                    _signatureStore.signature!.signatureId!);
+                              },
+                            ),
                     ),
                     const SizedBox(
                       height: 20,

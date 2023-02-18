@@ -23,6 +23,8 @@ class SignatureModule extends Module {
     ChildRoute('/card/',
         child: ((context, args) => const CreditCardPaymentPage())),
     ChildRoute('/create-signature/',
-        child: ((context, args) => const CreateSignatureByCardPage()))
+        child: ((context, args) => CreateSignatureByCardPage(
+              isUpdate: args.data,
+            )))
   ];
 }

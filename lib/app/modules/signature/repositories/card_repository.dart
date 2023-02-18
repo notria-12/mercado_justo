@@ -44,4 +44,25 @@ class CardRepository {
           title: 'Erro Cartão');
     }
   }
+
+  Future updateCard(CardSignatureModel card) async {
+    try {
+      await _dio.put('/assinaturas', data: card.toJson());
+    } catch (e) {
+      throw Failure(
+          message:
+              'Não foi possível criar trocar o cartão. Verifique os dados do cartão',
+          title: 'Erro Cartão');
+    }
+  }
+
+  Future cancelSignature(String signatureId) async {
+    try {
+      await _dio.put('/assinaturas/credit-card/$signatureId');
+    } catch (e) {
+      throw Failure(
+          title: 'Erro Cancelamento',
+          message: 'Não foi possível efetuar o cancelamento no momento.');
+    }
+  }
 }

@@ -121,7 +121,8 @@ class _ChooseSignaturePageState extends State<ChooseSignaturePage> {
                   if (_signatureStore.paymentByPix) {
                     Modular.to.pushNamed('/signature/pix/');
                   } else {
-                    Modular.to.pushNamed('/signature/create-signature/');
+                    Modular.to.pushNamed('/signature/create-signature/',
+                        arguments: false);
                   }
                 },
                 child: Container(

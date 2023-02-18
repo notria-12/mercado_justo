@@ -23,6 +23,8 @@ abstract class _CardInvoiceStoreBase with Store {
   @observable
   AppState signatureState = AppStateEmpty();
   @observable
+  AppState cancelState = AppStateEmpty();
+  @observable
   CardModel? card;
   @observable
   InvoiceModel? invoice;
@@ -57,6 +59,26 @@ abstract class _CardInvoiceStoreBase with Store {
       signatureState = AppStateSuccess();
     } on Failure catch (e) {
       signatureState = AppStateError(error: e);
+    }
+  }
+
+  Future updateSignature(CardSignatureModel card) async {
+    try {
+      signatureState = AppStateLoading();
+      signatureResponseModel = await _repository.updateCard(card);
+      signatureState = AppStateSuccess();
+    } on Failure catch (e) {
+      signatureState = AppStateError(error: e);
+    }
+  }
+
+  Future cancelSignature(String signatureId) async {
+    try {
+      cancelState = AppStateLoading();
+      await _repository.cancelSignature(signatureId);
+      cancelState = AppStateSuccess();
+    } on Failure catch (e) {
+      cancelState = AppStateError(error: e);
     }
   }
 }
