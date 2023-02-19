@@ -250,6 +250,7 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                           );
                         }).then((value) {
                       if (Modular.get<CategoryStore>().canUpdate) {
+                        productStore.isCategorySearch = true;
                         productStore.getProductsByCategories(
                             categoryName: Modular.get<CategoryStore>()
                                 .selectedCategory!
@@ -315,24 +316,32 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                         }
                         return CustomDataTable(
                           fixedColWidth: 80.w,
-                          loadMoreWidget:
-                              productStore.productState is AppStateLoading
-                                  ? Container(
-                                      height: 40,
-                                      child: Center(
-                                        child: CircularProgressIndicator(),
-                                      ),
-                                    )
-                                  : LoadMoreButton(loadMoreItens: (() {
-                                      productStore.onlyButtonLoadMore = true;
-                                      if (productStore.isSearch) {
-                                        productStore.getProductsByDescription(
-                                            description: _searchController.text,
-                                            isNewSearch: false);
-                                      } else {
-                                        productStore.getAllProducts();
-                                      }
-                                    })),
+                          loadMoreWidget: productStore.productState
+                                  is AppStateLoading
+                              ? Container(
+                                  height: 40,
+                                  child: Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                )
+                              : LoadMoreButton(loadMoreItens: (() {
+                                  productStore.onlyButtonLoadMore = true;
+                                  if (productStore.isSearch) {
+                                    productStore.getProductsByDescription(
+                                        description: _searchController.text,
+                                        isNewSearch: false);
+                                  } else if (productStore.isCategorySearch) {
+                                    final _categoryStore =
+                                        Modular.get<CategoryStore>();
+
+                                    productStore.getProductsByCategories(
+                                        categoryName: _categoryStore
+                                            .selectedCategory!.description,
+                                        isNewSearch: false);
+                                  } else {
+                                    productStore.getAllProducts();
+                                  }
+                                })),
                           loadMore: productStore.canLoadMore,
                           cellHeight: 135,
                           fixedCornerCell: ButtonShare(

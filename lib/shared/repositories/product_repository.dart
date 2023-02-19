@@ -29,10 +29,11 @@ class ProductRepository {
   }
 
   Future<List<Product>> getProductsByCategory(
-      {required String categoryName}) async {
+      {required String categoryName, required int page}) async {
     try {
       final String name = categoryName.replaceAll(' ', '%20');
-      final result = await dio.get('/produtos/category/$name');
+      final result = await dio.get(
+          '/produtos/category/$name?itens_pagina=15&pagina=$page&ordernar=_id');
 
       List list = result.data['dados'] as List;
       List<Product> products = list.map((e) => Product.fromMap(e)).toList();
