@@ -46,12 +46,12 @@ class _CodeEmailPageState extends State<CodeEmailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Bem vindo!'),
+        title: const Text('Bem vindo!'),
         backgroundColor: Colors.green,
         centerTitle: true,
       ),
       body: Container(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: SingleChildScrollView(
             child: Form(
           key: _formKey,

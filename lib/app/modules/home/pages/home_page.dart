@@ -62,7 +62,7 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                 child: Column(
                   children: [
                     Image.asset('assets/img/logo.png'),
-                    SizedBox(
+                    const SizedBox(
                       height: 8,
                     ),
                     RichText(
@@ -81,14 +81,14 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                               ))
                         ])),
                     const Text(
-                      'Entre, e compare os preços da sua lista de compras!',
+                      'Entre e compare os preços da sua lista de compras!',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w400,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 12,
                     ),
                     Container(

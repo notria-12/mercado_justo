@@ -198,7 +198,7 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                                                   width: 170,
                                                   padding: EdgeInsets.all(16),
                                                   decoration: BoxDecoration(
-                                                      color: Colors.lightBlue,
+                                                      color: Colors.red,
                                                       borderRadius:
                                                           BorderRadius.all(
                                                               Radius.circular(
