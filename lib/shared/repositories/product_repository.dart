@@ -75,7 +75,7 @@ class ProductRepository {
       List list = result.data['dados'] as List;
       if (list.isNotEmpty) {
         Product product = Product.fromMap(list.first);
-        String imagePath = await getProductImage(barcode);
+        String imagePath = await getProductImage(product.barCode[0]);
         return product.copyWith(imagePath: imagePath);
       }
     } catch (e) {

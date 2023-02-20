@@ -4,6 +4,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:mercado_justo/app/modules/compare/compare_store.dart';
 import 'package:mercado_justo/app/modules/home_auth/controllers/average_price_controller.dart';
 import 'package:mercado_justo/app/modules/home_auth/controllers/category_controller.dart';
 import 'package:mercado_justo/app/modules/home_auth/controllers/problem_controller.dart';
@@ -179,6 +180,10 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                                             'Cancelar',
                                             false,
                                             ScanMode.BARCODE);
+                                    if (barcodeScanRes == "-1") {
+                                      return;
+                                    }
+
                                     productStore
                                         .getProductByBarcode(
                                             barcode: barcodeScanRes)
@@ -221,47 +226,73 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: 8,
-                ),
-                InkWell(
-                  onTap: () {
-                    PageController pageController = PageController();
+                // const SizedBox(
+                //   height: 8,
+                // ),
+                Row(
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        PageController pageController = PageController();
 
-                    List<Widget> pages = [
-                      GeneralCategoriesWidget(
-                        controller: pageController,
-                      ),
-                      SecondaryCategoriesWidget(
-                        pageController: pageController,
-                        productStore: productStore,
-                      )
-                    ];
-
-                    showModalBottomSheet(
-                        context: context,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
-                        builder: (ctx) {
-                          Modular.get<CategoryStore>().canUpdate = false;
-                          return PageView(
+                        List<Widget> pages = [
+                          GeneralCategoriesWidget(
                             controller: pageController,
-                            children: pages,
-                          );
-                        }).then((value) {
-                      if (Modular.get<CategoryStore>().canUpdate) {
-                        productStore.isCategorySearch = true;
-                        productStore.getProductsByCategories(
-                            categoryName: Modular.get<CategoryStore>()
-                                .selectedCategory!
-                                .description);
-                      }
-                    });
-                  },
-                  child: const Text(
-                    'Categorias',
-                    style: TextStyle(fontWeight: FontWeight.w500),
-                  ),
+                          ),
+                          SecondaryCategoriesWidget(
+                            pageController: pageController,
+                            productStore: productStore,
+                          )
+                        ];
+
+                        showModalBottomSheet(
+                            context: context,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12)),
+                            builder: (ctx) {
+                              Modular.get<CategoryStore>().canUpdate = false;
+                              return PageView(
+                                controller: pageController,
+                                children: pages,
+                              );
+                            }).then((value) {
+                          if (Modular.get<CategoryStore>().canUpdate) {
+                            productStore.onlyButtonLoadMore = false;
+                            productStore.isCategorySearch = true;
+                            productStore.getProductsByCategories(
+                                categoryName: Modular.get<CategoryStore>()
+                                    .selectedCategory!
+                                    .description);
+                          }
+                        });
+                      },
+                      child: const Text(
+                        'Categorias',
+                        style: TextStyle(fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                    TextButton.icon(
+                        style: ButtonStyle(
+                            padding:
+                                MaterialStateProperty.all(EdgeInsets.zero)),
+                        onPressed: () {
+                          Modular.get<MarketStore>().marketId = '';
+                          Modular.to.pushNamed('/home_auth/list/filters').then(
+                              (value) =>
+                                  Modular.get<CompareStore>().reloadList());
+                        },
+                        icon: const Icon(
+                          Icons.filter_list,
+                          color: Colors.black87,
+                        ),
+                        label: const Text(
+                          'Filtro',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black87),
+                        ))
+                  ],
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 )
               ],
             ),
@@ -285,35 +316,43 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                   );
                 } else {
                   if (productStore.products.isNotEmpty) {
-                    if (marketStore.filteredMarkets.isEmpty) {
+                    if (marketStore.filteredMarkets
+                        .where((element) => element.isSelectable)
+                        .toList()
+                        .isEmpty) {
                       return Center(
                         child: Text(
                             'Não há mercados no disponíveis para sua localização'),
                       );
                     }
-                    priceStore.getProductPriceByMarkets(
-                        productIds:
-                            productStore.products.map((e) => e.id).toList(),
-                        marketIds: marketStore.filteredMarkets
-                            .map((m) => m.id)
-                            .toList());
+                    if (productStore.productState is AppStateSuccess) {
+                      priceStore.getProductPriceByMarkets(
+                          productIds:
+                              productStore.products.map((e) => e.id).toList(),
+                          marketIds: marketStore.filteredMarkets
+                              .where((element) => element.isSelectable)
+                              .toList()
+                              .map((m) => m.id)
+                              .toList());
+                    }
                     return Observer(
                       builder: (_) {
-                        if (priceStore.allPriceStatus is AppStateLoading) {
-                          return Center(
-                            child: Column(
-                              children: const [
-                                Text(
-                                    "Aguarde enquanto os preços são carregados..."),
-                                SizedBox(
-                                  height: 8,
-                                ),
-                                CircularProgressIndicator()
-                              ],
-                              mainAxisAlignment: MainAxisAlignment.center,
-                            ),
-                          );
-                        }
+                        // if (priceStore.allPriceStatus is AppStateLoading) {
+                        //   return Center(
+                        //     child: Column(
+                        //       children: const [
+                        //         Text(
+                        //             "Aguarde enquanto os preços são carregados..."),
+                        //         SizedBox(
+                        //           height: 8,
+                        //         ),
+                        //         CircularProgressIndicator()
+                        //       ],
+                        //       mainAxisAlignment: MainAxisAlignment.center,
+                        //     ),
+                        //   );
+                        // }
+
                         return CustomDataTable(
                           fixedColWidth: 80.w,
                           loadMoreWidget: productStore.productState
@@ -324,24 +363,32 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                                     child: CircularProgressIndicator(),
                                   ),
                                 )
-                              : LoadMoreButton(loadMoreItens: (() {
-                                  productStore.onlyButtonLoadMore = true;
-                                  if (productStore.isSearch) {
-                                    productStore.getProductsByDescription(
-                                        description: _searchController.text,
-                                        isNewSearch: false);
-                                  } else if (productStore.isCategorySearch) {
-                                    final _categoryStore =
-                                        Modular.get<CategoryStore>();
+                              : priceStore.allPriceStatus is AppStateLoading
+                                  ? Container(
+                                      height: 40,
+                                      child: Center(
+                                        child: CircularProgressIndicator(),
+                                      ),
+                                    )
+                                  : LoadMoreButton(loadMoreItens: (() {
+                                      productStore.onlyButtonLoadMore = true;
+                                      if (productStore.isSearch) {
+                                        productStore.getProductsByDescription(
+                                            description: _searchController.text,
+                                            isNewSearch: false);
+                                      } else if (productStore
+                                          .isCategorySearch) {
+                                        final _categoryStore =
+                                            Modular.get<CategoryStore>();
 
-                                    productStore.getProductsByCategories(
-                                        categoryName: _categoryStore
-                                            .selectedCategory!.description,
-                                        isNewSearch: false);
-                                  } else {
-                                    productStore.getAllProducts();
-                                  }
-                                })),
+                                        productStore.getProductsByCategories(
+                                            categoryName: _categoryStore
+                                                .selectedCategory!.description,
+                                            isNewSearch: false);
+                                      } else {
+                                        productStore.getAllProducts();
+                                      }
+                                    })),
                           loadMore: productStore.canLoadMore,
                           cellHeight: 135,
                           fixedCornerCell: ButtonShare(
@@ -352,10 +399,23 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                                 (index) {
                               return [
                                 Text(productStore.products[index].description),
-                                ...priceStore.prices[index].map((e) => Center(
-                                    child: Text(e.isEmpty || e == 'R\$ 0,00'
-                                        ? 'Em Falta'
-                                        : e)))
+                                if (priceStore.allPriceStatus
+                                    is AppStateLoading)
+                                  ...List.generate(
+                                      marketStore.filteredMarkets
+                                          .where(
+                                              (element) => element.isSelectable)
+                                          .toList()
+                                          .length,
+                                      (index) => Center(
+                                            child: CircularProgressIndicator(),
+                                          )),
+                                if (priceStore.allPriceStatus
+                                    is AppStateSuccess)
+                                  ...priceStore.prices[index].map((e) => Center(
+                                      child: Text(e.isEmpty || e == 'R\$ 0,00'
+                                          ? 'Em Falta'
+                                          : e)))
                               ];
                             })
                           ],
@@ -418,17 +478,29 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                           fixedRowCells: [
                             Container(),
                             ...List.generate(
-                                marketStore.filteredMarkets.length,
+                                marketStore.filteredMarkets
+                                    .where((element) =>
+                                        element.isSelectable == true)
+                                    .toList()
+                                    .length,
                                 (index) => InkWell(
                                       onTap: () {
                                         Modular.to.pushNamed('marketDetail/',
                                             arguments: marketStore
-                                                .filteredMarkets[index]);
+                                                .filteredMarkets
+                                                .where((element) =>
+                                                    element.isSelectable ==
+                                                    true)
+                                                .toList()[index]);
                                       },
                                       child: Container(
                                         width: 100,
                                         child: Image.network(marketStore
-                                            .filteredMarkets[index].imagePath!),
+                                            .filteredMarkets
+                                            .where((element) =>
+                                                element.isSelectable == true)
+                                            .toList()[index]
+                                            .imagePath!),
                                       ),
                                     ))
                           ],
@@ -512,14 +584,20 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
           for (var j = 0; j < prices.length; j++) {
             if (selectedMarkets.contains(j)) {
               pricesString = pricesString +
-                  '${marketStore.filteredMarkets[j].name}.........${prices[j] == 'R\$ 0,00' ? 'Em Falta' : prices[j]}\n';
+                  '${marketStore.filteredMarkets.where((element) => element.isSelectable == true).toList()[j].name}.........${prices[j] == 'R\$ 0,00' ? 'Em Falta' : prices[j]}\n';
             }
           }
         }
-        for (var k = 0; k < marketStore.filteredMarkets.length; k++) {
+        for (var k = 0;
+            k <
+                marketStore.filteredMarkets
+                    .where((element) => element.isSelectable == true)
+                    .toList()
+                    .length;
+            k++) {
           if (selectedMarkets.contains(k)) {
             marketsInfo +=
-                '\n${marketStore.filteredMarkets[k].siteAddress}\nCep de Referência....${marketStore.filteredMarkets[k].address.split(',')[marketStore.filteredMarkets[k].address.split(',').length - 1]}\n';
+                '\n${marketStore.filteredMarkets.where((element) => element.isSelectable == true).toList()[k].siteAddress}\nCep de Referência....${marketStore.filteredMarkets.where((element) => element.isSelectable == true).toList()[k].address.split(',')[marketStore.filteredMarkets[k].address.split(',').length - 1]}\n';
           }
         }
         pricesString += marketsInfo;
@@ -535,7 +613,11 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
     final averagePriceController = Modular.get<AveragePriceStore>();
     averagePriceController.getAveragePrice(
         productId: product.id,
-        marketIds: marketStore.filteredMarkets.map((e) => e.id).toList());
+        marketIds: marketStore.filteredMarkets
+            .where((element) => element.isSelectable == true)
+            .toList()
+            .map((e) => e.id)
+            .toList());
     return showModalBottomSheet(
         context: context,
         isScrollControlled: true,
