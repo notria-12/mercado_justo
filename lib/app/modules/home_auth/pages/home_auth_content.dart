@@ -57,7 +57,11 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
 
     autorun((_) {
       if (Modular.get<ProblemStore>().problemStatus is AppStateSuccess) {
-        CustomBottonSheets().reportProblemSuccessfull(context);
+        CustomBottonSheets().reportProblemSuccessfull(context,
+            msg: Modular.get<ProblemStore>().problemType ==
+                    'produto_sem_cadastro'
+                ? 'O código lido será analisado'
+                : null);
       }
     });
     productStore.getAllProducts();
@@ -423,6 +427,8 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                               productStore.products.length,
                               (index) => InkWell(
                                     onTap: () {
+                                      productStore.findOne(
+                                          productStore.products[index].id);
                                       showDialogProductDetail(context,
                                           productStore.products[index]);
                                     },
@@ -485,6 +491,12 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                                     .length,
                                 (index) => InkWell(
                                       onTap: () {
+                                        marketStore.findOne(marketStore
+                                            .filteredMarkets
+                                            .where((element) =>
+                                                element.isSelectable == true)
+                                            .toList()[index]
+                                            .hashId);
                                         Modular.to.pushNamed('marketDetail/',
                                             arguments: marketStore
                                                 .filteredMarkets

@@ -1,7 +1,7 @@
-import 'package:flutter/animation.dart';
 import 'package:mercado_justo/app/modules/profile/city_model.dart';
 import 'package:mercado_justo/app/modules/profile/profile_repository.dart';
 import 'package:mercado_justo/app/modules/profile/state_model.dart';
+import 'package:mercado_justo/shared/auth/auth_controller.dart';
 import 'package:mercado_justo/shared/models/user_model.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/utils/error.dart';
@@ -13,8 +13,8 @@ class ProfileStore = _ProfileStoreBase with _$ProfileStore;
 
 abstract class _ProfileStoreBase with Store {
   final ProfileRepository _repository;
-
-  _ProfileStoreBase(this._repository);
+  final AuthController _authController;
+  _ProfileStoreBase(this._repository, this._authController);
 
   @observable
   String? inputName;
@@ -38,30 +38,6 @@ abstract class _ProfileStoreBase with Store {
   @action
   void setEmail(String value) {
     inputEmail = value;
-  }
-
-  @observable
-  String? inputStreet;
-
-  @action
-  void setStreet(String? value) {
-    inputStreet = value;
-  }
-
-  @observable
-  String? inputNeighborhood;
-
-  @action
-  void setNeighborhood(String? value) {
-    inputNeighborhood = value;
-  }
-
-  @observable
-  String? inputComplement;
-
-  @action
-  void setComplement(String? value) {
-    inputComplement = value;
   }
 
   @observable
@@ -138,9 +114,6 @@ abstract class _ProfileStoreBase with Store {
       setPhone(user!.phone);
       setEmail(user!.email);
       if (user!.address != null) {
-        setStreet(user!.address!.street);
-        setNeighborhood(user!.address!.neighborhood);
-        setComplement(user!.address!.complement);
         setCEP(user!.address!.cep);
       }
       if (user!.genre != null) {
@@ -166,13 +139,9 @@ abstract class _ProfileStoreBase with Store {
             email: inputEmail,
             genre: selectedGenre!.toLowerCase(),
             address: AddressModel(
-                state: selectedState!,
-                city: selectedCity!,
-                street: inputStreet,
-                neighborhood: inputNeighborhood,
-                complement: inputComplement,
-                cep: inputCEP));
+                state: selectedState!, city: selectedCity!, cep: inputCEP));
         user = await _repository.updateUser(user: newUser);
+        _authController.setUser(user);
         userUpdateStatus = AppStateSuccess();
       } else {
         throw Failure(
@@ -193,15 +162,6 @@ abstract class _ProfileStoreBase with Store {
         user!.genre !=
             (selectedGenre != null ? selectedGenre!.toLowerCase() : null) ||
         (user!.address != null && user!.address!.city != selectedCity) ||
-        (user!.address != null &&
-            user!.address!.street != inputStreet &&
-            inputStreet!.isNotEmpty) ||
-        (user!.address != null &&
-            user!.address!.neighborhood != inputNeighborhood &&
-            inputNeighborhood!.isNotEmpty) ||
-        (user!.address != null &&
-            user!.address!.complement != inputComplement &&
-            inputComplement!.isNotEmpty) ||
         (user!.address != null &&
             user!.address!.cep != inputCEP &&
             inputCEP!.isNotEmpty));

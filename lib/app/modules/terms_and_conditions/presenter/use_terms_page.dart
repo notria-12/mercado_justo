@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/app/modules/terms_and_conditions/domain/entities/use_terms_entity.dart';
 import 'package:mercado_justo/app/modules/terms_and_conditions/presenter/terms_and_conditions_store.dart';
+import 'package:flutter_html/flutter_html.dart';
 
 class UseTermsPage extends StatelessWidget {
   UseTermsPage({Key? key}) : super(key: key);
@@ -10,7 +11,7 @@ class UseTermsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Termos e Condições'),
+        title: const Text('Termos e Condições'),
         centerTitle: true,
         backgroundColor: Colors.green,
       ),
@@ -39,18 +40,15 @@ class UseTermsPage extends StatelessWidget {
                     );
                   case ConnectionState.done:
                     if (snapshot.hasError) {
-                      return Center(
+                      return const Center(
                         child: Text(
                           'Termos de uso não dispoíveis no momento',
                           style: TextStyle(color: Colors.black38),
+                          textAlign: TextAlign.center,
                         ),
                       );
                     }
-                    return Text(
-                        snapshot.data!.text
-                            .replaceAll(r'<p>', '')
-                            .replaceAll(r'</p>', ''),
-                        style: TextStyle(color: Colors.black38));
+                    return Html(data: snapshot.data!.text);
                   default:
                     return Container();
                 }

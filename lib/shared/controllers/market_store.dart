@@ -95,6 +95,14 @@ abstract class _MarketStoreBase with Store {
     return newMarkets;
   }
 
+  Future<Market> findOne(String id) async {
+    try {
+      return repository.finOne(id);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<String> getMarketImage({required int id}) async {
     try {
       return await repository.getMarketLogo(id);

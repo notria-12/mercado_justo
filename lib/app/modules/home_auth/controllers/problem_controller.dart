@@ -11,15 +11,18 @@ part 'problem_controller.g.dart';
 class ProblemStore = _ProblemStoreBase with _$ProblemStore;
 
 abstract class _ProblemStoreBase with Store {
-  ProblemRepository _repository;
+  final ProblemRepository _repository;
   _ProblemStoreBase(this._repository);
   @observable
   AppState problemStatus = AppStateEmpty();
+  @observable
+  String problemType = '';
 
   void reportProblem(ProblemModel problem) async {
     try {
       problemStatus = AppStateLoading();
       await _repository.reportProblem(problem: problem);
+      problemType = problem.errorType;
       problemStatus = AppStateSuccess();
     } on Failure catch (e) {
       problemStatus = AppStateError(error: e);

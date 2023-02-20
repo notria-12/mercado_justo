@@ -1,15 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:mercado_justo/app/modules/home_auth/widgets/custom_button_widget.dart';
-import 'package:mercado_justo/app/modules/profile/city_model.dart';
 import 'package:mercado_justo/app/modules/profile/profile_controller.dart';
-import 'package:mercado_justo/app/modules/profile/state_model.dart';
 import 'package:mercado_justo/app/modules/profile/widgets/custom_input_profile.dart';
 import 'package:mercado_justo/shared/auth/auth_controller.dart';
-import 'package:mercado_justo/shared/models/user_model.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
-import 'package:mercado_justo/shared/utils/error.dart';
 import 'package:mercado_justo/shared/utils/input_formaters.dart';
 import 'package:mobx/mobx.dart';
 
@@ -298,34 +293,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                     );
                                   },
                                 ),
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              CustomInputProfile(
-                                initialValue: _profileController.inputStreet,
-                                onChange: _profileController.setStreet,
-                                label: 'Rua',
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              Observer(builder: (_) {
-                                return CustomInputProfile(
-                                  initialValue:
-                                      _profileController.inputNeighborhood,
-                                  onChange: _profileController.setNeighborhood,
-                                  label: 'Bairro',
-                                );
-                              }),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              CustomInputProfile(
-                                initialValue:
-                                    _profileController.inputComplement,
-                                onChange: _profileController.setComplement,
-                                label: 'Complemento',
                               ),
                               const SizedBox(
                                 height: 20,

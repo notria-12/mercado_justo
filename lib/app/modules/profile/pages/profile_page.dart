@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/app/modules/profile/widgets/button_profile_option.dart';
 import 'package:mercado_justo/shared/auth/auth_controller.dart';
@@ -22,7 +23,7 @@ class ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Seu perfil'),
+        title: const Text('Seu perfil'),
         centerTitle: true,
         backgroundColor: Colors.green,
       ),
@@ -53,18 +54,22 @@ class ProfilePageState extends State<ProfilePage> {
               SizedBox(
                 height: 20,
               ),
-              Text(
-                _authController.user!.name,
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
-              ),
+              Observer(builder: (_) {
+                return Text(
+                  _authController.user!.name,
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+                );
+              }),
               SizedBox(
                 height: 10,
               ),
-              Text(
-                _authController.user!.email,
-                style: TextStyle(
-                    color: Colors.black26, fontWeight: FontWeight.w500),
-              ),
+              Observer(builder: (_) {
+                return Text(
+                  _authController.user!.email,
+                  style: TextStyle(
+                      color: Colors.black26, fontWeight: FontWeight.w500),
+                );
+              }),
               SizedBox(
                 height: 20,
               ),
@@ -88,7 +93,7 @@ class ProfilePageState extends State<ProfilePage> {
                 height: 10,
               ),
               Text(
-                'Cadastrado desde 14/04/2021 23:04',
+                'Cadastrado desde ${_authController.user!.registerDate!.toLocal()}',
                 style: TextStyle(
                     color: Colors.black26, fontWeight: FontWeight.w500),
               ),

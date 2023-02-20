@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:mercado_justo/shared/models/product_model.dart';
+import 'package:mercado_justo/shared/utils/error.dart';
 
 class ProductRepository {
   Dio dio;
@@ -80,6 +81,15 @@ class ProductRepository {
       }
     } catch (e) {
       rethrow;
+    }
+  }
+
+  Future<Product> findOne(String id) async {
+    try {
+      final result = await dio.get('/produtos/$id');
+      return Product.fromMap(result.data['dados']);
+    } catch (e) {
+      throw Failure(title: 'Erro Produto', message: 'Erro ao buscar produto');
     }
   }
 

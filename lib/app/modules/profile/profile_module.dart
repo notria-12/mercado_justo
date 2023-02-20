@@ -10,7 +10,7 @@ class ProfileModule extends Module {
   @override
   final List<Bind> binds = [
     Bind.singleton((i) => ProfileRepository(i())),
-    Bind.singleton((i) => ProfileStore(i()))
+    Bind.singleton((i) => ProfileStore(i(), i()))
   ];
 
   @override

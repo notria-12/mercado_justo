@@ -62,52 +62,6 @@ mixin _$ProfileStore on _ProfileStoreBase, Store {
     });
   }
 
-  final _$inputStreetAtom = Atom(name: '_ProfileStoreBase.inputStreet');
-
-  @override
-  String? get inputStreet {
-    _$inputStreetAtom.reportRead();
-    return super.inputStreet;
-  }
-
-  @override
-  set inputStreet(String? value) {
-    _$inputStreetAtom.reportWrite(value, super.inputStreet, () {
-      super.inputStreet = value;
-    });
-  }
-
-  final _$inputNeighborhoodAtom =
-      Atom(name: '_ProfileStoreBase.inputNeighborhood');
-
-  @override
-  String? get inputNeighborhood {
-    _$inputNeighborhoodAtom.reportRead();
-    return super.inputNeighborhood;
-  }
-
-  @override
-  set inputNeighborhood(String? value) {
-    _$inputNeighborhoodAtom.reportWrite(value, super.inputNeighborhood, () {
-      super.inputNeighborhood = value;
-    });
-  }
-
-  final _$inputComplementAtom = Atom(name: '_ProfileStoreBase.inputComplement');
-
-  @override
-  String? get inputComplement {
-    _$inputComplementAtom.reportRead();
-    return super.inputComplement;
-  }
-
-  @override
-  set inputComplement(String? value) {
-    _$inputComplementAtom.reportWrite(value, super.inputComplement, () {
-      super.inputComplement = value;
-    });
-  }
-
   final _$inputCEPAtom = Atom(name: '_ProfileStoreBase.inputCEP');
 
   @override
@@ -281,39 +235,6 @@ mixin _$ProfileStore on _ProfileStoreBase, Store {
   }
 
   @override
-  void setStreet(String? value) {
-    final _$actionInfo = _$_ProfileStoreBaseActionController.startAction(
-        name: '_ProfileStoreBase.setStreet');
-    try {
-      return super.setStreet(value);
-    } finally {
-      _$_ProfileStoreBaseActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  void setNeighborhood(String? value) {
-    final _$actionInfo = _$_ProfileStoreBaseActionController.startAction(
-        name: '_ProfileStoreBase.setNeighborhood');
-    try {
-      return super.setNeighborhood(value);
-    } finally {
-      _$_ProfileStoreBaseActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  void setComplement(String? value) {
-    final _$actionInfo = _$_ProfileStoreBaseActionController.startAction(
-        name: '_ProfileStoreBase.setComplement');
-    try {
-      return super.setComplement(value);
-    } finally {
-      _$_ProfileStoreBaseActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
   void setCEP(String? value) {
     final _$actionInfo = _$_ProfileStoreBaseActionController.startAction(
         name: '_ProfileStoreBase.setCEP');
@@ -330,9 +251,6 @@ mixin _$ProfileStore on _ProfileStoreBase, Store {
 inputName: ${inputName},
 inputPhone: ${inputPhone},
 inputEmail: ${inputEmail},
-inputStreet: ${inputStreet},
-inputNeighborhood: ${inputNeighborhood},
-inputComplement: ${inputComplement},
 inputCEP: ${inputCEP},
 user: ${user},
 selectedState: ${selectedState},

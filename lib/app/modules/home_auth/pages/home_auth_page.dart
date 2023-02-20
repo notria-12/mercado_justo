@@ -13,6 +13,7 @@ import 'package:mercado_justo/shared/controllers/position_store.dart';
 import 'package:mercado_justo/shared/controllers/product_store.dart';
 import 'package:mercado_justo/shared/controllers/signature_store.dart';
 import 'package:mercado_justo/shared/models/market_model.dart';
+import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mobx/mobx.dart';
 
 class HomeAuthPage extends StatefulWidget {
@@ -99,8 +100,12 @@ class HomeAuthPageState extends ModularState<HomeAuthPage, HomeAuthStore> {
               currentIndex: store.currentIndex,
               onTap: (index) {
                 if (store.currentIndex == 0 && index == 0) {
-                  Modular.get<ProductStore>()
-                      .getAllProducts(initialProducts: true);
+                  if (Modular.get<ProductStore>().productState
+                      is! AppStateLoading) {
+                    Modular.get<ProductStore>().onlyButtonLoadMore = false;
+                    Modular.get<ProductStore>()
+                        .getAllProducts(initialProducts: true);
+                  }
                 }
                 store.onTabTapped(index);
               },

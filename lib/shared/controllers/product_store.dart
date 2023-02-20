@@ -67,6 +67,14 @@ abstract class _ProductStoreBase with Store {
     }
   }
 
+  Future<Product> findOne(String id) async {
+    try {
+      return repository.findOne(id);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future getProductsByDescription(
       {required String description, bool isNewSearch = true}) async {
     try {

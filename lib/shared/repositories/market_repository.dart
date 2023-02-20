@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:mercado_justo/shared/models/market_model.dart';
+import 'package:mercado_justo/shared/utils/error.dart';
 
 class MarketRepository {
   Dio dio;
@@ -22,6 +23,15 @@ class MarketRepository {
     } catch (e) {
       //TODO: tratar esse erro com decência
       rethrow;
+    }
+  }
+
+  Future<Market> finOne(String id) async {
+    try {
+      final result = await dio.get('/mercados/$id');
+      return Market.fromMap(result.data['dados']);
+    } catch (e) {
+      throw Failure(title: 'Buscar mercado', message: 'Erro ao buscar mercado');
     }
   }
 

@@ -165,8 +165,14 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                 if (storeProductList.productState is AppStateSuccess &&
                     storeProductList.products.isEmpty) {
                   return Center(
-                    child:
-                        Text('Você ainda não adicionou produtos a essa lista'),
+                    child: const Text(
+                      'Lista vazia! Adicione itens a lista para fazer o comparativo de preços',
+                      style: TextStyle(
+                          color: Colors.black38,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
+                    ),
                   );
                 }
                 return Center(
