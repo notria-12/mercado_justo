@@ -61,7 +61,11 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
-                    Image.asset('assets/img/logo.png'),
+                    Container(
+                      child: Image.asset('assets/img/logo.png'),
+                      height: 110,
+                      width: 110,
+                    ),
                     const SizedBox(
                       height: 8,
                     ),
