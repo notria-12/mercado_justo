@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:intl/intl.dart';
 import 'package:mercado_justo/app/modules/profile/widgets/button_profile_option.dart';
 import 'package:mercado_justo/shared/auth/auth_controller.dart';
 import 'package:mercado_justo/shared/controllers/signature_store.dart';
@@ -33,17 +34,17 @@ class ProfilePageState extends State<ProfilePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              SizedBox(
+              const SizedBox(
                 height: 50,
               ),
               Container(
                 height: 90,
                 width: 90,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   shape: BoxShape.circle,
                   color: Color.fromARGB(255, 240, 241, 241),
                 ),
-                child: Center(
+                child: const Center(
                   child: Icon(
                     Icons.person_outline,
                     size: 60,
@@ -51,7 +52,7 @@ class ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               Observer(builder: (_) {
@@ -60,7 +61,7 @@ class ProfilePageState extends State<ProfilePage> {
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
                 );
               }),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               Observer(builder: (_) {
@@ -70,7 +71,7 @@ class ProfilePageState extends State<ProfilePage> {
                       color: Colors.black26, fontWeight: FontWeight.w500),
                 );
               }),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               Container(
@@ -82,18 +83,18 @@ class ProfilePageState extends State<ProfilePage> {
                           _signatureController.signature!.status
                       ? 'CONTA PREMIUM'
                       : 'CONTA FREE',
-                  style: TextStyle(
+                  style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w500,
                       fontSize: 10),
                 ),
                 padding: EdgeInsets.all(4),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               Text(
-                'Cadastrado desde ${_authController.user!.registerDate!.toLocal()}',
+                'Cadastrado desde ${DateFormat('dd/MM/yyyy hh:mm').format(_authController.user!.registerDate!)}',
                 style: TextStyle(
                     color: Colors.black26, fontWeight: FontWeight.w500),
               ),
