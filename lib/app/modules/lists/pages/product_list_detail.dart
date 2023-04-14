@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -464,10 +465,13 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                     return Container(
                       height: 60,
                       width: 90.w,
-                      child: Image.network(
-                        filteredMarkets[storeProductList.marketSelected]
-                            .imagePath!,
-                        errorBuilder: (context, error, stackTrace) {
+                      child: CachedNetworkImage(
+                        imageUrl:
+                            filteredMarkets[storeProductList.marketSelected]
+                                .imagePath!,
+                        memCacheHeight: 110,
+                        memCacheWidth: 180,
+                        errorWidget: (context, error, stackTrace) {
                           return Image.asset('assets/img/image_not_found.jpg');
                         },
                       ),
@@ -544,9 +548,16 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                       alignment: Alignment.center,
                       child: Container(
                         // margin: EdgeInsets.all(8),
-                        child: Image.network(
-                          e.imagePath!,
-                          errorBuilder: (context, error, stackTrace) {
+                        child: CachedNetworkImage(
+                          imageUrl: e.imagePath!,
+                          memCacheHeight: 175,
+                          memCacheWidth: 175,
+                          placeholder: (context, url) {
+                            return Container(
+                              color: Colors.grey[400],
+                            );
+                          },
+                          errorWidget: (context, error, stackTrace) {
                             return Image.asset(
                                 'assets/img/image_not_found.jpg');
                           },
@@ -641,7 +652,11 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                       },
                       child: Container(
                         width: 100,
-                        child: Image.network(filteredMarkets[index].imagePath!),
+                        child: CachedNetworkImage(
+                          imageUrl: filteredMarkets[index].imagePath!,
+                          memCacheHeight: 110,
+                          memCacheWidth: 180,
+                        ),
                       ),
                     ))
           ],

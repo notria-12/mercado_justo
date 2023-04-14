@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -145,8 +146,17 @@ class _FilterListPageState extends State<FilterListPage> {
                                   children: [
                                     Container(
                                       height: 45,
-                                      child: Image.network(marketStore
-                                          .filteredMarkets[index].imagePath!),
+                                      child: CachedNetworkImage(
+                                        imageUrl: marketStore
+                                            .filteredMarkets[index].imagePath!,
+                                        memCacheHeight: 80,
+                                        memCacheWidth: 141,
+                                        placeholder: (context, url) {
+                                          return Container(
+                                            color: Colors.grey[400],
+                                          );
+                                        },
+                                      ),
                                     ),
                                     Text(
                                       ' ${(Geolocator.distanceBetween(positionStore.position!.latitude, positionStore.position!.longitude, marketStore.filteredMarkets[index].latitude, marketStore.filteredMarkets[index].longitude) / 1000).toStringAsFixed(2).replaceAll(r'.', ',')} Km de distância',

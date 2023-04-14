@@ -20,13 +20,13 @@ class UseTermsPage extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            const SizedBox(
-              height: 24,
-            ),
-            const Text(
-              'Termos e Condições de Uso',
-              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-            ),
+            // const SizedBox(
+            //   height: 24,
+            // ),
+            // const Text(
+            //   'Termos e Condições de Uso',
+            //   style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+            // ),
             const SizedBox(
               height: 24,
             ),

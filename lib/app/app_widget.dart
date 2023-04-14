@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class AppWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // debugInvertOversizedImages = true;
     return ScreenUtilInit(
         designSize: const Size(360, 690),
         minTextAdapt: true,

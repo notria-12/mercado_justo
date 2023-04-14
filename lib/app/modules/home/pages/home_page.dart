@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -208,10 +209,12 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                                           children: [
                                             Container(
                                               height: 90,
-                                              child: Image.network(
-                                                initialStore
+                                              child: CachedNetworkImage(
+                                                imageUrl: initialStore
                                                     .products[index].imagePath!,
-                                                errorBuilder: (context, error,
+                                                memCacheHeight: 190,
+                                                memCacheWidth: 190,
+                                                errorWidget: (context, error,
                                                     stackTrace) {
                                                   return Image.asset(
                                                       'assets/img/image_not_found.jpg');
@@ -239,8 +242,11 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                                             );
                                           }
                                           if (snapshot.hasData) {
-                                            return Image.network(
-                                                snapshot.data!);
+                                            return CachedNetworkImage(
+                                              imageUrl: snapshot.data!,
+                                              memCacheWidth: 175,
+                                              memCacheHeight: 105,
+                                            );
                                           }
                                           return Center(
                                             child: CircularProgressIndicator(),

@@ -3,6 +3,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/app/modules/home_auth/widgets/drawer_item.dart';
 import 'package:mercado_justo/shared/auth/auth_controller.dart';
 import 'package:mercado_justo/shared/controllers/signature_store.dart';
+import 'package:mercado_justo/shared/widgets/dialogs.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({
@@ -66,13 +67,16 @@ class CustomDrawer extends StatelessWidget {
             },
           ),
         DrawerItem(
+            onTap: () {
+              Dialogs().socialNetworkDialog(context);
+            },
             child: const Text(
-          'Redes Sociais',
-          style: TextStyle(
-              fontSize: 15,
-              // fontWeight: FontWeight.w400,
-              color: Colors.black87),
-        )),
+              'Redes Sociais',
+              style: TextStyle(
+                  fontSize: 15,
+                  // fontWeight: FontWeight.w400,
+                  color: Colors.black87),
+            )),
         DrawerItem(
             child: const Text(
           'Avaliar Mercado Justo',

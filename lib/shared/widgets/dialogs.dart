@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:mercado_justo/app/modules/home_auth/controllers/problem_controller.dart';
 import 'package:mercado_justo/app/modules/home_auth/models/problem_model.dart';
 import 'package:mercado_justo/shared/controllers/fair_price_store.dart';
@@ -9,6 +12,7 @@ import 'package:mercado_justo/shared/controllers/market_name_store.dart';
 
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
+import 'package:mercado_justo/shared/utils/utils.dart';
 
 class Dialogs {
   Future addNewMarketName(BuildContext context,
@@ -309,6 +313,113 @@ class Dialogs {
                     ],
                   ),
                 ),
+              ),
+            ));
+  }
+
+  void socialNetworkDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Nossas Redes Sociais',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  IconButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: () {
+                        Modular.to.pop();
+                      },
+                      icon: const Icon(Icons.close))
+                ],
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Nos siga em nossas Redes sociais e fique por dentro de todas as novidades:',
+                    style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.grey),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          Utils.launchUrl(
+                              "https://instagram.com/mercadojustoapp?igshid=ZDdkNTZiNTM=");
+                        },
+                        child: Column(
+                          children: const [
+                            Icon(
+                              MdiIcons.instagram,
+                              size: 50,
+                            ),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            Text(
+                              'Instagram',
+                              style: TextStyle(
+                                  fontSize: 12, fontWeight: FontWeight.w700),
+                            )
+                          ],
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Utils.launchUrl(
+                              "https://www.facebook.com/MercadoJustoApp/");
+                        },
+                        child: Column(
+                          children: const [
+                            Icon(
+                              MdiIcons.facebook,
+                              size: 50,
+                            ),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            Text(
+                              'Facebook',
+                              style: TextStyle(
+                                  fontSize: 12, fontWeight: FontWeight.w700),
+                            )
+                          ],
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Utils.launchUrl("https://vm.tiktok.com/ZMYUW4tsW/");
+                        },
+                        child: Column(
+                          children: [
+                            Container(
+                              child: Image.asset('assets/img/tiktok.png'),
+                              height: 50,
+                            ),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            Text(
+                              'Tiktok',
+                              style: TextStyle(
+                                  fontSize: 12, fontWeight: FontWeight.w700),
+                            )
+                          ],
+                        ),
+                      )
+                    ],
+                  )
+                ],
               ),
             ));
   }
