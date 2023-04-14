@@ -256,8 +256,8 @@ abstract class _ListStoreBase with Store {
 
   Future getProducts(int listId) async {
     List<int> auxQuantities = [];
+    // productState = AppStateLoading();
     try {
-      productState = AppStateLoading();
       List<ProductListModel> list_products =
           await _repository.getProductsByList(listId);
       products = await _repository
@@ -270,6 +270,7 @@ abstract class _ListStoreBase with Store {
         quantities = auxQuantities;
         await getProductsPrices();
       }
+      print('LOG: products');
       productState = AppStateSuccess();
     } catch (e) {
       productState = AppStateError(error: Failure(title: '', message: ''));
