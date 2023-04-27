@@ -46,10 +46,16 @@ class _DialogSelectionMarketsState extends State<DialogSelectionMarkets> {
                   child: SingleChildScrollView(
                 child: Column(
                     children: List.generate(
-                        marketStore.filteredMarkets.length,
+                        marketStore.filteredMarkets
+                            .where((element) => element.isSelectable == true)
+                            .toList()
+                            .length,
                         (index) => CheckboxListTile(
-                            title:
-                                Text(marketStore.filteredMarkets[index].name),
+                            title: Text(marketStore.filteredMarkets
+                                .where(
+                                    (element) => element.isSelectable == true)
+                                .toList()[index]
+                                .name),
                             value: widget.selectedMarkets.contains(index),
                             onChanged: (widget.selectedMarkets.length == 4 &&
                                     !widget.selectedMarkets.contains(index))

@@ -10,6 +10,7 @@ class UserModel {
   int? age;
   String? genre;
   AddressModel? address;
+  DateTime? registerDate;
   UserModel(
       {required this.id,
       required this.name,
@@ -18,7 +19,8 @@ class UserModel {
       required this.phone,
       this.age,
       this.genre,
-      this.address});
+      this.address,
+      this.registerDate});
 
   UserModel copyWith(
       {String? name,
@@ -28,6 +30,7 @@ class UserModel {
       int? age,
       String? id,
       String? genre,
+      DateTime? registerDate,
       AddressModel? address}) {
     return UserModel(
         id: id ?? this.id,
@@ -37,7 +40,8 @@ class UserModel {
         phone: phone ?? this.phone,
         age: age ?? this.age,
         genre: genre ?? this.genre,
-        address: address ?? this.address);
+        address: address ?? this.address,
+        registerDate: registerDate ?? this.registerDate);
   }
 
   Map<String, dynamic> toMap() {
@@ -61,7 +65,8 @@ class UserModel {
       'email': email,
       'telefone': phone,
       'idade': age,
-      'orientacao': genre
+      'orientacao': genre,
+      'data_cadastro': registerDate.toString()
     };
   }
 
@@ -74,6 +79,9 @@ class UserModel {
         phone: map['telefone'] ?? '',
         age: map['idade']?.toInt(),
         genre: map['orientacao'],
+        registerDate: map['data_cadastro'] != null
+            ? DateTime.tryParse(map['data_cadastro'])
+            : null,
         address: map['endereco'] != null
             ? AddressModel.fromMap(map['endereco'])
             : null);

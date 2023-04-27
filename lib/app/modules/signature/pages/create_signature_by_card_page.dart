@@ -9,7 +9,9 @@ import 'package:mercado_justo/shared/utils/input_formaters.dart';
 import 'package:mobx/mobx.dart';
 
 class CreateSignatureByCardPage extends StatefulWidget {
-  const CreateSignatureByCardPage({Key? key}) : super(key: key);
+  bool isUpdate;
+  CreateSignatureByCardPage({Key? key, this.isUpdate = false})
+      : super(key: key);
 
   @override
   State<CreateSignatureByCardPage> createState() =>
@@ -39,7 +41,7 @@ class _CreateSignatureByCardPageState extends State<CreateSignatureByCardPage> {
       }
       if (cardStore.signatureState is AppStateSuccess) {
         Modular.to.pushNamedAndRemoveUntil('/', (p0) => false);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text('Assinatura realizada com sucesso'),
           backgroundColor: Colors.green,
         ));
@@ -63,9 +65,12 @@ class _CreateSignatureByCardPageState extends State<CreateSignatureByCardPage> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              const Text('Adicione um cartão para realizar a assinatura',
+              Text(
+                  widget.isUpdate
+                      ? 'Adicione um novo cartão para atualizar a assinatura'
+                      : 'Adicione um cartão para realizar a assinatura',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                       color: Colors.black54,
                       fontWeight: FontWeight.bold,
                       fontSize: 20)),
@@ -148,10 +153,8 @@ class _CreateSignatureByCardPageState extends State<CreateSignatureByCardPage> {
                       onPressed: cardStore.signatureState is AppStateLoading
                           ? null
                           : () {
-                              cardStore.createSignature(SignatureRequestModel(
-                                  email: authController.user!.email,
-                                  userId: authController.user!.id,
-                                  card: CardSignatureModel(
+                              if (widget.isUpdate) {
+                                cardStore.updateSignature(CardSignatureModel(
                                     holderName: holdeNameController.text,
                                     cardNumber: cardNumberController.text
                                         .replaceAll(' ', ''),
@@ -163,8 +166,26 @@ class _CreateSignatureByCardPageState extends State<CreateSignatureByCardPage> {
                                     expirationYear:
                                         validityController.text.split('/')[1],
                                     cvv: cvvController.text,
+                                    userId: authController.user!.id));
+                              } else {
+                                cardStore.createSignature(SignatureRequestModel(
+                                    email: authController.user!.email,
                                     userId: authController.user!.id,
-                                  )));
+                                    card: CardSignatureModel(
+                                      holderName: holdeNameController.text,
+                                      cardNumber: cardNumberController.text
+                                          .replaceAll(' ', ''),
+                                      cpf: cpfController.text
+                                          .replaceAll('.', '')
+                                          .replaceAll('-', ''),
+                                      expirationMonth:
+                                          validityController.text.split('/')[0],
+                                      expirationYear:
+                                          validityController.text.split('/')[1],
+                                      cvv: cvvController.text,
+                                      userId: authController.user!.id,
+                                    )));
+                              }
                             },
                       child: cardStore.signatureState is AppStateLoading
                           ? const Center(
@@ -172,8 +193,8 @@ class _CreateSignatureByCardPageState extends State<CreateSignatureByCardPage> {
                                 color: Colors.white,
                               ),
                             )
-                          : const Text(
-                              'ASSINAR',
+                          : Text(
+                              widget.isUpdate ? 'ATUALIZAR' : 'ASSINAR',
                               style: TextStyle(fontSize: 18),
                             ));
                 }),

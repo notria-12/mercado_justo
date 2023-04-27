@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/app/modules/common_questions/presenter/common_questions_store.dart';
@@ -40,17 +41,25 @@ class _CommonQuestionsPageState
                       const SizedBox(
                         height: 24,
                       ),
-                      const Text(
-                        'Principais Perguntas',
-                        style: TextStyle(
-                            fontSize: 30, fontWeight: FontWeight.bold),
+                      Align(
+                        alignment: Alignment.center,
+                        child: const Text(
+                          'Principais Perguntas',
+                          style: TextStyle(
+                              fontSize: 30, fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                       const SizedBox(
                         height: 10,
                       ),
-                      const Text(
-                        'Dúvidas frequentes sobre o uso do Mercado Justo',
-                        style: TextStyle(fontSize: 18),
+                      Align(
+                        alignment: Alignment.center,
+                        child: const Text(
+                          'Dúvidas frequentes sobre o uso do Mercado Justo',
+                          style: TextStyle(fontSize: 18),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                       const SizedBox(
                         height: 15,
@@ -71,14 +80,9 @@ class _CommonQuestionsPageState
                                     Padding(
                                       padding: const EdgeInsets.only(
                                           right: 16, left: 16, bottom: 16),
-                                      child: Text(
-                                        store.commonQuestions[index].answer
-                                            .replaceAll(r'<p>', '')
-                                            .replaceAll(r'</p>', ''),
-                                        style: TextStyle(
-                                            color: Colors.black38,
-                                            fontWeight: FontWeight.w600),
-                                      ),
+                                      child: Html(
+                                          data: store
+                                              .commonQuestions[index].answer),
                                     )
                                   ],
                                 )

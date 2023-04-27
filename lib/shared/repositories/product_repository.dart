@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:mercado_justo/shared/models/product_model.dart';
+import 'package:mercado_justo/shared/utils/error.dart';
 
 class ProductRepository {
   Dio dio;
@@ -29,10 +30,11 @@ class ProductRepository {
   }
 
   Future<List<Product>> getProductsByCategory(
-      {required String categoryName}) async {
+      {required String categoryName, required int page}) async {
     try {
       final String name = categoryName.replaceAll(' ', '%20');
-      final result = await dio.get('/produtos/category/$name');
+      final result = await dio.get(
+          '/produtos/category/$name?itens_pagina=15&pagina=$page&ordernar=_id');
 
       List list = result.data['dados'] as List;
       List<Product> products = list.map((e) => Product.fromMap(e)).toList();
@@ -74,11 +76,20 @@ class ProductRepository {
       List list = result.data['dados'] as List;
       if (list.isNotEmpty) {
         Product product = Product.fromMap(list.first);
-        String imagePath = await getProductImage(barcode);
+        String imagePath = await getProductImage(product.barCode[0]);
         return product.copyWith(imagePath: imagePath);
       }
     } catch (e) {
       rethrow;
+    }
+  }
+
+  Future<Product> findOne(String id) async {
+    try {
+      final result = await dio.get('/produtos/$id');
+      return Product.fromMap(result.data['dados']);
+    } catch (e) {
+      throw Failure(title: 'Erro Produto', message: 'Erro ao buscar produto');
     }
   }
 

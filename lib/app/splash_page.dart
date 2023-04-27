@@ -17,6 +17,7 @@ class _SplashPageState extends State<SplashPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      color: Colors.white,
       child: FutureBuilder(
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {

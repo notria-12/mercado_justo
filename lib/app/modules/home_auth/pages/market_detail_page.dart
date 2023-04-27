@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -19,6 +20,7 @@ class MarketDetail extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(backgroundColor: Colors.green),
       body: Container(
+          color: Colors.white,
           padding: EdgeInsets.all(12.sp),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -32,7 +34,11 @@ class MarketDetail extends StatelessWidget {
                   Container(
                     height: 80,
                     width: 100.w,
-                    child: Image.network(market.imagePath!),
+                    child: CachedNetworkImage(
+                      imageUrl: market.imagePath!,
+                      memCacheHeight: 105,
+                      memCacheWidth: 175,
+                    ),
                   ),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -124,7 +130,11 @@ class _AddressWidgetState extends State<AddressWidget> {
             Container(
               height: 40,
               width: 40,
-              child: Image.asset('assets/img/turn_right.jpg'),
+              child: Image.asset(
+                'assets/img/turn_right.jpg',
+                cacheHeight: 90,
+                cacheWidth: 170,
+              ),
             ),
             SizedBox(
               width: 15,

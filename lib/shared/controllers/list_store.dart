@@ -256,20 +256,21 @@ abstract class _ListStoreBase with Store {
 
   Future getProducts(int listId) async {
     List<int> auxQuantities = [];
+    // productState = AppStateLoading();
     try {
-      productState = AppStateLoading();
       List<ProductListModel> list_products =
           await _repository.getProductsByList(listId);
       products = await _repository
           .getProducts(list_products.map((e) => e.productId).toList());
-      // if (products.isNotEmpty) {
-      for (Product product in products) {
-        auxQuantities
-            .add(await _repository.getQuantity(listId, product.productId!));
+      if (products.isNotEmpty) {
+        for (Product product in products) {
+          auxQuantities
+              .add(await _repository.getQuantity(listId, product.productId!));
+        }
+        quantities = auxQuantities;
+        await getProductsPrices();
       }
-      quantities = auxQuantities;
-      await getProductsPrices();
-      // }
+      print('LOG: products');
       productState = AppStateSuccess();
     } catch (e) {
       productState = AppStateError(error: Failure(title: '', message: ''));

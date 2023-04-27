@@ -39,6 +39,22 @@ mixin _$ProductStore on _ProductStoreBase, Store {
     });
   }
 
+  final _$isCategorySearchAtom =
+      Atom(name: '_ProductStoreBase.isCategorySearch');
+
+  @override
+  bool get isCategorySearch {
+    _$isCategorySearchAtom.reportRead();
+    return super.isCategorySearch;
+  }
+
+  @override
+  set isCategorySearch(bool value) {
+    _$isCategorySearchAtom.reportWrite(value, super.isCategorySearch, () {
+      super.isCategorySearch = value;
+    });
+  }
+
   final _$productStateAtom = Atom(name: '_ProductStoreBase.productState');
 
   @override
@@ -105,6 +121,7 @@ mixin _$ProductStore on _ProductStoreBase, Store {
     return '''
 products: ${products},
 isSearch: ${isSearch},
+isCategorySearch: ${isCategorySearch},
 productState: ${productState},
 canLoadMore: ${canLoadMore},
 onlyButtonLoadMore: ${onlyButtonLoadMore},

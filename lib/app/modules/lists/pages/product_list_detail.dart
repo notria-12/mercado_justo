@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -58,7 +59,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
     adState.adState.then((state) {
       setState(() {
         _topBanner = BannerAd(
-          adUnitId: adState.bannerAdUnitId,
+          adUnitId: adState.topBannerListDetailId,
           size: AdSize(
               width: MediaQuery.of(context).size.width.truncate(), height: 50),
           request: AdRequest(),
@@ -66,7 +67,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
         )..load();
 
         _bottomBanner = BannerAd(
-          adUnitId: adState.bannerAdUnitId,
+          adUnitId: adState.bottomBannerListDetailId,
           size: AdSize(
               width: MediaQuery.of(context).size.width.truncate(), height: 50),
           request: AdRequest(),
@@ -165,8 +166,14 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                 if (storeProductList.productState is AppStateSuccess &&
                     storeProductList.products.isEmpty) {
                   return Center(
-                    child:
-                        Text('Você ainda não adicionou produtos a essa lista'),
+                    child: const Text(
+                      'Lista vazia! Adicione itens a lista para fazer o comparativo de preços',
+                      style: TextStyle(
+                          color: Colors.black38,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
+                    ),
                   );
                 }
                 return Center(
@@ -458,10 +465,13 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                     return Container(
                       height: 60,
                       width: 90.w,
-                      child: Image.network(
-                        filteredMarkets[storeProductList.marketSelected]
-                            .imagePath!,
-                        errorBuilder: (context, error, stackTrace) {
+                      child: CachedNetworkImage(
+                        imageUrl:
+                            filteredMarkets[storeProductList.marketSelected]
+                                .imagePath!,
+                        memCacheHeight: 110,
+                        memCacheWidth: 180,
+                        errorWidget: (context, error, stackTrace) {
                           return Image.asset('assets/img/image_not_found.jpg');
                         },
                       ),
@@ -538,11 +548,30 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                       alignment: Alignment.center,
                       child: Container(
                         // margin: EdgeInsets.all(8),
-                        child: Image.network(
-                          e.imagePath!,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Image.asset(
-                                'assets/img/image_not_found.jpg');
+                        child: CachedNetworkImage(
+                          imageUrl: e.imagePath!,
+                          memCacheHeight: 175,
+                          memCacheWidth: 175,
+                          placeholder: (context, url) {
+                            return Container(
+                              color: Colors.grey[400],
+                            );
+                          },
+                          errorWidget: (context, error, stackTrace) {
+                            return CachedNetworkImage(
+                              imageUrl: e.imagePath!,
+                              memCacheHeight: 175,
+                              memCacheWidth: 175,
+                              placeholder: (context, url) {
+                                return Container(
+                                  color: Colors.grey[400],
+                                );
+                              },
+                              errorWidget: (context, error, stackTrace) {
+                                return Image.asset(
+                                    'assets/img/image_not_found.jpg');
+                              },
+                            );
                           },
                         ),
                         height: 90,
@@ -635,7 +664,11 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                       },
                       child: Container(
                         width: 100,
-                        child: Image.network(filteredMarkets[index].imagePath!),
+                        child: CachedNetworkImage(
+                          imageUrl: filteredMarkets[index].imagePath!,
+                          memCacheHeight: 110,
+                          memCacheWidth: 180,
+                        ),
                       ),
                     ))
           ],

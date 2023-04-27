@@ -24,10 +24,26 @@ mixin _$ProblemStore on _ProblemStoreBase, Store {
     });
   }
 
+  final _$problemTypeAtom = Atom(name: '_ProblemStoreBase.problemType');
+
+  @override
+  String get problemType {
+    _$problemTypeAtom.reportRead();
+    return super.problemType;
+  }
+
+  @override
+  set problemType(String value) {
+    _$problemTypeAtom.reportWrite(value, super.problemType, () {
+      super.problemType = value;
+    });
+  }
+
   @override
   String toString() {
     return '''
-problemStatus: ${problemStatus}
+problemStatus: ${problemStatus},
+problemType: ${problemType}
     ''';
   }
 }

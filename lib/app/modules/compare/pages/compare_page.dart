@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -47,7 +48,7 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
     adState.adState.then((state) {
       setState(() {
         _topBanner = BannerAd(
-          adUnitId: adState.bannerAdUnitId,
+          adUnitId: adState.topBannerCompareId,
           size: AdSize(
               width: MediaQuery.of(context).size.width.truncate(), height: 50),
           request: AdRequest(),
@@ -55,7 +56,7 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
         )..load();
 
         _bottomBanner = BannerAd(
-          adUnitId: adState.bannerAdUnitId,
+          adUnitId: adState.bottomBannerCompareId,
           size: AdSize(
               width: MediaQuery.of(context).size.width.truncate(), height: 50),
           request: AdRequest(),
@@ -198,7 +199,7 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                                                   width: 170,
                                                   padding: EdgeInsets.all(16),
                                                   decoration: BoxDecoration(
-                                                      color: Colors.lightBlue,
+                                                      color: Colors.red,
                                                       borderRadius:
                                                           BorderRadius.all(
                                                               Radius.circular(
@@ -345,8 +346,12 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                                                             _signatureStore
                                                                 .signature!
                                                                 .status)
-                                                        ? Image.network(
-                                                            market.imagePath!)
+                                                        ? CachedNetworkImage(
+                                                            imageUrl: market
+                                                                .imagePath!,
+                                                            memCacheHeight: 150,
+                                                            memCacheWidth: 180,
+                                                          )
                                                         : Container(
                                                             child: const Center(
                                                             child: Text(
@@ -635,9 +640,11 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                   child: Container(
                     width: 90.w,
                     height: 80,
-                    child: Image.network(
-                      products[i].imagePath!,
-                      errorBuilder: (context, error, stackTrace) {
+                    child: CachedNetworkImage(
+                      imageUrl: products[i].imagePath!,
+                      memCacheHeight: 150,
+                      memCacheWidth: 180,
+                      errorWidget: (context, error, stackTrace) {
                         return Image.asset('assets/img/image_not_found.jpg');
                       },
                     ),
@@ -937,9 +944,11 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
             // width: 130,
             // padding: const EdgeInsets.all(8),
             child: Center(
-              child: Image.network(
-                e[i].imagePath!,
-                errorBuilder: (context, error, stackTrace) {
+              child: CachedNetworkImage(
+                imageUrl: e[i].imagePath!,
+                memCacheHeight: 180,
+                memCacheWidth: 180,
+                errorWidget: (context, error, stackTrace) {
                   return Image.asset('assets/img/image_not_found.jpg');
                 },
               ),

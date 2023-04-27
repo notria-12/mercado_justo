@@ -22,7 +22,7 @@ class ProductListPage extends StatefulWidget {
 
 class _ProductListPageState extends ModularState<ProductListPage, ListStore> {
   BannerAd? _topBanner;
-  BannerAd? _bottomBanner;
+  // BannerAd? _bottomBanner;
 
   final _signatureStore = Modular.get<SignatureStore>();
   @override
@@ -38,20 +38,20 @@ class _ProductListPageState extends ModularState<ProductListPage, ListStore> {
     adState.adState.then((state) {
       setState(() {
         _topBanner = BannerAd(
-          adUnitId: adState.bannerAdUnitId,
+          adUnitId: adState.topBannerListId,
           size: AdSize(
               width: MediaQuery.of(context).size.width.truncate(), height: 50),
           request: AdRequest(),
           listener: BannerAdListener(),
         )..load();
 
-        _bottomBanner = BannerAd(
-          adUnitId: adState.bannerAdUnitId,
-          size: AdSize(
-              width: MediaQuery.of(context).size.width.truncate(), height: 50),
-          request: AdRequest(),
-          listener: BannerAdListener(),
-        )..load();
+        // _bottomBanner = BannerAd(
+        //   adUnitId: adState.bott,
+        //   size: AdSize(
+        //       width: MediaQuery.of(context).size.width.truncate(), height: 50),
+        //   request: AdRequest(),
+        //   listener: BannerAdListener(),
+        // )..load();
       });
     });
   }

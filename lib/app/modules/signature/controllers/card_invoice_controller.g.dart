@@ -55,6 +55,21 @@ mixin _$CardInvoiceStore on _CardInvoiceStoreBase, Store {
     });
   }
 
+  final _$cancelStateAtom = Atom(name: '_CardInvoiceStoreBase.cancelState');
+
+  @override
+  AppState get cancelState {
+    _$cancelStateAtom.reportRead();
+    return super.cancelState;
+  }
+
+  @override
+  set cancelState(AppState value) {
+    _$cancelStateAtom.reportWrite(value, super.cancelState, () {
+      super.cancelState = value;
+    });
+  }
+
   final _$cardAtom = Atom(name: '_CardInvoiceStoreBase.card');
 
   @override
@@ -108,6 +123,7 @@ mixin _$CardInvoiceStore on _CardInvoiceStoreBase, Store {
 cardState: ${cardState},
 invoiceState: ${invoiceState},
 signatureState: ${signatureState},
+cancelState: ${cancelState},
 card: ${card},
 invoice: ${invoice},
 signatureResponseModel: ${signatureResponseModel}

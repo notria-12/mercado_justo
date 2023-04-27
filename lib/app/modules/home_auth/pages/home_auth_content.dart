@@ -1,9 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:mercado_justo/app/modules/compare/compare_store.dart';
 import 'package:mercado_justo/app/modules/home_auth/controllers/average_price_controller.dart';
 import 'package:mercado_justo/app/modules/home_auth/controllers/category_controller.dart';
 import 'package:mercado_justo/app/modules/home_auth/controllers/problem_controller.dart';
@@ -56,7 +58,11 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
 
     autorun((_) {
       if (Modular.get<ProblemStore>().problemStatus is AppStateSuccess) {
-        CustomBottonSheets().reportProblemSuccessfull(context);
+        CustomBottonSheets().reportProblemSuccessfull(context,
+            msg: Modular.get<ProblemStore>().problemType ==
+                    'produto_sem_cadastro'
+                ? 'O código lido será analisado'
+                : null);
       }
     });
     productStore.getAllProducts();
@@ -77,7 +83,7 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
     adState.adState.then((state) {
       setState(() {
         _bottomBanner = BannerAd(
-          adUnitId: adState.bannerAdUnitId,
+          adUnitId: adState.topBannerHomeId,
           size: AdSize(
               width: MediaQuery.of(context).size.width.truncate(), height: 50),
           request: AdRequest(),
@@ -85,7 +91,7 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
         )..load();
 
         _topBanner = BannerAd(
-          adUnitId: adState.bannerAdUnitId,
+          adUnitId: adState.bottomBannerHomeId,
           size: AdSize(
               width: MediaQuery.of(context).size.width.round(), height: 50),
           request: AdRequest(),
@@ -179,6 +185,10 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                                             'Cancelar',
                                             false,
                                             ScanMode.BARCODE);
+                                    if (barcodeScanRes == "-1") {
+                                      return;
+                                    }
+
                                     productStore
                                         .getProductByBarcode(
                                             barcode: barcodeScanRes)
@@ -221,46 +231,73 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: 8,
-                ),
-                InkWell(
-                  onTap: () {
-                    PageController pageController = PageController();
+                // const SizedBox(
+                //   height: 8,
+                // ),
+                Row(
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        PageController pageController = PageController();
 
-                    List<Widget> pages = [
-                      GeneralCategoriesWidget(
-                        controller: pageController,
-                      ),
-                      SecondaryCategoriesWidget(
-                        pageController: pageController,
-                        productStore: productStore,
-                      )
-                    ];
-
-                    showModalBottomSheet(
-                        context: context,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
-                        builder: (ctx) {
-                          Modular.get<CategoryStore>().canUpdate = false;
-                          return PageView(
+                        List<Widget> pages = [
+                          GeneralCategoriesWidget(
                             controller: pageController,
-                            children: pages,
-                          );
-                        }).then((value) {
-                      if (Modular.get<CategoryStore>().canUpdate) {
-                        productStore.getProductsByCategories(
-                            categoryName: Modular.get<CategoryStore>()
-                                .selectedCategory!
-                                .description);
-                      }
-                    });
-                  },
-                  child: const Text(
-                    'Categorias',
-                    style: TextStyle(fontWeight: FontWeight.w500),
-                  ),
+                          ),
+                          SecondaryCategoriesWidget(
+                            pageController: pageController,
+                            productStore: productStore,
+                          )
+                        ];
+
+                        showModalBottomSheet(
+                            context: context,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12)),
+                            builder: (ctx) {
+                              Modular.get<CategoryStore>().canUpdate = false;
+                              return PageView(
+                                controller: pageController,
+                                children: pages,
+                              );
+                            }).then((value) {
+                          if (Modular.get<CategoryStore>().canUpdate) {
+                            productStore.onlyButtonLoadMore = false;
+                            productStore.isCategorySearch = true;
+                            productStore.getProductsByCategories(
+                                categoryName: Modular.get<CategoryStore>()
+                                    .selectedCategory!
+                                    .description);
+                          }
+                        });
+                      },
+                      child: const Text(
+                        'Categorias',
+                        style: TextStyle(fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                    TextButton.icon(
+                        style: ButtonStyle(
+                            padding:
+                                MaterialStateProperty.all(EdgeInsets.zero)),
+                        onPressed: () {
+                          Modular.get<MarketStore>().marketId = '';
+                          Modular.to.pushNamed('/home_auth/list/filters').then(
+                              (value) =>
+                                  Modular.get<CompareStore>().reloadList());
+                        },
+                        icon: const Icon(
+                          Icons.filter_list,
+                          color: Colors.black87,
+                        ),
+                        label: const Text(
+                          'Filtro',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black87),
+                        ))
+                  ],
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 )
               ],
             ),
@@ -284,39 +321,54 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                   );
                 } else {
                   if (productStore.products.isNotEmpty) {
-                    if (marketStore.filteredMarkets.isEmpty) {
+                    if (marketStore.filteredMarkets
+                        .where((element) => element.isSelectable)
+                        .toList()
+                        .isEmpty) {
                       return Center(
                         child: Text(
                             'Não há mercados no disponíveis para sua localização'),
                       );
                     }
-                    priceStore.getProductPriceByMarkets(
-                        productIds:
-                            productStore.products.map((e) => e.id).toList(),
-                        marketIds: marketStore.filteredMarkets
-                            .map((m) => m.id)
-                            .toList());
+                    if (productStore.productState is AppStateSuccess) {
+                      priceStore.getProductPriceByMarkets(
+                          productIds:
+                              productStore.products.map((e) => e.id).toList(),
+                          marketIds: marketStore.filteredMarkets
+                              .where((element) => element.isSelectable)
+                              .toList()
+                              .map((m) => m.id)
+                              .toList());
+                    }
                     return Observer(
                       builder: (_) {
-                        if (priceStore.allPriceStatus is AppStateLoading) {
-                          return Center(
-                            child: Column(
-                              children: const [
-                                Text(
-                                    "Aguarde enquanto os preços são carregados..."),
-                                SizedBox(
-                                  height: 8,
-                                ),
-                                CircularProgressIndicator()
-                              ],
-                              mainAxisAlignment: MainAxisAlignment.center,
-                            ),
-                          );
-                        }
+                        // if (priceStore.allPriceStatus is AppStateLoading) {
+                        //   return Center(
+                        //     child: Column(
+                        //       children: const [
+                        //         Text(
+                        //             "Aguarde enquanto os preços são carregados..."),
+                        //         SizedBox(
+                        //           height: 8,
+                        //         ),
+                        //         CircularProgressIndicator()
+                        //       ],
+                        //       mainAxisAlignment: MainAxisAlignment.center,
+                        //     ),
+                        //   );
+                        // }
+
                         return CustomDataTable(
                           fixedColWidth: 80.w,
-                          loadMoreWidget:
-                              productStore.productState is AppStateLoading
+                          loadMoreWidget: productStore.productState
+                                  is AppStateLoading
+                              ? Container(
+                                  height: 40,
+                                  child: Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                )
+                              : priceStore.allPriceStatus is AppStateLoading
                                   ? Container(
                                       height: 40,
                                       child: Center(
@@ -328,6 +380,15 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                                       if (productStore.isSearch) {
                                         productStore.getProductsByDescription(
                                             description: _searchController.text,
+                                            isNewSearch: false);
+                                      } else if (productStore
+                                          .isCategorySearch) {
+                                        final _categoryStore =
+                                            Modular.get<CategoryStore>();
+
+                                        productStore.getProductsByCategories(
+                                            categoryName: _categoryStore
+                                                .selectedCategory!.description,
                                             isNewSearch: false);
                                       } else {
                                         productStore.getAllProducts();
@@ -343,10 +404,36 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                                 (index) {
                               return [
                                 Text(productStore.products[index].description),
-                                ...priceStore.prices[index].map((e) => Center(
-                                    child: Text(e.isEmpty || e == 'R\$ 0,00'
-                                        ? 'Em Falta'
-                                        : e)))
+                                if (priceStore.allPriceStatus
+                                    is AppStateLoading)
+                                  ...List.generate(
+                                      marketStore.filteredMarkets
+                                          .where(
+                                              (element) => element.isSelectable)
+                                          .toList()
+                                          .length,
+                                      (id) => index >= priceStore.prices.length
+                                          ? const Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            )
+                                          : Center(
+                                              child: Text(priceStore
+                                                          .prices[index][id]
+                                                          .isEmpty ||
+                                                      priceStore.prices[index]
+                                                              [id] ==
+                                                          'R\$ 0,00'
+                                                  ? 'Em Falta'
+                                                  : priceStore.prices[index]
+                                                      [id]),
+                                            )),
+                                if (priceStore.allPriceStatus
+                                    is AppStateSuccess)
+                                  ...priceStore.prices[index].map((e) => Center(
+                                      child: Text(e.isEmpty || e == 'R\$ 0,00'
+                                          ? 'Em Falta'
+                                          : e)))
                               ];
                             })
                           ],
@@ -354,6 +441,8 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                               productStore.products.length,
                               (index) => InkWell(
                                     onTap: () {
+                                      productStore.findOne(
+                                          productStore.products[index].id);
                                       showDialogProductDetail(context,
                                           productStore.products[index]);
                                     },
@@ -364,17 +453,44 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                                                 MainAxisAlignment.center,
                                             children: [
                                               Container(
-                                                height: 90,
-                                                child: Image.network(
-                                                  productStore.products[index]
-                                                      .imagePath!,
-                                                  errorBuilder: (context, error,
-                                                      stackTrace) {
-                                                    return Image.asset(
-                                                        'assets/img/image_not_found.jpg');
-                                                  },
-                                                ),
-                                              ),
+                                                  height: 90,
+                                                  child: CachedNetworkImage(
+                                                    imageUrl: productStore
+                                                        .products[index]
+                                                        .imagePath!,
+                                                    memCacheHeight: 150,
+                                                    memCacheWidth: 150,
+                                                    placeholder:
+                                                        (context, url) {
+                                                      return Container(
+                                                        width: 100,
+                                                        color: Colors.grey[400],
+                                                      );
+                                                    },
+                                                    errorWidget: (context,
+                                                        error, stackTrace) {
+                                                      return CachedNetworkImage(
+                                                        imageUrl: productStore
+                                                            .products[index]
+                                                            .imagePath!,
+                                                        memCacheHeight: 150,
+                                                        memCacheWidth: 150,
+                                                        placeholder:
+                                                            (context, url) {
+                                                          return Container(
+                                                            width: 100,
+                                                            color: Colors
+                                                                .grey[400],
+                                                          );
+                                                        },
+                                                        errorWidget: (context,
+                                                            error, stackTrace) {
+                                                          return Image.asset(
+                                                              'assets/img/image_not_found.jpg');
+                                                        },
+                                                      );
+                                                    },
+                                                  )),
                                               const SizedBox(
                                                 height: 12,
                                               ),
@@ -383,18 +499,20 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                                                   Container(
                                                     height: 20,
                                                     width: 20,
-                                                    decoration: BoxDecoration(
-                                                        shape: BoxShape.circle,
-                                                        color:
-                                                            Colors.lightBlue),
-                                                    child: Center(
+                                                    decoration:
+                                                        const BoxDecoration(
+                                                            shape:
+                                                                BoxShape.circle,
+                                                            color: Colors
+                                                                .lightBlue),
+                                                    child: const Center(
                                                         child: Icon(
                                                       Icons.add,
                                                       color: Colors.white,
                                                       size: 18,
                                                     )),
                                                   ),
-                                                  SizedBox(
+                                                  const SizedBox(
                                                     width: 4,
                                                   ),
                                                   Text(
@@ -409,19 +527,42 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                           fixedRowCells: [
                             Container(),
                             ...List.generate(
-                                marketStore.filteredMarkets.length,
-                                (index) => InkWell(
-                                      onTap: () {
-                                        Modular.to.pushNamed('marketDetail/',
-                                            arguments: marketStore
-                                                .filteredMarkets[index]);
-                                      },
-                                      child: Container(
-                                        width: 100,
-                                        child: Image.network(marketStore
-                                            .filteredMarkets[index].imagePath!),
-                                      ),
-                                    ))
+                              marketStore.filteredMarkets
+                                  .where(
+                                      (element) => element.isSelectable == true)
+                                  .toList()
+                                  .length,
+                              (index) => InkWell(
+                                onTap: () {
+                                  marketStore.findOne(marketStore
+                                      .filteredMarkets
+                                      .where((element) =>
+                                          element.isSelectable == true)
+                                      .toList()[index]
+                                      .hashId);
+                                  Modular.to.pushNamed('marketDetail/',
+                                      arguments: marketStore.filteredMarkets
+                                          .where((element) =>
+                                              element.isSelectable == true)
+                                          .toList()[index]);
+                                },
+                                child: Container(
+                                  width: 100,
+                                  child: CachedNetworkImage(
+                                    imageUrl: marketStore.filteredMarkets
+                                        .where((element) =>
+                                            element.isSelectable == true)
+                                        .toList()[index]
+                                        .imagePath!,
+                                    memCacheHeight: 100,
+                                    memCacheWidth: 150,
+                                    placeholder: (context, url) {
+                                      return Container(color: Colors.grey[300]);
+                                    },
+                                  ),
+                                ),
+                              ),
+                            )
                           ],
                           cellBuilder: (data) {
                             return Center(
@@ -503,14 +644,20 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
           for (var j = 0; j < prices.length; j++) {
             if (selectedMarkets.contains(j)) {
               pricesString = pricesString +
-                  '${marketStore.filteredMarkets[j].name}.........${prices[j] == 'R\$ 0,00' ? 'Em Falta' : prices[j]}\n';
+                  '${marketStore.filteredMarkets.where((element) => element.isSelectable == true).toList()[j].name}.........${prices[j] == 'R\$ 0,00' ? 'Em Falta' : prices[j]}\n';
             }
           }
         }
-        for (var k = 0; k < marketStore.filteredMarkets.length; k++) {
+        for (var k = 0;
+            k <
+                marketStore.filteredMarkets
+                    .where((element) => element.isSelectable == true)
+                    .toList()
+                    .length;
+            k++) {
           if (selectedMarkets.contains(k)) {
             marketsInfo +=
-                '\n${marketStore.filteredMarkets[k].siteAddress}\nCep de Referência....${marketStore.filteredMarkets[k].address.split(',')[marketStore.filteredMarkets[k].address.split(',').length - 1]}\n';
+                '\n${marketStore.filteredMarkets.where((element) => element.isSelectable == true).toList()[k].siteAddress}\nCep de Referência....${marketStore.filteredMarkets.where((element) => element.isSelectable == true).toList()[k].address.split(',')[marketStore.filteredMarkets[k].address.split(',').length - 1]}\n';
           }
         }
         pricesString += marketsInfo;
@@ -526,9 +673,14 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
     final averagePriceController = Modular.get<AveragePriceStore>();
     averagePriceController.getAveragePrice(
         productId: product.id,
-        marketIds: marketStore.filteredMarkets.map((e) => e.id).toList());
+        marketIds: marketStore.filteredMarkets
+            .where((element) => element.isSelectable == true)
+            .toList()
+            .map((e) => e.id)
+            .toList());
     return showModalBottomSheet(
         context: context,
+        backgroundColor: Colors.white,
         isScrollControlled: true,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         builder: (context) {
@@ -547,10 +699,22 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                 ),
                 Container(
                   height: 200,
-                  child: Image.network(
-                    product.imagePath!,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Image.asset('assets/img/image_not_found.jpg');
+                  child: CachedNetworkImage(
+                    imageUrl: product.imagePath!,
+                    memCacheHeight: 350,
+                    memCacheWidth: 350,
+                    placeholder: (context, url) {
+                      return Container(
+                        width: 250,
+                        color: Colors.grey[400],
+                      );
+                    },
+                    errorWidget: (context, error, stackTrace) {
+                      return Image.asset(
+                        'assets/img/image_not_found.jpg',
+                        cacheHeight: 350,
+                        cacheWidth: 350,
+                      );
                     },
                   ),
                 ),

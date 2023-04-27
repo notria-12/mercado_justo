@@ -21,6 +21,9 @@ abstract class _ProductStoreBase with Store {
   bool isSearch = false;
 
   @observable
+  bool isCategorySearch = false;
+
+  @observable
   AppState productState = AppStateEmpty();
 
   @observable
@@ -39,6 +42,7 @@ abstract class _ProductStoreBase with Store {
         page = 1;
       }
       isSearch = false;
+      isCategorySearch = false;
       productState = AppStateLoading();
       var productsResult = await repository.getAllProducts(page: page);
       if (productsResult.length < 15) {
@@ -63,9 +67,18 @@ abstract class _ProductStoreBase with Store {
     }
   }
 
+  Future<Product> findOne(String id) async {
+    try {
+      return repository.findOne(id);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future getProductsByDescription(
       {required String description, bool isNewSearch = true}) async {
     try {
+      isCategorySearch = false;
       if (isSearch) {
         if (isNewSearch) {
           page = 1;
@@ -99,14 +112,36 @@ abstract class _ProductStoreBase with Store {
     }
   }
 
-  void getProductsByCategories({required String categoryName}) async {
+  void getProductsByCategories(
+      {required String categoryName, bool isNewSearch = true}) async {
     try {
+      if (isCategorySearch) {
+        if (isNewSearch) {
+          page = 1;
+        } else {
+          page++;
+        }
+      } else {
+        page = 1;
+      }
       productState = AppStateLoading();
-      var productsResult =
-          await repository.getProductsByCategory(categoryName: categoryName);
+      var productsResult = await repository.getProductsByCategory(
+          categoryName: categoryName, page: page);
 
-      products = productsResult;
-      canLoadMore = false;
+      if (productsResult.length < 15) {
+        canLoadMore = false;
+      } else {
+        canLoadMore = true;
+      }
+      if (isNewSearch) {
+        products = productsResult;
+
+        isCategorySearch = true;
+      } else {
+        if (productsResult.isNotEmpty) {
+          products = [...products, ...productsResult];
+        }
+      }
       productState = AppStateSuccess();
     } catch (e) {
       productState = AppStateError(error: Failure(title: '', message: ''));

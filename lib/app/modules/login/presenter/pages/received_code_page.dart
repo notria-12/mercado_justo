@@ -28,9 +28,15 @@ class _ReceivedCodePageState
             .showSnackBar(SnackBar(content: Text(stateError.error.message)));
       }
       if (store.loginState is AppStateSuccess) {
-        Modular.to.pushReplacementNamed('/home_auth/');
+        Modular.to.pushNamedAndRemoveUntil('/', (p0) => false);
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _disposer();
+    super.dispose();
   }
 
   @override

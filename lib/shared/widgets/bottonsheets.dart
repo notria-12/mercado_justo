@@ -277,7 +277,7 @@ class CustomBottonSheets {
         });
   }
 
-  void reportProblemSuccessfull(BuildContext context) {
+  void reportProblemSuccessfull(BuildContext context, {String? msg}) {
     showModalBottomSheet(
         context: context,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -291,8 +291,8 @@ class CustomBottonSheets {
                   const SizedBox(
                     height: 10,
                   ),
-                  const Text(
-                    "O problema foi reportado com sucesso!",
+                  Text(
+                    msg ?? "O problema foi reportado com sucesso!",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(
@@ -395,30 +395,62 @@ class CustomBottonSheets {
                                         const SizedBox(
                                           height: 20,
                                         ),
-                                        SizedBox(
-                                          height: 50,
-                                          width: 300,
-                                          child: ElevatedButton(
-                                            onPressed: () {
-                                              Modular.to.pop();
-                                              Modular.to.pop();
-                                              Modular.get<ListStore>()
-                                                  .deleteList(listId);
-                                            },
-                                            child: const Center(
-                                              child: Text(
-                                                'SIM',
-                                                style: TextStyle(fontSize: 20),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceAround,
+                                          children: [
+                                            InkWell(
+                                              onTap: () {
+                                                Modular.to.pop();
+                                                Modular.to.pop();
+                                                Modular.get<ListStore>()
+                                                    .deleteList(listId);
+                                              },
+                                              child: Container(
+                                                width: 170,
+                                                padding: EdgeInsets.all(16),
+                                                decoration: BoxDecoration(
+                                                    color: Colors.red,
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                5))),
+                                                child: Center(
+                                                  child: Text(
+                                                    'Remover',
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 18),
+                                                  ),
+                                                ),
                                               ),
                                             ),
-                                            style: ElevatedButton.styleFrom(
-                                                primary: Colors.lightBlue,
-                                                shape: RoundedRectangleBorder(
+                                            InkWell(
+                                              onTap: () {
+                                                Modular.to.pop();
+                                              },
+                                              child: Container(
+                                                width: 170,
+                                                padding: EdgeInsets.all(16),
+                                                decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    border: Border.all(
+                                                        color: Colors.grey),
                                                     borderRadius:
-                                                        BorderRadius.circular(
-                                                            8))),
-                                          ),
-                                        )
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                5))),
+                                                child: Center(
+                                                  child: Text(
+                                                    'Cancelar',
+                                                    style:
+                                                        TextStyle(fontSize: 18),
+                                                  ),
+                                                ),
+                                              ),
+                                            )
+                                          ],
+                                        ),
                                       ],
                                     ),
                                   );

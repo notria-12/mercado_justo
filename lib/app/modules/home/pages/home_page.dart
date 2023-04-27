@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -61,8 +62,12 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
-                    Image.asset('assets/img/logo.png'),
-                    SizedBox(
+                    Container(
+                      child: Image.asset('assets/img/logo.png'),
+                      height: 110,
+                      width: 110,
+                    ),
+                    const SizedBox(
                       height: 8,
                     ),
                     RichText(
@@ -81,14 +86,14 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                               ))
                         ])),
                     const Text(
-                      'Entre, e compare os preços da sua lista de compras!',
+                      'Entre e compare os preços da sua lista de compras!',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w400,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 12,
                     ),
                     Container(
@@ -204,13 +209,30 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                                           children: [
                                             Container(
                                               height: 90,
-                                              child: Image.network(
-                                                initialStore
+                                              child: CachedNetworkImage(
+                                                imageUrl: initialStore
                                                     .products[index].imagePath!,
-                                                errorBuilder: (context, error,
+                                                placeholder: (context, url) {
+                                                  return Container(
+                                                    color: Colors.grey[400],
+                                                  );
+                                                },
+                                                memCacheHeight: 190,
+                                                memCacheWidth: 190,
+                                                errorWidget: (context, error,
                                                     stackTrace) {
-                                                  return Image.asset(
-                                                      'assets/img/image_not_found.jpg');
+                                                  return CachedNetworkImage(
+                                                    imageUrl: initialStore
+                                                        .products[index]
+                                                        .imagePath!,
+                                                    memCacheHeight: 190,
+                                                    memCacheWidth: 190,
+                                                    errorWidget: (context,
+                                                        error, stackTrace) {
+                                                      return Image.asset(
+                                                          'assets/img/image_not_found.jpg');
+                                                    },
+                                                  );
                                                 },
                                               ),
                                             ),
@@ -235,8 +257,11 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                                             );
                                           }
                                           if (snapshot.hasData) {
-                                            return Image.network(
-                                                snapshot.data!);
+                                            return CachedNetworkImage(
+                                              imageUrl: snapshot.data!,
+                                              memCacheWidth: 175,
+                                              memCacheHeight: 105,
+                                            );
                                           }
                                           return Center(
                                             child: CircularProgressIndicator(),

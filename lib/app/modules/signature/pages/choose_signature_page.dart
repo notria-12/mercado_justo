@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/shared/controllers/signature_store.dart';
+import 'package:mercado_pago_mobile_checkout/mercado_pago_mobile_checkout.dart';
 
 class ChooseSignaturePage extends StatefulWidget {
   const ChooseSignaturePage({Key? key}) : super(key: key);
@@ -117,11 +118,12 @@ class _ChooseSignaturePageState extends State<ChooseSignaturePage> {
                 height: 30,
               ),
               InkWell(
-                onTap: () {
+                onTap: () async {
                   if (_signatureStore.paymentByPix) {
                     Modular.to.pushNamed('/signature/pix/');
                   } else {
-                    Modular.to.pushNamed('/signature/create-signature/');
+                    Modular.to.pushNamed('/signature/create-signature/',
+                        arguments: false);
                   }
                 },
                 child: Container(
