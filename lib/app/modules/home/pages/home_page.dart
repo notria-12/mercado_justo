@@ -212,12 +212,27 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                                               child: CachedNetworkImage(
                                                 imageUrl: initialStore
                                                     .products[index].imagePath!,
+                                                placeholder: (context, url) {
+                                                  return Container(
+                                                    color: Colors.grey[400],
+                                                  );
+                                                },
                                                 memCacheHeight: 190,
                                                 memCacheWidth: 190,
                                                 errorWidget: (context, error,
                                                     stackTrace) {
-                                                  return Image.asset(
-                                                      'assets/img/image_not_found.jpg');
+                                                  return CachedNetworkImage(
+                                                    imageUrl: initialStore
+                                                        .products[index]
+                                                        .imagePath!,
+                                                    memCacheHeight: 190,
+                                                    memCacheWidth: 190,
+                                                    errorWidget: (context,
+                                                        error, stackTrace) {
+                                                      return Image.asset(
+                                                          'assets/img/image_not_found.jpg');
+                                                    },
+                                                  );
                                                 },
                                               ),
                                             ),

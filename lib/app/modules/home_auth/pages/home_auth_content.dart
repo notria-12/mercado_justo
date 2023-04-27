@@ -83,7 +83,7 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
     adState.adState.then((state) {
       setState(() {
         _bottomBanner = BannerAd(
-          adUnitId: adState.bannerAdUnitId,
+          adUnitId: adState.topBannerHomeId,
           size: AdSize(
               width: MediaQuery.of(context).size.width.truncate(), height: 50),
           request: AdRequest(),
@@ -91,7 +91,7 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
         )..load();
 
         _topBanner = BannerAd(
-          adUnitId: adState.bannerAdUnitId,
+          adUnitId: adState.bottomBannerHomeId,
           size: AdSize(
               width: MediaQuery.of(context).size.width.round(), height: 50),
           request: AdRequest(),
@@ -412,9 +412,22 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                                               (element) => element.isSelectable)
                                           .toList()
                                           .length,
-                                      (index) => Center(
-                                            child: CircularProgressIndicator(),
-                                          )),
+                                      (id) => index >= priceStore.prices.length
+                                          ? const Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            )
+                                          : Center(
+                                              child: Text(priceStore
+                                                          .prices[index][id]
+                                                          .isEmpty ||
+                                                      priceStore.prices[index]
+                                                              [id] ==
+                                                          'R\$ 0,00'
+                                                  ? 'Em Falta'
+                                                  : priceStore.prices[index]
+                                                      [id]),
+                                            )),
                                 if (priceStore.allPriceStatus
                                     is AppStateSuccess)
                                   ...priceStore.prices[index].map((e) => Center(
@@ -456,8 +469,26 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                                                     },
                                                     errorWidget: (context,
                                                         error, stackTrace) {
-                                                      return Image.asset(
-                                                          'assets/img/image_not_found.jpg');
+                                                      return CachedNetworkImage(
+                                                        imageUrl: productStore
+                                                            .products[index]
+                                                            .imagePath!,
+                                                        memCacheHeight: 150,
+                                                        memCacheWidth: 150,
+                                                        placeholder:
+                                                            (context, url) {
+                                                          return Container(
+                                                            width: 100,
+                                                            color: Colors
+                                                                .grey[400],
+                                                          );
+                                                        },
+                                                        errorWidget: (context,
+                                                            error, stackTrace) {
+                                                          return Image.asset(
+                                                              'assets/img/image_not_found.jpg');
+                                                        },
+                                                      );
                                                     },
                                                   )),
                                               const SizedBox(

@@ -48,7 +48,7 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
     adState.adState.then((state) {
       setState(() {
         _topBanner = BannerAd(
-          adUnitId: adState.bannerAdUnitId,
+          adUnitId: adState.topBannerCompareId,
           size: AdSize(
               width: MediaQuery.of(context).size.width.truncate(), height: 50),
           request: AdRequest(),
@@ -56,7 +56,7 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
         )..load();
 
         _bottomBanner = BannerAd(
-          adUnitId: adState.bannerAdUnitId,
+          adUnitId: adState.bottomBannerCompareId,
           size: AdSize(
               width: MediaQuery.of(context).size.width.truncate(), height: 50),
           request: AdRequest(),

@@ -59,7 +59,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
     adState.adState.then((state) {
       setState(() {
         _topBanner = BannerAd(
-          adUnitId: adState.bannerAdUnitId,
+          adUnitId: adState.topBannerListDetailId,
           size: AdSize(
               width: MediaQuery.of(context).size.width.truncate(), height: 50),
           request: AdRequest(),
@@ -67,7 +67,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
         )..load();
 
         _bottomBanner = BannerAd(
-          adUnitId: adState.bannerAdUnitId,
+          adUnitId: adState.bottomBannerListDetailId,
           size: AdSize(
               width: MediaQuery.of(context).size.width.truncate(), height: 50),
           request: AdRequest(),
@@ -558,8 +558,20 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                             );
                           },
                           errorWidget: (context, error, stackTrace) {
-                            return Image.asset(
-                                'assets/img/image_not_found.jpg');
+                            return CachedNetworkImage(
+                              imageUrl: e.imagePath!,
+                              memCacheHeight: 175,
+                              memCacheWidth: 175,
+                              placeholder: (context, url) {
+                                return Container(
+                                  color: Colors.grey[400],
+                                );
+                              },
+                              errorWidget: (context, error, stackTrace) {
+                                return Image.asset(
+                                    'assets/img/image_not_found.jpg');
+                              },
+                            );
                           },
                         ),
                         height: 90,

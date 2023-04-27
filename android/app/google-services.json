@@ -7,12 +7,57 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:589939512131:android:f91d76a17907b9bb6d95f6",
+        "android_client_info": {
+          "package_name": "br.com.mercadojusto"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "589939512131-r5nr9abln2iqovjgfh4ueiuc6o6a1mli.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD7e5PJDEMCbA4lXt89SHw0Y89Hpqly5zk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "589939512131-r5nr9abln2iqovjgfh4ueiuc6o6a1mli.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:589939512131:android:e53efd5963f00e126d95f6",
         "android_client_info": {
           "package_name": "com.example.mercado_justo"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "589939512131-f0hca574v7nu8slha297qp66ictcvr9r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.mercado_justo",
+            "certificate_hash": "b1c1bd82cce1a291b078e17aa4462bbc655dfe3b"
+          }
+        },
+        {
+          "client_id": "589939512131-usv68stof7lmom8mimobtgll4jvr69lp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.mercado_justo",
+            "certificate_hash": "dd6a1d09bfec4e0fc6ef01b954136c3924e938f8"
+          }
+        },
         {
           "client_id": "589939512131-r5nr9abln2iqovjgfh4ueiuc6o6a1mli.apps.googleusercontent.com",
           "client_type": 3
