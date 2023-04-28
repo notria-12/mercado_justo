@@ -38,7 +38,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:589939512131:android:e53efd5963f00e126d95f6",
         "android_client_info": {
-          "package_name": "com.example.mercado_justo"
+          "package_name": "br.com.mercadojusto"
         }
       },
       "oauth_client": [
@@ -46,7 +46,7 @@
           "client_id": "589939512131-f0hca574v7nu8slha297qp66ictcvr9r.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.mercado_justo",
+            "package_name": "br.com.mercadojusto",
             "certificate_hash": "b1c1bd82cce1a291b078e17aa4462bbc655dfe3b"
           }
         },
@@ -54,7 +54,7 @@
           "client_id": "589939512131-usv68stof7lmom8mimobtgll4jvr69lp.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.mercado_justo",
+            "package_name": "br.com.mercadojusto",
             "certificate_hash": "dd6a1d09bfec4e0fc6ef01b954136c3924e938f8"
           }
         },

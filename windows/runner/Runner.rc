@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "mercado_justo" "\0"
+            VALUE "CompanyName", "br.com" "\0"
+            VALUE "FileDescription", "mercadojusto" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "mercado_justo" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2022 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "mercado_justo.exe" "\0"
-            VALUE "ProductName", "mercado_justo" "\0"
+            VALUE "InternalName", "mercadojusto" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2022 br.com. All rights reserved." "\0"
+            VALUE "OriginalFilename", "mercadojusto.exe" "\0"
+            VALUE "ProductName", "mercadojusto" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

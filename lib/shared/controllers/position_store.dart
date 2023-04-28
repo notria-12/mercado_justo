@@ -11,6 +11,11 @@ abstract class _PositionStoreBase with Store {
   Position? position;
 
   Future getCurrentPosition() async {
-    position = await Utils.determinePosition();
+    try {
+      position = await Utils.determinePosition();
+      print(position);
+    } catch (e) {
+      print(e);
+    }
   }
 }
