@@ -1,8 +1,11 @@
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:mercado_justo/app/modules/home_auth/widgets/drawer_item.dart';
 import 'package:mercado_justo/shared/auth/auth_controller.dart';
 import 'package:mercado_justo/shared/controllers/signature_store.dart';
+import 'package:mercado_justo/shared/utils/dynamic_links.dart';
 import 'package:mercado_justo/shared/widgets/dialogs.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -79,13 +82,20 @@ class CustomDrawer extends StatelessWidget {
                   color: Colors.black87),
             )),
         DrawerItem(
+            onTap: () async {
+              final InAppReview inAppReview = InAppReview.instance;
+
+              if (await inAppReview.isAvailable()) {
+                inAppReview.requestReview();
+              }
+            },
             child: const Text(
-          'Avaliar Mercado Justo',
-          style: TextStyle(
-              fontSize: 15,
-              // fontWeight: FontWeight.w400,
-              color: Colors.black87),
-        )),
+              'Avaliar Mercado Justo',
+              style: TextStyle(
+                  fontSize: 15,
+                  // fontWeight: FontWeight.w400,
+                  color: Colors.black87),
+            )),
         DrawerItem(
             onTap: () {
               Modular.to.pushNamed('/home_auth/faq/');
@@ -98,9 +108,11 @@ class CustomDrawer extends StatelessWidget {
                   color: Colors.black87),
             )),
         DrawerItem(
-            onTap: () {
-              Share.share(
-                  "https://mercado-justo-bc5a8.web.app/?inviteId=${Modular.get<AuthController>().user!.id}");
+            onTap: () async {
+              DynamicLinkProvider()
+                  .createLink(Modular.get<AuthController>().user!.id)
+                  .then((value) => Share.share(
+                      "Olá, já conhece o App *Mercado Justo*?\n Baixe agora mesmo através do link abaixo e ganhe 7 dias de uso gratuíto para usar como quiser: \n\n $value"));
             },
             child: const Text(
               'Compartilhar o App com Amigos',

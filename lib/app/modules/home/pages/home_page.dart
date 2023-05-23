@@ -39,10 +39,11 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
     _disposer = reaction((_) => storePosition.position, (_) {
       if (storePosition.position != null) {
         initialStore.getPublicMarkets();
+        initialStore.getPublicsProducts();
       }
     });
-    initialStore.getPublicsProducts();
-    initialStore.getPublicMarkets();
+
+    // initialStore.getPublicMarkets();
   }
 
   @override
