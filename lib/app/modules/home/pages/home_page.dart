@@ -11,6 +11,7 @@ import 'package:mercado_justo/shared/controllers/market_store.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/widgets/button_share.dart';
 import 'package:mercado_justo/shared/widgets/custom_table_widget.dart';
+import 'package:mercado_justo/shared/widgets/dialogs.dart';
 import 'package:mobx/mobx.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -30,14 +31,28 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
   final initialStore = Modular.get<InitialStore>();
   late ReactionDisposer _disposer;
   final storePosition = Modular.get<PositionStore>();
+  final _dialogs = Dialogs();
   @override
   void initState() {
     super.initState();
+
     _disposer = reaction((_) => storePosition.position, (_) {
-      initialStore.getPublicMarkets();
+      if (storePosition.position != null) {
+        initialStore.getPublicMarkets();
+      }
     });
     initialStore.getPublicsProducts();
     initialStore.getPublicMarkets();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      if (storePosition.position == null) {
+        _dialogs.requestLocalizationDialog(context);
+      }
+    });
   }
 
   @override
@@ -118,6 +133,34 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                   flex: 6,
                   child: Observer(
                     builder: (_) {
+                      if (storePosition.position == null) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const SizedBox(height: 20),
+                            SizedBox(
+                              child: Image.asset('assets/img/location.png'),
+                              height: 150,
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            const Text(
+                              'Infelizmente não conseguiremos listar mercados e produtos sem sua localização.',
+                              style: TextStyle(
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.w500),
+                              textAlign: TextAlign.center,
+                            ),
+                            TextButton(
+                                onPressed: () {
+                                  _dialogs.requestLocalizationDialog(context);
+                                },
+                                child: const Text(
+                                    'Permitir acesso a minha localização'))
+                          ],
+                        );
+                      }
                       if (initialStore.marketState is AppStateLoading) {
                         return Center(
                           child: Column(
@@ -135,9 +178,24 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                         );
                       } else {
                         if (initialStore.markets.isEmpty) {
-                          return const Center(
-                              child: Text(
-                                  'Não encontramos nenhum mercado na sua região'));
+                          return Center(
+                              child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const SizedBox(height: 20),
+                              SizedBox(
+                                child: Image.asset('assets/img/location.png'),
+                                height: 150,
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              Text(
+                                'Não encontramos nenhum mercado na sua região',
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ));
                         }
                         if (initialStore.productState is AppStateLoading) {
                           return Center(

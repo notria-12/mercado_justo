@@ -31,8 +31,7 @@ class _SplashPageState extends State<SplashPage> {
               return Container();
           }
         },
-        future: Future.wait(
-            [authController.init(), positionStore.getCurrentPosition()]),
+        future: Future.wait([authController.init()]),
       ),
     );
   }

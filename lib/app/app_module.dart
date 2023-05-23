@@ -26,7 +26,8 @@ class AppModule extends Module {
     Bind.lazySingleton((i) => FilterStore()),
     Bind.lazySingleton((i) => PositionStore()),
     Bind.singleton((i) => getDioInstance()),
-    Bind.singleton((i) => AuthController(signatureStore: i())),
+    Bind.singleton(
+        (i) => AuthController(signatureStore: i(), positionStore: i())),
     Bind.singleton((i) => SignatureStore(i())),
     Bind.singleton((i) => SignatureRepository(i())),
     Bind.singleton((i) => AdStore(adState: MobileAds.instance.initialize()))

@@ -1,4 +1,5 @@
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:mercado_justo/shared/controllers/position_store.dart';
 import 'package:mercado_justo/shared/controllers/signature_store.dart';
 import 'package:mercado_justo/shared/models/user_model.dart';
 import 'package:mobx/mobx.dart';
@@ -13,11 +14,14 @@ enum AuthState { authenticated, unauthenticated }
 abstract class _AuthControllerBase extends Disposable with Store {
   late ReactionDisposer disposer;
   SignatureStore signatureStore;
-  _AuthControllerBase({required this.signatureStore}) {
+  PositionStore positionStore;
+  _AuthControllerBase(
+      {required this.signatureStore, required this.positionStore}) {
     init();
     disposer = autorun((_) {
       if (state == AuthState.authenticated) {
         Modular.to.pushReplacementNamed('/home_auth/');
+        positionStore.getCurrentPosition();
       } else if (state == AuthState.unauthenticated) {
         Modular.to.pushReplacementNamed('/home/');
       }

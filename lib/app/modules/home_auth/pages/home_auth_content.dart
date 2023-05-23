@@ -23,6 +23,7 @@ import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/widgets/bottonsheets.dart';
 import 'package:mercado_justo/shared/widgets/button_share.dart';
 import 'package:mercado_justo/shared/widgets/custom_table_widget.dart';
+import 'package:mercado_justo/shared/widgets/dialogs.dart';
 import 'package:mercado_justo/shared/widgets/load_more_button.dart';
 import 'package:mobx/mobx.dart';
 import 'package:share_plus/share_plus.dart';
@@ -326,8 +327,23 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                         .toList()
                         .isEmpty) {
                       return Center(
-                        child: Text(
-                            'Não há mercados no disponíveis para sua localização'),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const SizedBox(height: 20),
+                            SizedBox(
+                              child: Image.asset('assets/img/location.png'),
+                              height: 150,
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            const Text(
+                              'Não há mercados no disponíveis para sua localização',
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
                       );
                     }
                     if (productStore.productState is AppStateSuccess) {
