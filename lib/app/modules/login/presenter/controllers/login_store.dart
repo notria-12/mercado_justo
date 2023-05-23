@@ -68,10 +68,10 @@ abstract class _LoginStoreBase with Store {
     }
   }
 
-  Future<void> signUp({required UserModel user}) async {
+  Future<void> signUp({required UserModel user, String? inviteId}) async {
     try {
       signupState = AppStateLoading();
-      await _signUpUsecase.call(user: user);
+      await _signUpUsecase.call(user: user, inviteId: inviteId);
       signupState = AppStateSuccess();
     } on Failure catch (e) {
       signupState = AppStateError(error: e);

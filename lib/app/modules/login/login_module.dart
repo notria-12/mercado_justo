@@ -45,7 +45,10 @@ class LoginModule extends Module {
   @override
   final List<ModularRoute> routes = [
     ChildRoute(Modular.initialRoute, child: (_, args) => const SignInPage()),
-    ChildRoute('/signup/', child: (_, args) => const SignUpPage()),
+    ChildRoute('/signup/',
+        child: (_, args) => SignUpPage(
+              inviteId: args.queryParams['inviteId'],
+            )),
     ChildRoute('/receivedCode/', child: (_, args) => const ReceivedCodePage()),
     ChildRoute('/receivedEmailCode/',
         child: (_, args) => const ReceivedCodeByEmailPage()),

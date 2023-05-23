@@ -29,6 +29,8 @@ import 'package:mobx/mobx.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../shared/auth/auth_controller.dart';
+
 class HomeAuthContent extends StatefulWidget {
   const HomeAuthContent({Key? key}) : super(key: key);
 
@@ -679,7 +681,7 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
         pricesString += marketsInfo;
 
         Share.share(pricesString +
-            '\n\nAcesse o nosso app e tenha uma visualização completa dos melhores preços.');
+            '\n\nAcesse o nosso app e tenha uma visualização completa dos melhores preços. \n\nAndroid:\nhttps://mercado-justo-bc5a8.web.app/?inviteId=${Modular.get<AuthController>().user!.id}');
       }
     });
   }

@@ -37,7 +37,9 @@ class AppModule extends Module {
   final List<ModularRoute> routes = [
     ChildRoute(
       '/',
-      child: (context, args) => SplashPage(),
+      child: (context, args) => SplashPage(
+        inviteId: args.queryParams['inviteId'],
+      ),
     ),
     ModuleRoute('/home', module: HomeModule()),
     ModuleRoute('/login/', module: LoginModule()),

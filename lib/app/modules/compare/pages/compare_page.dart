@@ -20,6 +20,8 @@ import 'package:mercado_justo/shared/widgets/button_share.dart';
 
 import 'package:share_plus/share_plus.dart';
 
+import '../../../../shared/auth/auth_controller.dart';
+
 class ComparePage extends StatefulWidget {
   const ComparePage({Key? key}) : super(key: key);
 
@@ -611,7 +613,7 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
     pricesString += '\nSite e/ou local de referência:\n';
     pricesString += marketsInfo;
     Share.share(pricesString +
-        '\n\nAcesse o nosso app e tenha uma visualização completa dos melhores preços.');
+        '\n\nAcesse o nosso app e tenha uma visualização completa dos melhores preços.\n\nAndroid:\nhttps://mercado-justo-bc5a8.web.app/?inviteId=${Modular.get<AuthController>().user!.id}');
   }
 
   DataTable productsTable(List<Product> products, int index) {

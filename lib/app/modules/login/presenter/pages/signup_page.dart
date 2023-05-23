@@ -3,6 +3,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/app/modules/login/presenter/controllers/login_store.dart';
 import 'package:mercado_justo/app/modules/login/presenter/controllers/signup_store.dart';
+import 'package:mercado_justo/shared/auth/auth_controller.dart';
 import 'package:mercado_justo/shared/models/user_model.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/utils/input_formaters.dart';
@@ -12,13 +13,16 @@ import 'package:mobx/mobx.dart';
 
 class SignUpPage extends StatefulWidget {
   final String title;
-  const SignUpPage({Key? key, this.title = 'SignUpPage'}) : super(key: key);
+  SignUpPage({Key? key, this.title = 'SignUpPage', this.inviteId})
+      : super(key: key);
+  String? inviteId;
   @override
   SignUpPageState createState() => SignUpPageState();
 }
 
 class SignUpPageState extends State<SignUpPage> {
   final signUpStore = Modular.get<LoginStore>();
+  final _authController = Modular.get<AuthController>();
 
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
@@ -40,7 +44,11 @@ class SignUpPageState extends State<SignUpPage> {
       if (signUpStore.signupState is AppStateSuccess) {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Cadastro realizado com sucesso!')));
-        Modular.to.pop();
+        if (_authController.inviteId != null) {
+          Modular.to.pushReplacementNamed('/login/');
+        } else {
+          Modular.to.pop();
+        }
       }
     });
   }
@@ -59,6 +67,16 @@ class SignUpPageState extends State<SignUpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: InkWell(
+          child: const Icon(Icons.arrow_back),
+          onTap: () {
+            if (_authController.inviteId == null) {
+              Modular.to.pop();
+            } else {
+              _authController.inviteId = null;
+            }
+          },
+        ),
         backgroundColor: Colors.green,
         centerTitle: true,
         title: const Text(
@@ -111,7 +129,7 @@ class SignUpPageState extends State<SignUpPage> {
                           validator: InputValidators.cpfValidator,
                           inputFotmatters: [InputFormater.cpfMask],
                           label: 'CPF',
-                          hintText: 'Digite seu cpf',
+                          hintText: 'Digite seu CPF',
                           icon: const Icon(Icons.person)),
                       const SizedBox(
                         height: 20,
@@ -150,21 +168,22 @@ class SignUpPageState extends State<SignUpPage> {
                                     'Cadastrar',
                                     style: TextStyle(fontSize: 16),
                                   ),
-                            onPressed: signUpStore.signupState
-                                    is AppStateLoading
-                                ? null
-                                : () {
-                                    var formState = _formKey.currentState!;
-                                    if (formState.validate()) {
-                                      signUpStore.signUp(
-                                          user: UserModel(
-                                              id: '',
-                                              name: _nameController.text,
-                                              cpf: _cpfController.text,
-                                              email: _emailController.text,
-                                              phone: _phoneController.text));
-                                    }
-                                  },
+                            onPressed:
+                                signUpStore.signupState is AppStateLoading
+                                    ? null
+                                    : () {
+                                        var formState = _formKey.currentState!;
+                                        if (formState.validate()) {
+                                          signUpStore.signUp(
+                                              user: UserModel(
+                                                  id: '',
+                                                  name: _nameController.text,
+                                                  cpf: _cpfController.text,
+                                                  email: _emailController.text,
+                                                  phone: _phoneController.text),
+                                              inviteId: widget.inviteId);
+                                        }
+                                      },
                           ),
                         );
                       }),
@@ -180,7 +199,11 @@ class SignUpPageState extends State<SignUpPage> {
                     padding: EdgeInsets.zero,
                   ),
                   onPressed: () {
-                    Modular.to.pushReplacementNamed('/login/');
+                    if (_authController.inviteId == null) {
+                      Modular.to.pushReplacementNamed('/login/');
+                    } else {
+                      Modular.to.pushNamed('/login/');
+                    }
                   },
                   child: const Text(
                     'Já tenho conta',

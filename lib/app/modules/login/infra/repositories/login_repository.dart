@@ -58,9 +58,10 @@ class LoginRepositoryImpl implements ILoginRepository {
   }
 
   @override
-  Future<void> signUpUsecase({required UserModel user}) async {
+  Future<void> signUpUsecase(
+      {required UserModel user, String? inviteId}) async {
     try {
-      await _datasource.signUpUsecase(user: user);
+      await _datasource.signUpUsecase(user: user, inviteId: inviteId);
     } catch (e) {
       rethrow;
     }

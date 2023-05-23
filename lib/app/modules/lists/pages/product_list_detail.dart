@@ -23,6 +23,8 @@ import 'package:mercado_justo/shared/widgets/fixed_corner_table_widget.dart';
 import 'package:mobx/mobx.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../../../shared/auth/auth_controller.dart';
+
 class ProductListDetailsPage extends StatefulWidget {
   ListModel listModel;
   ProductListDetailsPage({Key? key, required this.listModel}) : super(key: key);
@@ -835,7 +837,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
         pricesString += marketsInfo;
 
         Share.share(pricesString +
-            '\n\nAcesse o nosso app e tenha uma visualização completa dos melhores preços.');
+            '\n\nAcesse o nosso app e tenha uma visualização completa dos melhores preços.\n\nAndroid:\nhttps://mercado-justo-bc5a8.web.app/?inviteId=${Modular.get<AuthController>().user!.id}');
       }
     });
   }

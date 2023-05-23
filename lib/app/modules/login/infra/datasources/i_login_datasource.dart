@@ -12,5 +12,5 @@ abstract class ILoginDatasource {
       {required String verificationId,
       required String smsCode,
       required phoneNumber});
-  Future<void> signUpUsecase({required UserModel user});
+  Future<void> signUpUsecase({required UserModel user, String? inviteId});
 }

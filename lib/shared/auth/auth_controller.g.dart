@@ -17,6 +17,21 @@ mixin _$AuthController on _AuthControllerBase, Store {
               name: '_AuthControllerBase.isUserAutenticated'))
       .value;
 
+  final _$inviteIdAtom = Atom(name: '_AuthControllerBase.inviteId');
+
+  @override
+  String? get inviteId {
+    _$inviteIdAtom.reportRead();
+    return super.inviteId;
+  }
+
+  @override
+  set inviteId(String? value) {
+    _$inviteIdAtom.reportWrite(value, super.inviteId, () {
+      super.inviteId = value;
+    });
+  }
+
   final _$userAtom = Atom(name: '_AuthControllerBase.user');
 
   @override
@@ -64,6 +79,7 @@ mixin _$AuthController on _AuthControllerBase, Store {
   @override
   String toString() {
     return '''
+inviteId: ${inviteId},
 user: ${user},
 state: ${state},
 isUserAutenticated: ${isUserAutenticated}

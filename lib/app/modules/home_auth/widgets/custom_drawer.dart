@@ -4,6 +4,7 @@ import 'package:mercado_justo/app/modules/home_auth/widgets/drawer_item.dart';
 import 'package:mercado_justo/shared/auth/auth_controller.dart';
 import 'package:mercado_justo/shared/controllers/signature_store.dart';
 import 'package:mercado_justo/shared/widgets/dialogs.dart';
+import 'package:share_plus/share_plus.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({
@@ -97,13 +98,17 @@ class CustomDrawer extends StatelessWidget {
                   color: Colors.black87),
             )),
         DrawerItem(
+            onTap: () {
+              Share.share(
+                  "https://mercado-justo-bc5a8.web.app/?inviteId=${Modular.get<AuthController>().user!.id}");
+            },
             child: const Text(
-          'Compartilhar o App com Amigos',
-          style: TextStyle(
-              fontSize: 15,
-              // fontWeight: FontWeight.w400,
-              color: Colors.black87),
-        )),
+              'Compartilhar o App com Amigos',
+              style: TextStyle(
+                  fontSize: 15,
+                  // fontWeight: FontWeight.w400,
+                  color: Colors.black87),
+            )),
         DrawerItem(
             onTap: () {
               Modular.to.pushNamed('/home_auth/terms/');
