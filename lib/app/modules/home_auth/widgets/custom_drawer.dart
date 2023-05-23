@@ -112,7 +112,7 @@ class CustomDrawer extends StatelessWidget {
               DynamicLinkProvider()
                   .createLink(Modular.get<AuthController>().user!.id)
                   .then((value) => Share.share(
-                      "Olá, já conhece o App *Mercado Justo*?\n Baixe agora mesmo através do link abaixo e ganhe 7 dias de uso gratuíto para usar como quiser: \n\n $value"));
+                      "Baixe agora o app Mercado Justo, o melhor comparador de preços de supermercados e ganhe 30 dias de uso gratuito!\n\n$value\n\nAlém disso você ainda ganha +1 dia gratuito pra cada vez que você compartilhar com outro amigo(a)"));
             },
             child: const Text(
               'Compartilhar o App com Amigos',

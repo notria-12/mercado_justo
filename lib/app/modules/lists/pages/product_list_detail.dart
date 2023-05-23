@@ -24,6 +24,7 @@ import 'package:mobx/mobx.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../../shared/auth/auth_controller.dart';
+import '../../../../shared/utils/dynamic_links.dart';
 
 class ProductListDetailsPage extends StatefulWidget {
   ListModel listModel;
@@ -836,8 +837,10 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
         }
         pricesString += marketsInfo;
 
-        Share.share(pricesString +
-            '\n\nAcesse o nosso app e tenha uma visualização completa dos melhores preços.\n\nAndroid:\nhttps://mercado-justo-bc5a8.web.app/?inviteId=${Modular.get<AuthController>().user!.id}');
+        DynamicLinkProvider()
+            .createLink(Modular.get<AuthController>().user!.id)
+            .then((value) => Share.share(pricesString +
+                '\n\nAcesse o nosso app e tenha uma visualização completa dos melhores preços.\n\n$value'));
       }
     });
   }
