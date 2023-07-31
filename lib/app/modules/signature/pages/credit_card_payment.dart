@@ -81,6 +81,13 @@ class _CreditCardPaymentPageState extends State<CreditCardPaymentPage> {
                   child: CircularProgressIndicator(),
                 );
               }
+
+              if (_cardInvoiceStore.cancelState is AppStateError) {
+                return const Center(
+                  child: Text('Erro ao buscar dados da assinatura!'),
+                );
+              }
+
               return Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
@@ -120,7 +127,9 @@ class _CreditCardPaymentPageState extends State<CreditCardPaymentPage> {
                                   text:
                                       _signatureStore.signature!.pendingPayment
                                           ? (_cardInvoiceStore
-                                              .invoice!.nextRetryDate!.toDate)
+                                              .invoice!
+                                              .recurrentPayment!
+                                              .nextRecurrency!)
                                           : (_signatureStore.signature!
                                               .expirationDate.toDate),
                                   style: const TextStyle(
@@ -152,25 +161,40 @@ class _CreditCardPaymentPageState extends State<CreditCardPaymentPage> {
                             width: 10,
                           ),
                           Expanded(
-                            child: Text(_cardInvoiceStore.card!.firstSixDigits!
-                                    .substring(0, 4) +
-                                " **** **** " +
-                                _cardInvoiceStore.card!.lastFourDigits!),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(_cardInvoiceStore
+                                      .card!.payment!.creditCard!.cardNumber!
+                                      .substring(0, 4) +
+                                  " **** **** " +
+                                  _cardInvoiceStore
+                                      .card!.payment!.creditCard!.cardNumber!
+                                      .substring(
+                                          _cardInvoiceStore
+                                                  .card!
+                                                  .payment!
+                                                  .creditCard!
+                                                  .cardNumber!
+                                                  .length -
+                                              4,
+                                          _cardInvoiceStore.card!.payment!
+                                              .creditCard!.cardNumber!.length)),
+                            ),
                           ),
                           const SizedBox(
                             width: 10,
                           ),
-                          TextButton.icon(
-                              onPressed: () {
-                                Modular.to.pushReplacementNamed(
-                                    '/signature/create-signature/',
-                                    arguments: true);
-                              },
-                              icon: const Icon(
-                                Icons.change_circle_sharp,
-                                color: Colors.lightBlue,
-                              ),
-                              label: Text('Trocar'))
+                          // TextButton.icon(
+                          //     onPressed: () {
+                          //       Modular.to.pushReplacementNamed(
+                          //           '/signature/create-signature/',
+                          //           arguments: true);
+                          //     },
+                          //     icon: const Icon(
+                          //       Icons.change_circle_sharp,
+                          //       color: Colors.lightBlue,
+                          //     ),
+                          //     label: Text('Trocar'))
                         ],
                       ),
                     ),

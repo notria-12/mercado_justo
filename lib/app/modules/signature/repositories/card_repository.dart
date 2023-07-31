@@ -35,7 +35,7 @@ class CardRepository {
       SignatureRequestModel signatureRequest) async {
     try {
       var result =
-          await _dio.post('/assinaturas/', data: signatureRequest.toJson());
+          await _dio.post('/assinaturas/', data: signatureRequest.toMap());
       return SignatureResponseModel.fromJson(result.data['dados']);
     } catch (e) {
       throw Failure(

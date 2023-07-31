@@ -62,7 +62,7 @@ class SignatureRequestModel {
 class CardSignatureModel {
   String holderName;
   String cardNumber;
-  String cpf;
+
   String expirationMonth;
   String expirationYear;
   String cvv;
@@ -70,7 +70,6 @@ class CardSignatureModel {
   CardSignatureModel(
       {required this.holderName,
       required this.cardNumber,
-      required this.cpf,
       required this.expirationMonth,
       required this.expirationYear,
       required this.cvv,
@@ -79,7 +78,6 @@ class CardSignatureModel {
   CardSignatureModel copyWith(
       {String? holderName,
       String? cardNumber,
-      String? cpf,
       String? expirationMonth,
       String? expirationYear,
       String? cvv,
@@ -87,7 +85,6 @@ class CardSignatureModel {
     return CardSignatureModel(
         holderName: holderName ?? this.holderName,
         cardNumber: cardNumber ?? this.cardNumber,
-        cpf: cpf ?? this.cpf,
         expirationMonth: expirationMonth ?? this.expirationMonth,
         expirationYear: expirationYear ?? this.expirationYear,
         cvv: cvv ?? this.cvv,
@@ -98,7 +95,6 @@ class CardSignatureModel {
     return <String, dynamic>{
       'holder_name': holderName,
       'card_number': cardNumber,
-      'cpf': cpf,
       'expiration_month': expirationMonth,
       'expiration_year': expirationYear,
       'security_code': cvv,
@@ -110,7 +106,6 @@ class CardSignatureModel {
     return CardSignatureModel(
         holderName: map['holderName'] as String,
         cardNumber: map['cardNumber'] as String,
-        cpf: map['cpf'] as String,
         expirationMonth: map['expirationMonth'] as String,
         expirationYear: map['expirationYear'] as String,
         cvv: map['cvv'] as String,
@@ -124,7 +119,7 @@ class CardSignatureModel {
 
   @override
   String toString() {
-    return 'CardSignatureModel(holderName: $holderName, cardNumber: $cardNumber, cpf: $cpf, expirationMonth: $expirationMonth, expirationYear: $expirationYear, cvv: $cvv)';
+    return 'CardSignatureModel(holderName: $holderName, cardNumber: $cardNumber,  expirationMonth: $expirationMonth, expirationYear: $expirationYear, cvv: $cvv)';
   }
 
   @override
@@ -133,7 +128,6 @@ class CardSignatureModel {
 
     return other.holderName == holderName &&
         other.cardNumber == cardNumber &&
-        other.cpf == cpf &&
         other.expirationMonth == expirationMonth &&
         other.expirationYear == expirationYear &&
         other.cvv == cvv;
@@ -143,7 +137,6 @@ class CardSignatureModel {
   int get hashCode {
     return holderName.hashCode ^
         cardNumber.hashCode ^
-        cpf.hashCode ^
         expirationMonth.hashCode ^
         expirationYear.hashCode ^
         cvv.hashCode;

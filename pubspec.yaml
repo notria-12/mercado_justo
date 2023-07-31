@@ -6,7 +6,7 @@ description: A new Flutter project.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 
-version: 1.1.0+5
+version: 1.1.0+7
 
 environment:
   sdk: ">=2.16.0 <3.0.0"
@@ -48,6 +48,8 @@ dependencies:
   intl: ^0.17.0  
   firebase_dynamic_links: ^4.1.2
   in_app_review: ^2.0.6
+  unique_identifier: ^0.3.0
+  webview_flutter: ^2.8.0
 
 dev_dependencies:
   flutter_test:
