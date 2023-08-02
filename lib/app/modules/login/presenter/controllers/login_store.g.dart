@@ -6,10 +6,11 @@ part of 'login_store.dart';
 // StoreGenerator
 // **************************************************************************
 
-// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
+// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$LoginStore on _LoginStoreBase, Store {
-  final _$phoneNumberAtom = Atom(name: '_LoginStoreBase.phoneNumber');
+  late final _$phoneNumberAtom =
+      Atom(name: '_LoginStoreBase.phoneNumber', context: context);
 
   @override
   String? get phoneNumber {
@@ -24,7 +25,7 @@ mixin _$LoginStore on _LoginStoreBase, Store {
     });
   }
 
-  final _$codeAtom = Atom(name: '_LoginStoreBase.code');
+  late final _$codeAtom = Atom(name: '_LoginStoreBase.code', context: context);
 
   @override
   String? get code {
@@ -39,7 +40,8 @@ mixin _$LoginStore on _LoginStoreBase, Store {
     });
   }
 
-  final _$verificationIdAtom = Atom(name: '_LoginStoreBase.verificationId');
+  late final _$verificationIdAtom =
+      Atom(name: '_LoginStoreBase.verificationId', context: context);
 
   @override
   String? get verificationId {
@@ -54,7 +56,8 @@ mixin _$LoginStore on _LoginStoreBase, Store {
     });
   }
 
-  final _$signupStateAtom = Atom(name: '_LoginStoreBase.signupState');
+  late final _$signupStateAtom =
+      Atom(name: '_LoginStoreBase.signupState', context: context);
 
   @override
   AppState get signupState {
@@ -69,7 +72,8 @@ mixin _$LoginStore on _LoginStoreBase, Store {
     });
   }
 
-  final _$loginStateAtom = Atom(name: '_LoginStoreBase.loginState');
+  late final _$loginStateAtom =
+      Atom(name: '_LoginStoreBase.loginState', context: context);
 
   @override
   AppState get loginState {
@@ -84,8 +88,8 @@ mixin _$LoginStore on _LoginStoreBase, Store {
     });
   }
 
-  final _$sendLoginCodeStateAtom =
-      Atom(name: '_LoginStoreBase.sendLoginCodeState');
+  late final _$sendLoginCodeStateAtom =
+      Atom(name: '_LoginStoreBase.sendLoginCodeState', context: context);
 
   @override
   AppState get sendLoginCodeState {

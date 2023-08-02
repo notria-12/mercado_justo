@@ -6,11 +6,11 @@ part of 'config_store.dart';
 // StoreGenerator
 // **************************************************************************
 
-// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
+// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$ConfigStore on _ConfigStoreBase, Store {
-  final _$separetedByCategoryAtom =
-      Atom(name: '_ConfigStoreBase.separetedByCategory');
+  late final _$separetedByCategoryAtom =
+      Atom(name: '_ConfigStoreBase.separetedByCategory', context: context);
 
   @override
   bool get separetedByCategory {
@@ -25,8 +25,8 @@ mixin _$ConfigStore on _ConfigStoreBase, Store {
     });
   }
 
-  final _$_ConfigStoreBaseActionController =
-      ActionController(name: '_ConfigStoreBase');
+  late final _$_ConfigStoreBaseActionController =
+      ActionController(name: '_ConfigStoreBase', context: context);
 
   @override
   dynamic setSeparetedByCategory(bool value) {

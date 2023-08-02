@@ -6,10 +6,11 @@ part of 'average_price_controller.dart';
 // StoreGenerator
 // **************************************************************************
 
-// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
+// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$AveragePriceStore on _AveragePriceStoreBase, Store {
-  final _$statusAtom = Atom(name: '_AveragePriceStoreBase.status');
+  late final _$statusAtom =
+      Atom(name: '_AveragePriceStoreBase.status', context: context);
 
   @override
   AppState get status {
@@ -24,7 +25,8 @@ mixin _$AveragePriceStore on _AveragePriceStoreBase, Store {
     });
   }
 
-  final _$averagePriceAtom = Atom(name: '_AveragePriceStoreBase.averagePrice');
+  late final _$averagePriceAtom =
+      Atom(name: '_AveragePriceStoreBase.averagePrice', context: context);
 
   @override
   double get averagePrice {

@@ -5,9 +5,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mercado_justo/app/modules/home/home_store.dart';
 import 'package:mercado_justo/app/modules/home/widgets/custom_dialog_selection_markets.dart';
-import 'package:mercado_justo/app/modules/home_auth/widgets/custom_dialog_selection_markets.dart';
 import 'package:mercado_justo/shared/controllers/market_store.dart';
-
 import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/widgets/button_share.dart';
 import 'package:mercado_justo/shared/widgets/custom_table_widget.dart';
@@ -42,8 +40,6 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
         initialStore.getPublicsProducts();
       }
     });
-
-    // initialStore.getPublicMarkets();
   }
 
   @override
@@ -134,7 +130,8 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                   flex: 6,
                   child: Observer(
                     builder: (_) {
-                      if (storePosition.position == null) {
+                      if (storePosition.position == null &&
+                          (storePosition.positionState is! AppStateLoading)) {
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
@@ -160,6 +157,16 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                                 child: const Text(
                                     'Permitir acesso a minha localização'))
                           ],
+                        );
+                      }
+                      if (storePosition.positionState is AppStateLoading) {
+                        return Center(
+                          child: Column(
+                            children: const [
+                              Text('Buscando localização'),
+                              CircularProgressIndicator(),
+                            ],
+                          ),
                         );
                       }
                       if (initialStore.marketState is AppStateLoading) {
@@ -253,7 +260,10 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                                     Text(initialStore
                                         .products[index].description),
                                     ...initialStore.prices[index]
-                                        .map((e) => Center(child: Text(e)))
+                                        .map((e) => Center(
+                                            child: e.isEmpty || e == 'R\$ 0,00'
+                                                ? const Text('Em Falta')
+                                                : Text(e)))
                                         .toList()
                                   ];
                                 })

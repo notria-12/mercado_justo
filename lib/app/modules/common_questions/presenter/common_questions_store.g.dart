@@ -6,11 +6,11 @@ part of 'common_questions_store.dart';
 // StoreGenerator
 // **************************************************************************
 
-// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
+// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$CommonQuestionsStore on _CommonQuestionsStoreBase, Store {
-  final _$commonQuestionsAtom =
-      Atom(name: '_CommonQuestionsStoreBase.commonQuestions');
+  late final _$commonQuestionsAtom =
+      Atom(name: '_CommonQuestionsStoreBase.commonQuestions', context: context);
 
   @override
   List<CommonQuestionEntity> get commonQuestions {
@@ -25,8 +25,8 @@ mixin _$CommonQuestionsStore on _CommonQuestionsStoreBase, Store {
     });
   }
 
-  final _$commonQuestionsStateAtom =
-      Atom(name: '_CommonQuestionsStoreBase.commonQuestionsState');
+  late final _$commonQuestionsStateAtom = Atom(
+      name: '_CommonQuestionsStoreBase.commonQuestionsState', context: context);
 
   @override
   AppState get commonQuestionsState {

@@ -6,7 +6,7 @@ part of 'compare_store.dart';
 // StoreGenerator
 // **************************************************************************
 
-// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
+// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$CompareStore on _CompareStoreBase, Store {
   Computed<List<List<Map<String, dynamic>>>>? _$getFairPriceComputed;
@@ -18,7 +18,8 @@ mixin _$CompareStore on _CompareStoreBase, Store {
               name: '_CompareStoreBase.getFairPrice'))
           .value;
 
-  final _$newQuantityAtom = Atom(name: '_CompareStoreBase.newQuantity');
+  late final _$newQuantityAtom =
+      Atom(name: '_CompareStoreBase.newQuantity', context: context);
 
   @override
   int? get newQuantity {
@@ -33,7 +34,8 @@ mixin _$CompareStore on _CompareStoreBase, Store {
     });
   }
 
-  final _$pricesAtom = Atom(name: '_CompareStoreBase.prices');
+  late final _$pricesAtom =
+      Atom(name: '_CompareStoreBase.prices', context: context);
 
   @override
   List<List<Map<String, dynamic>>> get prices {
@@ -48,7 +50,8 @@ mixin _$CompareStore on _CompareStoreBase, Store {
     });
   }
 
-  final _$listIdAtom = Atom(name: '_CompareStoreBase.listId');
+  late final _$listIdAtom =
+      Atom(name: '_CompareStoreBase.listId', context: context);
 
   @override
   int? get listId {
@@ -63,7 +66,8 @@ mixin _$CompareStore on _CompareStoreBase, Store {
     });
   }
 
-  final _$totalAtom = Atom(name: '_CompareStoreBase.total');
+  late final _$totalAtom =
+      Atom(name: '_CompareStoreBase.total', context: context);
 
   @override
   double get total {
@@ -78,7 +82,8 @@ mixin _$CompareStore on _CompareStoreBase, Store {
     });
   }
 
-  final _$listTotalAtom = Atom(name: '_CompareStoreBase.listTotal');
+  late final _$listTotalAtom =
+      Atom(name: '_CompareStoreBase.listTotal', context: context);
 
   @override
   List<Map<String, dynamic>> get listTotal {
@@ -93,8 +98,8 @@ mixin _$CompareStore on _CompareStoreBase, Store {
     });
   }
 
-  final _$_CompareStoreBaseActionController =
-      ActionController(name: '_CompareStoreBase');
+  late final _$_CompareStoreBaseActionController =
+      ActionController(name: '_CompareStoreBase', context: context);
 
   @override
   dynamic setTotal(double value) {

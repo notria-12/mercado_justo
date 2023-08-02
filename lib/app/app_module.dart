@@ -24,7 +24,7 @@ class AppModule extends Module {
   final List<Bind> binds = [
     Bind.singleton((i) => ConfigStore()),
     Bind.lazySingleton((i) => FilterStore()),
-    Bind.lazySingleton((i) => PositionStore()),
+    Bind.singleton((i) => PositionStore()),
     Bind.singleton((i) => getDioInstance()),
     Bind.singleton(
         (i) => AuthController(signatureStore: i(), positionStore: i())),

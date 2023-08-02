@@ -6,11 +6,11 @@ part of 'login_by_email_code_store.dart';
 // StoreGenerator
 // **************************************************************************
 
-// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
+// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$LoginByEmailCodeStore on _LoginByEmailCodeStoreBase, Store {
-  final _$sendLoginCodeStateAtom =
-      Atom(name: '_LoginByEmailCodeStoreBase.sendLoginCodeState');
+  late final _$sendLoginCodeStateAtom = Atom(
+      name: '_LoginByEmailCodeStoreBase.sendLoginCodeState', context: context);
 
   @override
   AppState get sendLoginCodeState {
@@ -25,7 +25,8 @@ mixin _$LoginByEmailCodeStore on _LoginByEmailCodeStoreBase, Store {
     });
   }
 
-  final _$loginStateAtom = Atom(name: '_LoginByEmailCodeStoreBase.loginState');
+  late final _$loginStateAtom =
+      Atom(name: '_LoginByEmailCodeStoreBase.loginState', context: context);
 
   @override
   AppState get loginState {
@@ -40,7 +41,8 @@ mixin _$LoginByEmailCodeStore on _LoginByEmailCodeStoreBase, Store {
     });
   }
 
-  final _$emailAtom = Atom(name: '_LoginByEmailCodeStoreBase.email');
+  late final _$emailAtom =
+      Atom(name: '_LoginByEmailCodeStoreBase.email', context: context);
 
   @override
   String? get email {
@@ -55,7 +57,8 @@ mixin _$LoginByEmailCodeStore on _LoginByEmailCodeStoreBase, Store {
     });
   }
 
-  final _$codeAtom = Atom(name: '_LoginByEmailCodeStoreBase.code');
+  late final _$codeAtom =
+      Atom(name: '_LoginByEmailCodeStoreBase.code', context: context);
 
   @override
   String? get code {
