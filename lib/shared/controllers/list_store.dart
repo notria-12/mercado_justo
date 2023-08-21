@@ -18,7 +18,6 @@ part 'list_store.g.dart';
 class ListStore = _ListStoreBase with _$ListStore;
 
 abstract class _ListStoreBase with Store {
-  // final PriceStore priceStore;
   final PriceRepository priceRepository;
   final MarketStore marketStore;
   final ListRepository _repository;
@@ -139,7 +138,6 @@ abstract class _ListStoreBase with Store {
     double average = 0;
     if (marketSelected >= 0) {
       for (var i = 0; i < prices.length; i++) {
-        var priceAux = prices[i][marketSelected];
         if (prices[i][marketSelected].isEmpty ||
             prices[i][marketSelected] == 'R\$ 0,00' ||
             prices[i][marketSelected] == 'Em Falta') {
@@ -256,12 +254,12 @@ abstract class _ListStoreBase with Store {
 
   Future getProducts(int listId) async {
     List<int> auxQuantities = [];
-    // productState = AppStateLoading();
+
     try {
-      List<ProductListModel> list_products =
+      List<ProductListModel> listProducts =
           await _repository.getProductsByList(listId);
       products = await _repository
-          .getProducts(list_products.map((e) => e.productId).toList());
+          .getProducts(listProducts.map((e) => e.productId).toList());
       if (products.isNotEmpty) {
         for (Product product in products) {
           auxQuantities
@@ -270,7 +268,7 @@ abstract class _ListStoreBase with Store {
         quantities = auxQuantities;
         await getProductsPrices();
       }
-      print('LOG: products');
+
       productState = AppStateSuccess();
     } catch (e) {
       productState = AppStateError(error: Failure(title: '', message: ''));
@@ -296,8 +294,6 @@ abstract class _ListStoreBase with Store {
   }
 
   Future getProductsPrices() async {
-    // List<List<String>> listPricesAux = [];
-
     try {
       List<List<Price>>? listPricesAux =
           await priceRepository.getProductPricesByMarkets(
@@ -306,21 +302,10 @@ abstract class _ListStoreBase with Store {
                   .where((element) => element.isSelectable == true)
                   .map((e) => e.id)
                   .toList());
-      // for (int i = 0; i < products.length; i++) {
-      //   List<String> pricesByProducts = [];
-      //   for (Market market in marketStore.filteredMarkets
-      //       .where((element) => element.isSelectable == true)
-      //       .toList()) {
-      //     String? price = await priceStore.getProductPriceByMarket(
-      //         marketId: market.id, barCode: products[i].barCode.first);
-      //     pricesByProducts.add(price);
-      //   }
-      //   listPricesAux.add([...pricesByProducts]);
-      // }
+
       prices = listPricesAux!
           .map((element) => element.map((e) => e.price).toList())
           .toList();
-      print(prices);
     } catch (e) {
       rethrow;
     }
