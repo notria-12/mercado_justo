@@ -12,6 +12,7 @@ import 'package:mercado_justo/app/modules/home_auth/controllers/problem_controll
 import 'package:mercado_justo/app/modules/home_auth/models/category_model.dart';
 import 'package:mercado_justo/app/modules/home_auth/models/problem_model.dart';
 import 'package:mercado_justo/app/modules/home_auth/widgets/custom_dialog_selection_markets.dart';
+import 'package:mercado_justo/app/modules/lists/filter_store.dart';
 import 'package:mercado_justo/shared/controllers/ad_store.dart';
 import 'package:mercado_justo/shared/controllers/market_store.dart';
 import 'package:mercado_justo/shared/controllers/price_store.dart';
@@ -285,7 +286,7 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                             padding:
                                 MaterialStateProperty.all(EdgeInsets.zero)),
                         onPressed: () {
-                          Modular.get<MarketStore>().marketId = '';
+                          Modular.get<FilterStore>().marketId = '';
                           Modular.to.pushNamed('/home_auth/list/filters').then(
                               (value) =>
                                   Modular.get<CompareStore>().reloadList());
@@ -350,6 +351,7 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                       );
                     }
                     if (productStore.productState is AppStateSuccess) {
+                      priceStore.prices = [];
                       priceStore.getProductPriceByMarkets(
                           productIds:
                               productStore.products.map((e) => e.id).toList(),
