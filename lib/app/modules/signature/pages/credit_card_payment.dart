@@ -23,7 +23,7 @@ class _CreditCardPaymentPageState extends State<CreditCardPaymentPage> {
   void initState() {
     super.initState();
     if (_signatureStore.signature!.pendingPayment) {
-      _cardInvoiceStore.getInvoice(id: _signatureStore.signature!.paymentId);
+      _cardInvoiceStore.getInvoice(id: _signatureStore.signature!.signatureId!);
     }
     _cardInvoiceStore.getCard(id: Modular.get<AuthController>().user!.id);
 
