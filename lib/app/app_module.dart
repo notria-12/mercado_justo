@@ -23,7 +23,7 @@ class AppModule extends Module {
   @override
   final List<Bind> binds = [
     Bind.singleton((i) => ConfigStore()),
-    Bind.lazySingleton((i) => FilterStore()),
+    Bind.lazySingleton((i) => FilterStore(positionStore: i())),
     Bind.singleton((i) => PositionStore()),
     Bind.singleton((i) => getDioInstance()),
     Bind.singleton(
