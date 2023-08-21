@@ -27,6 +27,7 @@ class _FilterListPageState extends State<FilterListPage> {
 
   @override
   void dispose() {
+    filterStore.marketId = '';
     marketStore.setFilteredMarkets(filterStore.filteredMarkets);
     super.dispose();
   }
