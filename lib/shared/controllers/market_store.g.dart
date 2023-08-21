@@ -9,14 +9,6 @@ part of 'market_store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$MarketStore on _MarketStoreBase, Store {
-  Computed<List<Market>>? _$filteredMarketsComputed;
-
-  @override
-  List<Market> get filteredMarkets => (_$filteredMarketsComputed ??=
-          Computed<List<Market>>(() => super.filteredMarkets,
-              name: '_MarketStoreBase.filteredMarkets'))
-      .value;
-
   late final _$marketsAtom =
       Atom(name: '_MarketStoreBase.markets', context: context);
 
@@ -64,20 +56,34 @@ mixin _$MarketStore on _MarketStoreBase, Store {
     });
   }
 
-  late final _$marketIdAtom =
-      Atom(name: '_MarketStoreBase.marketId', context: context);
+  late final _$filteredMarketsAtom =
+      Atom(name: '_MarketStoreBase.filteredMarkets', context: context);
 
   @override
-  String? get marketId {
-    _$marketIdAtom.reportRead();
-    return super.marketId;
+  List<Market> get filteredMarkets {
+    _$filteredMarketsAtom.reportRead();
+    return super.filteredMarkets;
   }
 
   @override
-  set marketId(String? value) {
-    _$marketIdAtom.reportWrite(value, super.marketId, () {
-      super.marketId = value;
+  set filteredMarkets(List<Market> value) {
+    _$filteredMarketsAtom.reportWrite(value, super.filteredMarkets, () {
+      super.filteredMarkets = value;
     });
+  }
+
+  late final _$_MarketStoreBaseActionController =
+      ActionController(name: '_MarketStoreBase', context: context);
+
+  @override
+  dynamic setFilteredMarkets(List<Market> newMarkets) {
+    final _$actionInfo = _$_MarketStoreBaseActionController.startAction(
+        name: '_MarketStoreBase.setFilteredMarkets');
+    try {
+      return super.setFilteredMarkets(newMarkets);
+    } finally {
+      _$_MarketStoreBaseActionController.endAction(_$actionInfo);
+    }
   }
 
   @override
@@ -86,7 +92,6 @@ mixin _$MarketStore on _MarketStoreBase, Store {
 markets: ${markets},
 groupMarkets: ${groupMarkets},
 page: ${page},
-marketId: ${marketId},
 filteredMarkets: ${filteredMarkets}
     ''';
   }
