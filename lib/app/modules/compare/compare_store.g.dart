@@ -98,6 +98,54 @@ mixin _$CompareStore on _CompareStoreBase, Store {
     });
   }
 
+  late final _$productsAtom =
+      Atom(name: '_CompareStoreBase.products', context: context);
+
+  @override
+  List<Product> get products {
+    _$productsAtom.reportRead();
+    return super.products;
+  }
+
+  @override
+  set products(List<Product> value) {
+    _$productsAtom.reportWrite(value, super.products, () {
+      super.products = value;
+    });
+  }
+
+  late final _$productStateAtom =
+      Atom(name: '_CompareStoreBase.productState', context: context);
+
+  @override
+  AppState get productState {
+    _$productStateAtom.reportRead();
+    return super.productState;
+  }
+
+  @override
+  set productState(AppState value) {
+    _$productStateAtom.reportWrite(value, super.productState, () {
+      super.productState = value;
+    });
+  }
+
+  late final _$quantitiesAtom =
+      Atom(name: '_CompareStoreBase.quantities', context: context);
+
+  @override
+  List<int> get quantities {
+    _$quantitiesAtom.reportRead();
+    return super.quantities;
+  }
+
+  @override
+  set quantities(List<int> value) {
+    _$quantitiesAtom.reportWrite(value, super.quantities, () {
+      super.quantities = value;
+    });
+  }
+
   late final _$_CompareStoreBaseActionController =
       ActionController(name: '_CompareStoreBase', context: context);
 
@@ -131,6 +179,9 @@ prices: ${prices},
 listId: ${listId},
 total: ${total},
 listTotal: ${listTotal},
+products: ${products},
+productState: ${productState},
+quantities: ${quantities},
 getFairPrice: ${getFairPrice}
     ''';
   }

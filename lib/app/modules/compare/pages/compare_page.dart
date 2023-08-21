@@ -6,10 +6,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mercado_justo/app/modules/compare/compare_store.dart';
+import 'package:mercado_justo/app/modules/lists/filter_store.dart';
 import 'package:mercado_justo/app/modules/lists/pages/product_list_detail.dart';
 import 'package:mercado_justo/shared/controllers/ad_store.dart';
 import 'package:mercado_justo/shared/controllers/config_store.dart';
-import 'package:mercado_justo/shared/controllers/list_store.dart';
+
 import 'package:mercado_justo/shared/controllers/market_store.dart';
 import 'package:mercado_justo/shared/controllers/position_store.dart';
 import 'package:mercado_justo/shared/controllers/signature_store.dart';
@@ -31,7 +32,6 @@ class ComparePage extends StatefulWidget {
 }
 
 class _ComparePageState extends ModularState<ComparePage, CompareStore> {
-  final listStore = Modular.get<ListStore>();
   final positionStore = Modular.get<PositionStore>();
   final marketStore = Modular.get<MarketStore>();
   final _signatureStore = Modular.get<SignatureStore>();
@@ -140,7 +140,7 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                       ButtonOptionsListDetail(
                         label: 'Filtro',
                         onTap: () {
-                          Modular.get<MarketStore>().marketId = '';
+                          Modular.get<FilterStore>().marketId = '';
                           Modular.to
                               .pushNamed('/home_auth/list/filters')
                               .then((value) => store.reloadList());
@@ -264,10 +264,10 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
             child: Observer(
               builder: (context) {
                 if (store.listId != null) {
-                  listStore.getProducts(store.listId!);
+                  store.getProducts(store.listId!);
                   return Observer(
                     builder: (_) {
-                      if (listStore.productState is AppStateLoading) {
+                      if (store.productState is AppStateLoading) {
                         return Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -281,7 +281,7 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                           ),
                         );
                       }
-                      if (listStore.productState is AppStateSuccess &&
+                      if (store.productState is AppStateSuccess &&
                           Modular.get<MarketStore>()
                               .filteredMarkets
                               .where((element) => element.isSelectable == true)
@@ -515,7 +515,7 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                                 return Container();
                             }
                           },
-                          future: store.getProductsPrices(listStore.products),
+                          future: store.getProductsPrices(store.products),
                         );
                       }
                       return Container(
