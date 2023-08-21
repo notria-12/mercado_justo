@@ -7,6 +7,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mercado_justo/app/modules/compare/compare_store.dart';
 import 'package:mercado_justo/app/modules/home_auth/home_auth_store.dart';
 import 'package:mercado_justo/app/modules/home_auth/widgets/custom_dialog_selection_markets.dart';
+import 'package:mercado_justo/app/modules/lists/filter_store.dart';
 import 'package:mercado_justo/shared/controllers/ad_store.dart';
 import 'package:mercado_justo/shared/controllers/fair_price_store.dart';
 import 'package:mercado_justo/shared/controllers/list_store.dart';
@@ -44,15 +45,24 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
   final _signatureStore = Modular.get<SignatureStore>();
   BannerAd? _topBanner;
   BannerAd? _bottomBanner;
+  late Future _getFairPriceFromList;
+
   @override
   void initState() {
+    super.initState();
+    _getFairPriceFromList =
+        storeFairPrice.getFairPricesFromList(listId: widget.listModel.id!);
     storeProductList.getProducts(widget.listModel.id!);
+
     _disposer = autorun((_) {
       filteredMarkets = storeMarket.filteredMarkets
           .where((element) => element.isSelectable == true)
           .toList();
+
+      storeProductList.prices = [];
+      storeProductList.marketSelected = 0;
+      storeProductList.getProducts(widget.listModel.id!);
     });
-    super.initState();
   }
 
   @override
@@ -146,13 +156,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                                 style: TextStyle(color: Colors.lightBlue),
                               ),
                               onTap: () {
-                                Modular.to
-                                    .pushNamed('/home_auth/list/filters')
-                                    .then((value) {
-                                  storeProductList.prices = [];
-                                  storeProductList
-                                      .getProducts(widget.listModel.id!);
-                                });
+                                Modular.to.pushNamed('/home_auth/list/filters');
                               },
                             )
                           ],
@@ -168,8 +172,8 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                 }
                 if (storeProductList.productState is AppStateSuccess &&
                     storeProductList.products.isEmpty) {
-                  return Center(
-                    child: const Text(
+                  return const Center(
+                    child: Text(
                       'Lista vazia! Adicione itens a lista para fazer o comparativo de preços',
                       style: TextStyle(
                           color: Colors.black38,
@@ -224,10 +228,8 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
               style:
                   TextStyle(color: Colors.black54, fontWeight: FontWeight.w500),
             ),
-            // Observer(builder: (_) {
             if (storeProductList.isFairPrice &&
                 storeProductList.marketSelected == -1)
-              // return
               FutureBuilder(
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
@@ -268,10 +270,8 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                   }
                   return Container();
                 },
-                future: storeFairPrice.getFairPricesFromList(
-                    listId: widget.listModel.id!),
+                future: _getFairPriceFromList,
               ),
-            // }
             Visibility(
               visible: storeProductList.missingProducts['missingItens'] != 0,
               child: Column(
@@ -304,7 +304,6 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                 ],
               ),
             )
-            // })
           ],
         ),
         Row(
@@ -502,12 +501,8 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
             ButtonOptionsListDetail(
               label: 'Filtro',
               onTap: () {
-                Modular.get<MarketStore>().marketId = '';
-                Modular.to.pushNamed('/home_auth/list/filters').then((value) {
-                  storeProductList.prices = [];
-                  storeProductList.getProducts(widget.listModel.id!);
-                  // Modular.get<>();
-                });
+                Modular.get<FilterStore>().marketId = '';
+                Modular.to.pushNamed('/home_auth/list/filters');
               },
             ),
             ButtonOptionsListDetail(
@@ -535,8 +530,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
           height: 20,
         ),
         Expanded(
-            child: Container(
-                child: CustomDataTable(
+            child: CustomDataTable(
           loadMore: false,
           fixedCornerCell: ButtonShare(
             onPressed: (_signatureStore.signature != null &&
@@ -612,7 +606,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                     switch (snapshot.connectionState) {
                       case ConnectionState.none:
                       case ConnectionState.waiting:
-                        return Center(
+                        return const Center(
                           child: CircularProgressIndicator(),
                         );
                       case ConnectionState.done:
@@ -630,7 +624,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                                 softWrap: true,
                                 maxLines: 3,
                                 overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,
                                 ),
@@ -689,7 +683,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                             switch (snapshot.connectionState) {
                               case ConnectionState.none:
                               case ConnectionState.waiting:
-                                return Center(
+                                return const Center(
                                   child: CircularProgressIndicator(),
                                 );
 
@@ -793,7 +787,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
               ),
             );
           },
-        )))
+        ))
       ],
     );
   }
