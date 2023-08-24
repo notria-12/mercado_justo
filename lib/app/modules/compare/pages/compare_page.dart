@@ -550,23 +550,61 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
+                    const Text(
                       'O seu comparativo está vazio.',
                       textAlign: TextAlign.center,
                       style:
                           TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 22,
                     ),
-                    Text(
-                      'Selecione a lista de compras desejada, faça um filtro de quais mercados você quer que apareça e veja os melhores preços em cada um deles!',
+                    const Text(
+                      'Selecione a lista de compras desejada e clique em: ',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
                           color: Colors.black54),
-                    )
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            height: 20,
+                            width: 20,
+                            decoration: const BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.lightBlue),
+                            child: const Center(
+                                child: Icon(
+                              Icons.add,
+                              color: Colors.white,
+                              size: 18,
+                            )),
+                          ),
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          const Text(
+                            'add a comparação',
+                            style: TextStyle(
+                                color: Colors.black54,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Text(
+                      'Assim você verá os melhores preços de cada supermercado.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black54),
+                    ),
                   ],
                 );
               },
