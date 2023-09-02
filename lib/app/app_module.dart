@@ -44,10 +44,6 @@ class AppModule extends Module {
         inviteId: args.queryParams['inviteId'],
       ),
     ),
-    ChildRoute('/disconnected',
-        child: (context, args) => Container(
-              child: Text('Sem conexão'),
-            )),
     ModuleRoute('/home', module: HomeModule()),
     ModuleRoute('/login/', module: LoginModule()),
     ModuleRoute('/home_auth/', module: HomeAuthModule()),

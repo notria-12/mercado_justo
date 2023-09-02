@@ -102,18 +102,29 @@ abstract class _ListStoreBase with Store {
           }).toList();
     if (prices.isNotEmpty) {
       for (var i = 0; i < newList.length; i++) {
-        average += prices[products.indexOf(products
-                    .firstWhere((element) => element.productId! == newList[i]))]
+        int index = products.indexOf(
+            products.firstWhere((element) => element.productId! == newList[i]));
+        average += prices[index]
                 .map((e) => _parseToDouble(e))
                 .reduce((value, element) => value + element) /
-            marketStore.filteredMarkets
-                .where((element) => element.isSelectable == true)
-                .toList()
-                .length;
+            (marketStore.filteredMarkets
+                    .where((element) => element.isSelectable == true)
+                    .toList()
+                    .length -
+                getNumberOfPricesEmpty(prices[index]));
       }
     }
 
     return average;
+  }
+
+  int getNumberOfPricesEmpty(List<String> prices) {
+    int numberOfPricesEmpty = 0;
+    print('Prices $prices');
+    for (var price in prices) {
+      if (priceIsEmpty(price)) numberOfPricesEmpty++;
+    }
+    return numberOfPricesEmpty;
   }
 
   double getTotalPriceForMyFairPrice(List<Map> productsMap) {
@@ -145,10 +156,11 @@ abstract class _ListStoreBase with Store {
           average += (prices[i]
                   .map((e) => _parseToDouble(e))
                   .reduce((value, element) => value + element)) /
-              marketStore.filteredMarkets
-                  .where((element) => element.isSelectable == true)
-                  .toList()
-                  .length;
+              (marketStore.filteredMarkets
+                      .where((element) => element.isSelectable == true)
+                      .toList()
+                      .length -
+                  getNumberOfPricesEmpty(prices[i]));
         }
       }
     }
@@ -160,10 +172,13 @@ abstract class _ListStoreBase with Store {
   }
 
   double _parseToDouble(String value) {
-    return value.isEmpty || value == 'Em Falta'
+    return priceIsEmpty(value)
         ? 0
         : double.parse(value.replaceAll(r'R$ ', '').replaceAll(r',', '.'));
   }
+
+  bool priceIsEmpty(String value) =>
+      value.isEmpty || value == 'Em Falta' || value == 'R\$ 0,00';
 
   Future getAllLists() async {
     try {
