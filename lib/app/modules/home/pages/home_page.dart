@@ -5,11 +5,13 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mercado_justo/app/modules/home/home_store.dart';
 import 'package:mercado_justo/app/modules/home/widgets/custom_dialog_selection_markets.dart';
+import 'package:mercado_justo/shared/controllers/connectivity_store.dart';
 import 'package:mercado_justo/shared/controllers/market_store.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/widgets/button_share.dart';
 import 'package:mercado_justo/shared/widgets/custom_table_widget.dart';
 import 'package:mercado_justo/shared/widgets/dialogs.dart';
+import 'package:mercado_justo/shared/widgets/no_connectivity_widget.dart';
 import 'package:mobx/mobx.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -108,20 +110,27 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                     const SizedBox(
                       height: 12,
                     ),
-                    Container(
-                      width: 290.w,
-                      height: 45,
-                      child: ElevatedButton(
-                        style:
-                            ElevatedButton.styleFrom(primary: Colors.lightBlue),
-                        child: Text(
-                          'Entrar / Cadastrar',
-                          style: TextStyle(fontSize: 14.sp),
-                        ),
-                        onPressed: () {
-                          Modular.to.pushNamed('/login/');
-                        },
-                      ),
+                    Observer(
+                      builder: (_) {
+                        return Container(
+                          width: 290.w,
+                          height: 45,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                primary: Colors.lightBlue),
+                            child: Text(
+                              'Entrar / Cadastrar',
+                              style: TextStyle(fontSize: 14.sp),
+                            ),
+                            onPressed:
+                                !Modular.get<ConnectivityStore>().hasConnection!
+                                    ? null
+                                    : () {
+                                        Modular.to.pushNamed('/login/');
+                                      },
+                          ),
+                        );
+                      },
                     )
                   ],
                 ),
@@ -130,6 +139,9 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                   flex: 6,
                   child: Observer(
                     builder: (_) {
+                      if (!Modular.get<ConnectivityStore>().hasConnection!) {
+                        return NoConnectionWidget();
+                      }
                       if (storePosition.position == null &&
                           (storePosition.positionState is! AppStateLoading)) {
                         return Column(

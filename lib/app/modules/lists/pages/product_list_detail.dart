@@ -9,6 +9,7 @@ import 'package:mercado_justo/app/modules/home_auth/home_auth_store.dart';
 import 'package:mercado_justo/app/modules/home_auth/widgets/custom_dialog_selection_markets.dart';
 import 'package:mercado_justo/app/modules/lists/filter_store.dart';
 import 'package:mercado_justo/shared/controllers/ad_store.dart';
+import 'package:mercado_justo/shared/controllers/connectivity_store.dart';
 import 'package:mercado_justo/shared/controllers/fair_price_store.dart';
 import 'package:mercado_justo/shared/controllers/list_store.dart';
 import 'package:mercado_justo/shared/controllers/market_name_store.dart';
@@ -21,6 +22,7 @@ import 'package:mercado_justo/shared/widgets/button_share.dart';
 import 'package:mercado_justo/shared/widgets/custom_table_widget.dart';
 import 'package:mercado_justo/shared/widgets/dialogs.dart';
 import 'package:mercado_justo/shared/widgets/fixed_corner_table_widget.dart';
+import 'package:mercado_justo/shared/widgets/no_connectivity_widget.dart';
 import 'package:mobx/mobx.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -129,6 +131,9 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
           Expanded(
             child: Observer(
               builder: (_) {
+                if (!Modular.get<ConnectivityStore>().hasConnection!) {
+                  return NoConnectionWidget();
+                }
                 if (storeProductList.productState is AppStateSuccess &&
                     storeProductList.prices.isNotEmpty) {
                   if (filteredMarkets.isEmpty) {
@@ -310,76 +315,82 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Observer(builder: (_) {
-                  return (storeProductList.isFairPrice &&
-                          storeProductList.marketSelected == -1)
-                      ? Text(
-                          'R\$ ${storeProductList.getTotalPriceForMyFairPrice(storeFairPrice.fairPricesFromList).toStringAsFixed(2).replaceAll(r'.', ',')}',
-                          style: const TextStyle(
-                              fontSize: 38, fontWeight: FontWeight.bold),
-                        )
-                      : (_signatureStore.signature != null &&
-                              _signatureStore.signature!.status)
-                          ? Text(
-                              'R\$ ${storeProductList.totalPrice.toStringAsFixed(2).replaceAll(r'.', ',')}',
-                              style: const TextStyle(
-                                  fontSize: 38, fontWeight: FontWeight.bold),
-                            )
-                          : InkWell(
-                              onTap: () => Modular.to.pushNamed('/signature/'),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: const [
-                                  Icon(
-                                    Icons.lock,
-                                    color: Colors.green,
-                                  ),
-                                  Text(
-                                    'Assine para desbloquear',
-                                    style: TextStyle(color: Colors.lightBlue),
-                                  )
-                                ],
-                              ),
-                            );
-                }),
-                const SizedBox(height: 5),
-                InkWell(
-                  onTap: () {
-                    Modular.get<CompareStore>()
-                        .addToComparePage(widget.listModel.id!);
-                    Modular.get<HomeAuthStore>().currentIndex = 2;
-                    Modular.to.pop();
-                  },
-                  child: Row(
-                    children: [
-                      Container(
-                        height: 20,
-                        width: 20,
-                        decoration: const BoxDecoration(
-                            shape: BoxShape.circle, color: Colors.lightBlue),
-                        child: const Center(
-                            child: Icon(
-                          Icons.add,
-                          color: Colors.white,
-                          size: 18,
-                        )),
-                      ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      const Text(
-                        'add a comparação',
-                        style: TextStyle(
-                            color: Colors.black54, fontWeight: FontWeight.w500),
-                      ),
-                    ],
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Observer(builder: (_) {
+                    return (storeProductList.isFairPrice &&
+                            storeProductList.marketSelected == -1)
+                        ? Text(
+                            'R\$ ${storeProductList.getTotalPriceForMyFairPrice(storeFairPrice.fairPricesFromList).toStringAsFixed(2).replaceAll(r'.', ',')}',
+                            style: const TextStyle(
+                                fontSize: 38, fontWeight: FontWeight.bold),
+                          )
+                        : (_signatureStore.signature != null &&
+                                _signatureStore.signature!.status)
+                            ? Text(
+                                'R\$ ${storeProductList.totalPrice.toStringAsFixed(2).replaceAll(r'.', ',')}',
+                                style: const TextStyle(
+                                    fontSize: 38, fontWeight: FontWeight.bold),
+                              )
+                            : InkWell(
+                                onTap: () =>
+                                    Modular.to.pushNamed('/signature/'),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    Icon(
+                                      Icons.lock,
+                                      color: Colors.green,
+                                    ),
+                                    Text(
+                                      'Assinar p/ desbloquear',
+                                      style: TextStyle(
+                                          color: Colors.lightBlue,
+                                          fontSize: 14),
+                                    )
+                                  ],
+                                ),
+                              );
+                  }),
+                  const SizedBox(height: 5),
+                  InkWell(
+                    onTap: () {
+                      Modular.get<CompareStore>()
+                          .addToComparePage(widget.listModel.id!);
+                      Modular.get<HomeAuthStore>().currentIndex = 2;
+                      Modular.to.pop();
+                    },
+                    child: Row(
+                      children: [
+                        Container(
+                          height: 20,
+                          width: 20,
+                          decoration: const BoxDecoration(
+                              shape: BoxShape.circle, color: Colors.lightBlue),
+                          child: const Center(
+                              child: Icon(
+                            Icons.add,
+                            color: Colors.white,
+                            size: 18,
+                          )),
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        const Text(
+                          'add a PoupaMais',
+                          style: TextStyle(
+                              color: Colors.black54,
+                              fontWeight: FontWeight.w500),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             Row(
               children: [
