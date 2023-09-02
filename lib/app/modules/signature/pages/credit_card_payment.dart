@@ -210,8 +210,109 @@ class _CreditCardPaymentPageState extends State<CreditCardPaymentPage> {
                                 style: TextStyle(color: Colors.red),
                               ),
                               onPressed: () {
-                                _cardInvoiceStore.cancelSignature(
-                                    _signatureStore.signature!.signatureId!);
+                                showModalBottomSheet(
+                                    context: context,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(12)),
+                                    builder: (context) {
+                                      return Container(
+                                        padding: EdgeInsets.all(16),
+                                        child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              const SizedBox(
+                                                height: 10,
+                                              ),
+                                              const Text(
+                                                "Tem certeza que deseja cancelar a assinatura?",
+                                                style: TextStyle(
+                                                    fontSize: 18,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              const SizedBox(
+                                                height: 4,
+                                              ),
+                                              const Text(
+                                                  "Você ainda usufruirá dos dias restantes."),
+                                              const SizedBox(
+                                                height: 8,
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceAround,
+                                                children: [
+                                                  InkWell(
+                                                    onTap: () {
+                                                      _cardInvoiceStore
+                                                          .cancelSignature(
+                                                              _signatureStore
+                                                                  .signature!
+                                                                  .signatureId!);
+                                                    },
+                                                    child: Container(
+                                                      width: 100,
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              16),
+                                                      decoration: const BoxDecoration(
+                                                          color: Colors.red,
+                                                          borderRadius:
+                                                              BorderRadius.all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          5))),
+                                                      child: const Center(
+                                                        child: Text(
+                                                          'Sim',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontSize: 18),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  InkWell(
+                                                    onTap: () {
+                                                      Modular.to.pop();
+                                                    },
+                                                    child: Container(
+                                                      width: 100,
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              16),
+                                                      decoration: BoxDecoration(
+                                                          color: Colors.white,
+                                                          border: Border.all(
+                                                              color:
+                                                                  Colors.grey),
+                                                          borderRadius:
+                                                              const BorderRadius
+                                                                      .all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          5))),
+                                                      child: const Center(
+                                                        child: Text(
+                                                          'Não',
+                                                          style: TextStyle(
+                                                              fontSize: 18),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  )
+                                                ],
+                                              )
+                                            ]),
+                                      );
+                                    });
                               },
                             ),
                     ),
