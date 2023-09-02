@@ -117,7 +117,7 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                       ? Text(
                           'R\$ ${sum.toStringAsFixed(2).replaceAll(r'.', ',')}',
                           style: TextStyle(
-                              fontSize: 38, fontWeight: FontWeight.bold),
+                              fontSize: 30.h, fontWeight: FontWeight.bold),
                         )
                       : Padding(
                           padding: const EdgeInsets.symmetric(),
@@ -307,7 +307,7 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                               case ConnectionState.done:
                                 if (snapshot.hasError) {
                                   return Text(
-                                      'Obtivemos problemas ao montar a lista de comparação');
+                                      'Obtivemos problemas ao montar a lista de PoupaMais');
                                 }
 
                                 return Container(
@@ -551,7 +551,7 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text(
-                      'O seu comparativo está vazio.',
+                      'O seu PoupaMais está vazio.',
                       textAlign: TextAlign.center,
                       style:
                           TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
@@ -589,7 +589,7 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                             width: 5,
                           ),
                           const Text(
-                            'add a comparação',
+                            'add a PoupaMais',
                             style: TextStyle(
                                 color: Colors.black54,
                                 fontWeight: FontWeight.w500),
@@ -662,7 +662,7 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
       border: const TableBorder(
         verticalInside: BorderSide(color: Colors.grey, width: 0.2),
       ),
-      dataRowHeight: 110,
+      dataRowHeight: 111.h,
       headingRowHeight: 0,
       horizontalMargin: 8,
       columnSpacing: 0,

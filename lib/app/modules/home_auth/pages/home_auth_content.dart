@@ -15,6 +15,7 @@ import 'package:mercado_justo/app/modules/home_auth/widgets/custom_dialog_select
 import 'package:mercado_justo/app/modules/lists/filter_store.dart';
 import 'package:mercado_justo/shared/controllers/ad_store.dart';
 import 'package:mercado_justo/shared/controllers/market_store.dart';
+import 'package:mercado_justo/shared/controllers/position_store.dart';
 import 'package:mercado_justo/shared/controllers/price_store.dart';
 import 'package:mercado_justo/shared/controllers/product_store.dart';
 import 'package:mercado_justo/shared/controllers/product_to_list_store.dart';
@@ -24,7 +25,6 @@ import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/widgets/bottonsheets.dart';
 import 'package:mercado_justo/shared/widgets/button_share.dart';
 import 'package:mercado_justo/shared/widgets/custom_table_widget.dart';
-import 'package:mercado_justo/shared/widgets/dialogs.dart';
 import 'package:mercado_justo/shared/widgets/load_more_button.dart';
 import 'package:mobx/mobx.dart';
 import 'package:share_plus/share_plus.dart';
@@ -70,7 +70,7 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                 : null);
       }
     });
-    productStore.getAllProducts();
+    productStore.getAllProducts(initialProducts: true);
     marketStore.getGroupMarkets();
   }
 
@@ -136,7 +136,7 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                 Form(
                   key: _formKey,
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
                         border: Border.all(
@@ -210,7 +210,7 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                                             context: context,
                                             builder: (context) {
                                               return AlertDialog(
-                                                title: Text(
+                                                title: const Text(
                                                     'Produto não cadastrado'),
                                                 content: Column(
                                                   mainAxisAlignment:
@@ -230,15 +230,12 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                                       }
                                     });
                                   },
-                                  icon: Icon(MdiIcons.barcodeScan)),
+                                  icon: const Icon(MdiIcons.barcodeScan)),
                             ],
                           )),
                     ),
                   ),
                 ),
-                // const SizedBox(
-                //   height: 8,
-                // ),
                 Row(
                   children: [
                     InkWell(
@@ -330,6 +327,8 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                         .where((element) => element.isSelectable)
                         .toList()
                         .isEmpty) {
+                      var position = Modular.get<PositionStore>().position;
+
                       return Center(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -342,8 +341,10 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                             const SizedBox(
                               height: 20,
                             ),
-                            const Text(
-                              'Não há mercados no disponíveis para sua localização',
+                            Text(
+                              position != null
+                                  ? 'Não há mercados no disponíveis para sua localização'
+                                  : 'GPS desligado! Ative o GPS para aparecer os produtos dos supermercados mais próximos de você.',
                               textAlign: TextAlign.center,
                             ),
                           ],
@@ -385,14 +386,14 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                                   is AppStateLoading
                               ? Container(
                                   height: 40,
-                                  child: Center(
+                                  child: const Center(
                                     child: CircularProgressIndicator(),
                                   ),
                                 )
                               : priceStore.allPriceStatus is AppStateLoading
                                   ? Container(
                                       height: 40,
-                                      child: Center(
+                                      child: const Center(
                                         child: CircularProgressIndicator(),
                                       ),
                                     )
@@ -708,191 +709,197 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         builder: (context) {
           return SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Align(
-                  child: IconButton(
-                      padding: EdgeInsets.zero,
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      icon: Icon(Icons.close)),
-                  alignment: Alignment.topRight,
-                ),
-                Container(
-                  height: 200,
-                  child: CachedNetworkImage(
-                    imageUrl: product.imagePath!,
-                    memCacheHeight: 350,
-                    memCacheWidth: 350,
-                    placeholder: (context, url) {
-                      return Container(
-                        width: 250,
-                        color: Colors.grey[400],
-                      );
-                    },
-                    errorWidget: (context, error, stackTrace) {
-                      return Image.asset(
-                        'assets/img/image_not_found.jpg',
-                        cacheHeight: 350,
-                        cacheWidth: 350,
-                      );
-                    },
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Align(
+                    child: IconButton(
+                        padding: EdgeInsets.zero,
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        icon: Icon(Icons.close)),
+                    alignment: Alignment.topRight,
                   ),
-                ),
-                Observer(builder: (_) {
-                  return Modular.get<ProblemStore>().problemStatus
-                          is AppStateLoading
-                      ? Center(
-                          child: CircularProgressIndicator(),
-                        )
-                      : TextButton(
-                          style: TextButton.styleFrom(
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              minimumSize: Size.zero,
-                              padding: EdgeInsets.zero),
-                          onPressed: () {
-                            Modular.get<ProblemStore>().reportProblem(
-                                ProblemModel(
-                                    bardCode: product.barCode[0],
-                                    errorType: 'erro_tela_leitor'));
-                          },
-                          child: Text(
-                            'Achou algum erro? clique aqui.',
-                            style: TextStyle(color: Colors.red, fontSize: 12),
-                          ));
-                }),
-                SizedBox(
-                  height: 8,
-                ),
-                Text(
-                  product.description,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
-                Text("Ref: ${product.barCode.first}"),
-                const SizedBox(
-                  height: 8,
-                ),
-                Observer(builder: (_) {
-                  if (averagePriceController.status is AppStateLoading) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                  if (averagePriceController.status is AppStateSuccess) {
-                    return Text(
-                      'Valor médio: R\$ ${averagePriceController.averagePrice.toStringAsFixed(2).replaceAll('.', ',')}',
-                      style: const TextStyle(
-                          // color: Colors.blue,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600),
-                    );
-                  }
-                  return Container();
-                }),
-                const SizedBox(
-                  height: 120,
-                ),
-                Observer(builder: (_) {
-                  _quantityController.text =
-                      productToListStore.value.toString();
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      InkWell(
-                        onTap: () => productToListStore.value > 1
-                            ? productToListStore.decrement()
-                            : null,
-                        child: Container(
-                          height: 30,
-                          width: 30,
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: productToListStore.value > 1
-                                  ? Colors.lightBlue
-                                  : Colors.blueGrey),
-                          child: const Center(
-                              child: Icon(
-                            MdiIcons.minus,
-                            color: Colors.white,
-                            size: 18,
-                          )),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      Container(
-                        width: 120,
-                        height: 50,
-                        padding: const EdgeInsets.symmetric(horizontal: 50),
-                        child: Center(
-                          child: TextFormField(
-                            // initialValue: '1',
-                            enabled: false,
-                            controller: _quantityController,
-                            decoration:
-                                const InputDecoration(border: InputBorder.none),
-                            keyboardType: TextInputType.number,
+                  Container(
+                    height: 200,
+                    child: CachedNetworkImage(
+                      imageUrl: product.imagePath!,
+                      memCacheHeight: 350,
+                      memCacheWidth: 350,
+                      placeholder: (context, url) {
+                        return Container(
+                          width: 250,
+                          color: Colors.grey[400],
+                        );
+                      },
+                      errorWidget: (context, error, stackTrace) {
+                        return Image.asset(
+                          'assets/img/image_not_found.jpg',
+                          cacheHeight: 350,
+                          cacheWidth: 350,
+                        );
+                      },
+                    ),
+                  ),
+                  Observer(builder: (_) {
+                    return Modular.get<ProblemStore>().problemStatus
+                            is AppStateLoading
+                        ? Center(
+                            child: CircularProgressIndicator(),
+                          )
+                        : TextButton(
+                            style: TextButton.styleFrom(
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                minimumSize: Size.zero,
+                                padding: EdgeInsets.zero),
+                            onPressed: () {
+                              Modular.get<ProblemStore>().reportProblem(
+                                  ProblemModel(
+                                      bardCode: product.barCode[0],
+                                      errorType: 'erro_tela_leitor'));
+                            },
+                            child: Text(
+                              'Achou algum erro? clique aqui.',
+                              style: TextStyle(color: Colors.red, fontSize: 12),
+                            ));
+                  }),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  Text(
+                    product.description,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  Text("Ref: ${product.barCode.first}"),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  Observer(builder: (_) {
+                    if (averagePriceController.status is AppStateLoading) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    if (averagePriceController.status is AppStateSuccess) {
+                      return Text(
+                        'Valor médio: R\$ ${averagePriceController.averagePrice.toStringAsFixed(2).replaceAll('.', ',')}',
+                        style: const TextStyle(
+                            // color: Colors.blue,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600),
+                      );
+                    }
+                    return Container();
+                  }),
+                  const SizedBox(
+                    height: 120,
+                  ),
+                  Observer(builder: (_) {
+                    _quantityController.text =
+                        productToListStore.value.toString();
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        InkWell(
+                          onTap: () => productToListStore.value > 1
+                              ? productToListStore.decrement()
+                              : null,
+                          child: Container(
+                            height: 30,
+                            width: 30,
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: productToListStore.value > 1
+                                    ? Colors.lightBlue
+                                    : Colors.blueGrey),
+                            child: const Center(
+                                child: Icon(
+                              MdiIcons.minus,
+                              color: Colors.white,
+                              size: 18,
+                            )),
                           ),
                         ),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: Colors.grey)),
-                      ),
-                      SizedBox(
-                        width: 20,
-                      ),
-                      InkWell(
-                        onTap: () => productToListStore.increment(),
-                        child: Container(
-                          height: 30,
-                          width: 30,
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle, color: Colors.lightBlue),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                        Container(
+                          width: 120,
+                          height: 50,
+                          padding: const EdgeInsets.symmetric(horizontal: 50),
                           child: Center(
-                              child: Icon(
-                            Icons.add,
-                            color: Colors.white,
-                            size: 18,
-                          )),
+                            child: TextFormField(
+                              // initialValue: '1',
+                              enabled: false,
+                              controller: _quantityController,
+                              decoration: const InputDecoration(
+                                  border: InputBorder.none),
+                              keyboardType: TextInputType.number,
+                            ),
+                          ),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: Colors.grey)),
+                        ),
+                        SizedBox(
+                          width: 20,
+                        ),
+                        InkWell(
+                          onTap: () => productToListStore.increment(),
+                          child: Container(
+                            height: 30,
+                            width: 30,
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.lightBlue),
+                            child: Center(
+                                child: Icon(
+                              Icons.add,
+                              color: Colors.white,
+                              size: 18,
+                            )),
+                          ),
+                        ),
+                      ],
+                    );
+                  }),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  SizedBox(
+                    height: 50,
+                    width: 240,
+                    child: ElevatedButton(
+                      child: Center(
+                        child: Text(
+                          'Selecione ou Adicione uma Lista',
+                          textAlign: TextAlign.center,
+                          style:
+                              TextStyle(color: Colors.white, fontSize: 12.sp),
                         ),
                       ),
-                    ],
-                  );
-                }),
-                SizedBox(
-                  height: 20,
-                ),
-                SizedBox(
-                  height: 50,
-                  width: 240,
-                  child: ElevatedButton(
-                    child: Center(
-                      child: Text(
-                        'Selecione ou Adicione uma Lista',
-                        style: TextStyle(color: Colors.white, fontSize: 12.sp),
-                      ),
+                      onPressed: () {
+                        productToListStore.saveProduct(product);
+                        CustomBottonSheets().selectList(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                          primary: Colors.lightBlue,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8))),
                     ),
-                    onPressed: () {
-                      productToListStore.saveProduct(product);
-                      CustomBottonSheets().selectList(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                        primary: Colors.lightBlue,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8))),
                   ),
-                ),
-                SizedBox(
-                  height: 30,
-                ),
-              ],
+                  SizedBox(
+                    height: 30,
+                  ),
+                ],
+              ),
             ),
           );
         });
