@@ -104,14 +104,15 @@ abstract class _ListStoreBase with Store {
       for (var i = 0; i < newList.length; i++) {
         int index = products.indexOf(
             products.firstWhere((element) => element.productId! == newList[i]));
-        average += prices[index]
-                .map((e) => _parseToDouble(e))
-                .reduce((value, element) => value + element) /
-            (marketStore.filteredMarkets
-                    .where((element) => element.isSelectable == true)
-                    .toList()
-                    .length -
-                getNumberOfPricesEmpty(prices[index]));
+        average += (prices[index]
+                    .map((e) => _parseToDouble(e))
+                    .reduce((value, element) => value + element) /
+                (marketStore.filteredMarkets
+                        .where((element) => element.isSelectable == true)
+                        .toList()
+                        .length -
+                    getNumberOfPricesEmpty(prices[index]))) *
+            quantities[index];
       }
     }
 
@@ -153,14 +154,15 @@ abstract class _ListStoreBase with Store {
             prices[i][marketSelected] == 'R\$ 0,00' ||
             prices[i][marketSelected] == 'Em Falta') {
           missingItens++;
-          average += (prices[i]
-                  .map((e) => _parseToDouble(e))
-                  .reduce((value, element) => value + element)) /
-              (marketStore.filteredMarkets
-                      .where((element) => element.isSelectable == true)
-                      .toList()
-                      .length -
-                  getNumberOfPricesEmpty(prices[i]));
+          average += ((prices[i]
+                      .map((e) => _parseToDouble(e))
+                      .reduce((value, element) => value + element)) /
+                  (marketStore.filteredMarkets
+                          .where((element) => element.isSelectable == true)
+                          .toList()
+                          .length -
+                      getNumberOfPricesEmpty(prices[i]))) *
+              quantities[i];
         }
       }
     }
