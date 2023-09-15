@@ -31,6 +31,7 @@
         android:label="Mercado Justo"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:allowBackup="false">
         
         <activity
@@ -74,5 +75,6 @@
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-6371060274459228~1034852286"/>
     </application>
+    
     
 </manifest>
