@@ -1,9 +1,13 @@
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:mercado_justo/app/modules/home_auth/widgets/drawer_item.dart';
 import 'package:mercado_justo/shared/auth/auth_controller.dart';
 import 'package:mercado_justo/shared/controllers/signature_store.dart';
+import 'package:mercado_justo/shared/utils/dynamic_links.dart';
 import 'package:mercado_justo/shared/widgets/dialogs.dart';
+import 'package:share_plus/share_plus.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({
@@ -78,13 +82,20 @@ class CustomDrawer extends StatelessWidget {
                   color: Colors.black87),
             )),
         DrawerItem(
+            onTap: () async {
+              final InAppReview inAppReview = InAppReview.instance;
+
+              if (await inAppReview.isAvailable()) {
+                inAppReview.requestReview();
+              }
+            },
             child: const Text(
-          'Avaliar Mercado Justo',
-          style: TextStyle(
-              fontSize: 15,
-              // fontWeight: FontWeight.w400,
-              color: Colors.black87),
-        )),
+              'Avaliar Mercado Justo',
+              style: TextStyle(
+                  fontSize: 15,
+                  // fontWeight: FontWeight.w400,
+                  color: Colors.black87),
+            )),
         DrawerItem(
             onTap: () {
               Modular.to.pushNamed('/home_auth/faq/');
@@ -97,13 +108,19 @@ class CustomDrawer extends StatelessWidget {
                   color: Colors.black87),
             )),
         DrawerItem(
+            onTap: () async {
+              DynamicLinkProvider()
+                  .createLink(Modular.get<AuthController>().user!.id)
+                  .then((value) => Share.share(
+                      "Baixe agora o app Mercado Justo, o melhor comparador de preços de supermercados e ganhe 30 dias de uso gratuito!\n\n$value\n\nAlém disso você ainda ganha +1 dia gratuito pra cada vez que você compartilhar com outro amigo(a)"));
+            },
             child: const Text(
-          'Compartilhar o App com Amigos',
-          style: TextStyle(
-              fontSize: 15,
-              // fontWeight: FontWeight.w400,
-              color: Colors.black87),
-        )),
+              'Compartilhar o App com Amigos',
+              style: TextStyle(
+                  fontSize: 15,
+                  // fontWeight: FontWeight.w400,
+                  color: Colors.black87),
+            )),
         DrawerItem(
             onTap: () {
               Modular.to.pushNamed('/home_auth/terms/');

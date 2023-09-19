@@ -6,19 +6,23 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mercado_justo/app/modules/compare/compare_store.dart';
+import 'package:mercado_justo/app/modules/lists/filter_store.dart';
 import 'package:mercado_justo/app/modules/lists/pages/product_list_detail.dart';
 import 'package:mercado_justo/shared/controllers/ad_store.dart';
 import 'package:mercado_justo/shared/controllers/config_store.dart';
-import 'package:mercado_justo/shared/controllers/list_store.dart';
+
 import 'package:mercado_justo/shared/controllers/market_store.dart';
 import 'package:mercado_justo/shared/controllers/position_store.dart';
 import 'package:mercado_justo/shared/controllers/signature_store.dart';
 import 'package:mercado_justo/shared/models/market_model.dart';
 import 'package:mercado_justo/shared/models/product_model.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
+import 'package:mercado_justo/shared/utils/dynamic_links.dart';
 import 'package:mercado_justo/shared/widgets/button_share.dart';
 
 import 'package:share_plus/share_plus.dart';
+
+import '../../../../shared/auth/auth_controller.dart';
 
 class ComparePage extends StatefulWidget {
   const ComparePage({Key? key}) : super(key: key);
@@ -28,7 +32,6 @@ class ComparePage extends StatefulWidget {
 }
 
 class _ComparePageState extends ModularState<ComparePage, CompareStore> {
-  final listStore = Modular.get<ListStore>();
   final positionStore = Modular.get<PositionStore>();
   final marketStore = Modular.get<MarketStore>();
   final _signatureStore = Modular.get<SignatureStore>();
@@ -114,7 +117,7 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                       ? Text(
                           'R\$ ${sum.toStringAsFixed(2).replaceAll(r'.', ',')}',
                           style: TextStyle(
-                              fontSize: 38, fontWeight: FontWeight.bold),
+                              fontSize: 30.h, fontWeight: FontWeight.bold),
                         )
                       : Padding(
                           padding: const EdgeInsets.symmetric(),
@@ -137,7 +140,7 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                       ButtonOptionsListDetail(
                         label: 'Filtro',
                         onTap: () {
-                          Modular.get<MarketStore>().marketId = '';
+                          Modular.get<FilterStore>().marketId = '';
                           Modular.to
                               .pushNamed('/home_auth/list/filters')
                               .then((value) => store.reloadList());
@@ -261,10 +264,10 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
             child: Observer(
               builder: (context) {
                 if (store.listId != null) {
-                  listStore.getProducts(store.listId!);
+                  store.getProducts(store.listId!);
                   return Observer(
                     builder: (_) {
-                      if (listStore.productState is AppStateLoading) {
+                      if (store.productState is AppStateLoading) {
                         return Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -278,7 +281,7 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                           ),
                         );
                       }
-                      if (listStore.productState is AppStateSuccess &&
+                      if (store.productState is AppStateSuccess &&
                           Modular.get<MarketStore>()
                               .filteredMarkets
                               .where((element) => element.isSelectable == true)
@@ -304,7 +307,7 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                               case ConnectionState.done:
                                 if (snapshot.hasError) {
                                   return Text(
-                                      'Obtivemos problemas ao montar a lista de comparação');
+                                      'Obtivemos problemas ao montar a lista de PoupaMais');
                                 }
 
                                 return Container(
@@ -512,7 +515,7 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                                 return Container();
                             }
                           },
-                          future: store.getProductsPrices(listStore.products),
+                          future: store.getProductsPrices(store.products),
                         );
                       }
                       return Container(
@@ -547,23 +550,61 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      'O seu comparativo está vazio.',
+                    const Text(
+                      'O seu PoupaMais está vazio.',
                       textAlign: TextAlign.center,
                       style:
                           TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 22,
                     ),
-                    Text(
-                      'Selecione a lista de compras desejada, faça um filtro de quais mercados você quer que apareça e veja os melhores preços em cada um deles!',
+                    const Text(
+                      'Selecione a lista de compras desejada e clique em: ',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
                           color: Colors.black54),
-                    )
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            height: 20,
+                            width: 20,
+                            decoration: const BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.lightBlue),
+                            child: const Center(
+                                child: Icon(
+                              Icons.add,
+                              color: Colors.white,
+                              size: 18,
+                            )),
+                          ),
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          const Text(
+                            'add a PoupaMais',
+                            style: TextStyle(
+                                color: Colors.black54,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Text(
+                      'Assim você verá os melhores preços de cada supermercado.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black54),
+                    ),
                   ],
                 );
               },
@@ -610,8 +651,10 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
     }
     pricesString += '\nSite e/ou local de referência:\n';
     pricesString += marketsInfo;
-    Share.share(pricesString +
-        '\n\nAcesse o nosso app e tenha uma visualização completa dos melhores preços.');
+    DynamicLinkProvider()
+        .createLink(Modular.get<AuthController>().user!.id)
+        .then((value) => Share.share(pricesString +
+            '\n\nAcesse o nosso app e tenha uma visualização completa dos melhores preços.\n\n$value'));
   }
 
   DataTable productsTable(List<Product> products, int index) {
@@ -619,7 +662,7 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
       border: const TableBorder(
         verticalInside: BorderSide(color: Colors.grey, width: 0.2),
       ),
-      dataRowHeight: 110,
+      dataRowHeight: 111.h,
       headingRowHeight: 0,
       horizontalMargin: 8,
       columnSpacing: 0,

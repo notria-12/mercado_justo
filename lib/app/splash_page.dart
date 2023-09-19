@@ -4,8 +4,8 @@ import 'package:mercado_justo/shared/auth/auth_controller.dart';
 import 'package:mercado_justo/shared/controllers/position_store.dart';
 
 class SplashPage extends StatefulWidget {
-  const SplashPage({Key? key}) : super(key: key);
-
+  SplashPage({Key? key, this.inviteId}) : super(key: key);
+  String? inviteId;
   @override
   _SplashPageState createState() => _SplashPageState();
 }
@@ -31,8 +31,7 @@ class _SplashPageState extends State<SplashPage> {
               return Container();
           }
         },
-        future: Future.wait(
-            [authController.init(), positionStore.getCurrentPosition()]),
+        future: Future.wait([authController.init(inviteId: widget.inviteId)]),
       ),
     );
   }

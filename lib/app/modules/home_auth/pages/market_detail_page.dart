@@ -40,37 +40,41 @@ class MarketDetail extends StatelessWidget {
                       memCacheWidth: 175,
                     ),
                   ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        market.name,
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.w700),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            'Visitar o site:',
-                            style: TextStyle(
-                                fontSize: 17.sp, fontWeight: FontWeight.w400),
-                          ),
-                          TextButton(
-                              onPressed: () {
-                                Utils.launchUrl(market.siteAddress);
-                              },
-                              child: Text(
-                                'Clique Aqui!',
-                                style: TextStyle(
-                                    color: Colors.red, fontSize: 17.sp),
-                              ))
-                        ],
-                      )
-                    ],
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          market.name,
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.w700),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Wrap(
+                          children: [
+                            Text(
+                              'Visitar o site:',
+                              style: TextStyle(
+                                  fontSize: 16.sp, fontWeight: FontWeight.w400),
+                            ),
+                            TextButton(
+                                style: TextButton.styleFrom(
+                                    padding: EdgeInsets.zero),
+                                onPressed: () {
+                                  Utils.launchUrl(market.siteAddress);
+                                },
+                                child: Text(
+                                  'Clique Aqui!',
+                                  style: TextStyle(
+                                      color: Colors.red, fontSize: 16.sp),
+                                )),
+                          ],
+                        )
+                      ],
+                    ),
                   )
                 ],
               ),

@@ -5,12 +5,13 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mercado_justo/app/modules/home/home_store.dart';
 import 'package:mercado_justo/app/modules/home/widgets/custom_dialog_selection_markets.dart';
-import 'package:mercado_justo/app/modules/home_auth/widgets/custom_dialog_selection_markets.dart';
+import 'package:mercado_justo/shared/controllers/connectivity_store.dart';
 import 'package:mercado_justo/shared/controllers/market_store.dart';
-
 import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/widgets/button_share.dart';
 import 'package:mercado_justo/shared/widgets/custom_table_widget.dart';
+import 'package:mercado_justo/shared/widgets/dialogs.dart';
+import 'package:mercado_justo/shared/widgets/no_connectivity_widget.dart';
 import 'package:mobx/mobx.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -30,14 +31,27 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
   final initialStore = Modular.get<InitialStore>();
   late ReactionDisposer _disposer;
   final storePosition = Modular.get<PositionStore>();
+  final _dialogs = Dialogs();
   @override
   void initState() {
     super.initState();
+
     _disposer = reaction((_) => storePosition.position, (_) {
-      initialStore.getPublicMarkets();
+      if (storePosition.position != null) {
+        initialStore.getPublicMarkets();
+        initialStore.getPublicsProducts();
+      }
     });
-    initialStore.getPublicsProducts();
-    initialStore.getPublicMarkets();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      if (storePosition.position == null) {
+        _dialogs.requestLocalizationDialog(context);
+      }
+    });
   }
 
   @override
@@ -96,20 +110,27 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                     const SizedBox(
                       height: 12,
                     ),
-                    Container(
-                      width: 290.w,
-                      height: 45,
-                      child: ElevatedButton(
-                        style:
-                            ElevatedButton.styleFrom(primary: Colors.lightBlue),
-                        child: Text(
-                          'Entrar / Cadastrar',
-                          style: TextStyle(fontSize: 14.sp),
-                        ),
-                        onPressed: () {
-                          Modular.to.pushNamed('/login/');
-                        },
-                      ),
+                    Observer(
+                      builder: (_) {
+                        return Container(
+                          width: 290.w,
+                          height: 45,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                primary: Colors.lightBlue),
+                            child: Text(
+                              'Entrar / Cadastrar',
+                              style: TextStyle(fontSize: 14.sp),
+                            ),
+                            onPressed:
+                                !Modular.get<ConnectivityStore>().hasConnection!
+                                    ? null
+                                    : () {
+                                        Modular.to.pushNamed('/login/');
+                                      },
+                          ),
+                        );
+                      },
                     )
                   ],
                 ),
@@ -118,6 +139,48 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                   flex: 6,
                   child: Observer(
                     builder: (_) {
+                      if (!Modular.get<ConnectivityStore>().hasConnection!) {
+                        return NoConnectionWidget();
+                      }
+                      if (storePosition.position == null &&
+                          (storePosition.positionState is! AppStateLoading)) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const SizedBox(height: 20),
+                            SizedBox(
+                              child: Image.asset('assets/img/location.png'),
+                              height: 150,
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            const Text(
+                              'Infelizmente não conseguiremos listar mercados e produtos sem sua localização.',
+                              style: TextStyle(
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.w500),
+                              textAlign: TextAlign.center,
+                            ),
+                            TextButton(
+                                onPressed: () {
+                                  _dialogs.requestLocalizationDialog(context);
+                                },
+                                child: const Text(
+                                    'Permitir acesso a minha localização'))
+                          ],
+                        );
+                      }
+                      if (storePosition.positionState is AppStateLoading) {
+                        return Center(
+                          child: Column(
+                            children: const [
+                              Text('Buscando localização'),
+                              CircularProgressIndicator(),
+                            ],
+                          ),
+                        );
+                      }
                       if (initialStore.marketState is AppStateLoading) {
                         return Center(
                           child: Column(
@@ -135,9 +198,24 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                         );
                       } else {
                         if (initialStore.markets.isEmpty) {
-                          return const Center(
-                              child: Text(
-                                  'Não encontramos nenhum mercado na sua região'));
+                          return Center(
+                              child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const SizedBox(height: 20),
+                              SizedBox(
+                                child: Image.asset('assets/img/location.png'),
+                                height: 150,
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              Text(
+                                'Não encontramos nenhum mercado na sua região',
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ));
                         }
                         if (initialStore.productState is AppStateLoading) {
                           return Center(
@@ -194,7 +272,10 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                                     Text(initialStore
                                         .products[index].description),
                                     ...initialStore.prices[index]
-                                        .map((e) => Center(child: Text(e)))
+                                        .map((e) => Center(
+                                            child: e.isEmpty || e == 'R\$ 0,00'
+                                                ? const Text('Em Falta')
+                                                : Text(e)))
                                         .toList()
                                   ];
                                 })

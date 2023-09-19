@@ -53,22 +53,24 @@ class MarketDetail extends StatelessWidget {
                       SizedBox(
                         height: 20,
                       ),
-                      Row(
+                      Wrap(
                         children: [
                           Text(
                             'Visitar o site:',
                             style: TextStyle(
-                                fontSize: 17.sp, fontWeight: FontWeight.w400),
+                                fontSize: 16.sp, fontWeight: FontWeight.w400),
                           ),
                           TextButton(
+                              style: TextButton.styleFrom(
+                                  padding: EdgeInsets.zero),
                               onPressed: () {
                                 Utils.launchUrl(market.siteAddress);
                               },
                               child: Text(
                                 'Clique Aqui!',
                                 style: TextStyle(
-                                    color: Colors.red, fontSize: 17.sp),
-                              ))
+                                    color: Colors.red, fontSize: 16.sp),
+                              )),
                         ],
                       )
                     ],

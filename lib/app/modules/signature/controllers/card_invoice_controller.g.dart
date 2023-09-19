@@ -6,10 +6,11 @@ part of 'card_invoice_controller.dart';
 // StoreGenerator
 // **************************************************************************
 
-// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
+// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$CardInvoiceStore on _CardInvoiceStoreBase, Store {
-  final _$cardStateAtom = Atom(name: '_CardInvoiceStoreBase.cardState');
+  late final _$cardStateAtom =
+      Atom(name: '_CardInvoiceStoreBase.cardState', context: context);
 
   @override
   AppState get cardState {
@@ -24,7 +25,8 @@ mixin _$CardInvoiceStore on _CardInvoiceStoreBase, Store {
     });
   }
 
-  final _$invoiceStateAtom = Atom(name: '_CardInvoiceStoreBase.invoiceState');
+  late final _$invoiceStateAtom =
+      Atom(name: '_CardInvoiceStoreBase.invoiceState', context: context);
 
   @override
   AppState get invoiceState {
@@ -39,8 +41,8 @@ mixin _$CardInvoiceStore on _CardInvoiceStoreBase, Store {
     });
   }
 
-  final _$signatureStateAtom =
-      Atom(name: '_CardInvoiceStoreBase.signatureState');
+  late final _$signatureStateAtom =
+      Atom(name: '_CardInvoiceStoreBase.signatureState', context: context);
 
   @override
   AppState get signatureState {
@@ -55,7 +57,8 @@ mixin _$CardInvoiceStore on _CardInvoiceStoreBase, Store {
     });
   }
 
-  final _$cancelStateAtom = Atom(name: '_CardInvoiceStoreBase.cancelState');
+  late final _$cancelStateAtom =
+      Atom(name: '_CardInvoiceStoreBase.cancelState', context: context);
 
   @override
   AppState get cancelState {
@@ -70,7 +73,8 @@ mixin _$CardInvoiceStore on _CardInvoiceStoreBase, Store {
     });
   }
 
-  final _$cardAtom = Atom(name: '_CardInvoiceStoreBase.card');
+  late final _$cardAtom =
+      Atom(name: '_CardInvoiceStoreBase.card', context: context);
 
   @override
   CardModel? get card {
@@ -85,7 +89,8 @@ mixin _$CardInvoiceStore on _CardInvoiceStoreBase, Store {
     });
   }
 
-  final _$invoiceAtom = Atom(name: '_CardInvoiceStoreBase.invoice');
+  late final _$invoiceAtom =
+      Atom(name: '_CardInvoiceStoreBase.invoice', context: context);
 
   @override
   InvoiceModel? get invoice {
@@ -100,8 +105,8 @@ mixin _$CardInvoiceStore on _CardInvoiceStoreBase, Store {
     });
   }
 
-  final _$signatureResponseModelAtom =
-      Atom(name: '_CardInvoiceStoreBase.signatureResponseModel');
+  late final _$signatureResponseModelAtom = Atom(
+      name: '_CardInvoiceStoreBase.signatureResponseModel', context: context);
 
   @override
   SignatureResponseModel? get signatureResponseModel {

@@ -11,6 +11,7 @@ import 'package:mercado_justo/shared/controllers/list_store.dart';
 import 'package:mercado_justo/shared/controllers/market_name_store.dart';
 
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
+import 'package:mercado_justo/shared/controllers/position_store.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/utils/utils.dart';
 
@@ -422,6 +423,60 @@ class Dialogs {
                 ],
               ),
             ));
+  }
+
+  Future<dynamic> requestLocalizationDialog(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (ctx) {
+          return AlertDialog(
+            content: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Image.asset('assets/img/location_image.jpeg'),
+                const SizedBox(
+                  height: 15,
+                ),
+                const Text(
+                  'O mercado justo precisa da sua localização para listar os mercados mais próximos de você',
+                  style: TextStyle(
+                      color: Colors.grey, fontWeight: FontWeight.w500),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                const Text(
+                  'Dê permissão e descubra onde comprar barato!',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      color: Colors.grey, fontWeight: FontWeight.w500),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text(
+                          'Negar',
+                          style: TextStyle(color: Colors.red),
+                        )),
+                    TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          Modular.get<PositionStore>().getCurrentPosition();
+                        },
+                        child: const Text('Aceitar')),
+                  ],
+                )
+              ],
+            ),
+          );
+        });
   }
 
   void reportProblem(BuildContext context, {required String barCode}) {

@@ -6,9 +6,10 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'app/app_module.dart';
 import 'app/app_widget.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Firebase.initializeApp();
+  await Firebase.initializeApp();
+
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);

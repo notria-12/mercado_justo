@@ -6,10 +6,11 @@ part of 'product_to_list_store.dart';
 // StoreGenerator
 // **************************************************************************
 
-// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
+// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$ProductToListStore on _ProductToListStoreBase, Store {
-  final _$productIdAtom = Atom(name: '_ProductToListStoreBase.productId');
+  late final _$productIdAtom =
+      Atom(name: '_ProductToListStoreBase.productId', context: context);
 
   @override
   int? get productId {
@@ -24,7 +25,8 @@ mixin _$ProductToListStore on _ProductToListStoreBase, Store {
     });
   }
 
-  final _$valueAtom = Atom(name: '_ProductToListStoreBase.value');
+  late final _$valueAtom =
+      Atom(name: '_ProductToListStoreBase.value', context: context);
 
   @override
   int get value {
@@ -39,8 +41,8 @@ mixin _$ProductToListStore on _ProductToListStoreBase, Store {
     });
   }
 
-  final _$_ProductToListStoreBaseActionController =
-      ActionController(name: '_ProductToListStoreBase');
+  late final _$_ProductToListStoreBaseActionController =
+      ActionController(name: '_ProductToListStoreBase', context: context);
 
   @override
   void increment() {

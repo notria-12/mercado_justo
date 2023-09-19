@@ -20,6 +20,19 @@ class _FilterListPageState extends State<FilterListPage> {
   final filterStore = Modular.get<FilterStore>();
 
   @override
+  void initState() {
+    super.initState();
+    filterStore.setMarkets(marketStore.markets);
+  }
+
+  @override
+  void dispose() {
+    filterStore.marketId = '';
+    marketStore.setFilteredMarkets(filterStore.filteredMarkets);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -110,7 +123,7 @@ class _FilterListPageState extends State<FilterListPage> {
           ),
           Expanded(child: Container(
             child: Observer(builder: (_) {
-              return marketStore.filteredMarkets.isEmpty
+              return filterStore.filteredMarkets.isEmpty
                   ? Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -133,12 +146,11 @@ class _FilterListPageState extends State<FilterListPage> {
                             Observer(builder: (_) {
                               return SwitchListTile(
                                 contentPadding: EdgeInsets.zero,
-                                value: Modular.get<MarketStore>()
-                                    .filteredMarkets[index]
-                                    .isSelectable,
+                                value: filterStore
+                                    .filteredMarkets[index].isSelectable,
                                 onChanged: (onChanged) {
-                                  marketStore.marketId =
-                                      marketStore.filteredMarkets[index].hashId;
+                                  filterStore.marketId =
+                                      filterStore.filteredMarkets[index].hashId;
                                 },
                                 controlAffinity:
                                     ListTileControlAffinity.leading,
@@ -147,7 +159,7 @@ class _FilterListPageState extends State<FilterListPage> {
                                     Container(
                                       height: 45,
                                       child: CachedNetworkImage(
-                                        imageUrl: marketStore
+                                        imageUrl: filterStore
                                             .filteredMarkets[index].imagePath!,
                                         memCacheHeight: 80,
                                         memCacheWidth: 141,
@@ -159,7 +171,7 @@ class _FilterListPageState extends State<FilterListPage> {
                                       ),
                                     ),
                                     Text(
-                                      ' ${(Geolocator.distanceBetween(positionStore.position!.latitude, positionStore.position!.longitude, marketStore.filteredMarkets[index].latitude, marketStore.filteredMarkets[index].longitude) / 1000).toStringAsFixed(2).replaceAll(r'.', ',')} Km de distância',
+                                      ' ${(Geolocator.distanceBetween(positionStore.position!.latitude, positionStore.position!.longitude, filterStore.filteredMarkets[index].latitude, filterStore.filteredMarkets[index].longitude) / 1000).toStringAsFixed(2).replaceAll(r'.', ',')} Km de distância',
                                       style: const TextStyle(
                                           fontWeight: FontWeight.w600,
                                           fontSize: 13,
@@ -173,7 +185,7 @@ class _FilterListPageState extends State<FilterListPage> {
                           ],
                         );
                       },
-                      itemCount: marketStore.filteredMarkets.length,
+                      itemCount: filterStore.filteredMarkets.length,
                     );
             }),
           ))

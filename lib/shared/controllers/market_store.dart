@@ -28,9 +28,6 @@ abstract class _MarketStoreBase with Store {
   @observable
   int page = 1;
 
-  @observable
-  String? marketId;
-
   Future getGroupMarkets() async {
     try {
       groupMarkets = await repository.getGroupMarkets();
@@ -44,6 +41,16 @@ abstract class _MarketStoreBase with Store {
   void setMarkets() {
     markets = groupMarkets.map((e) => getShorterDistance(e)).toList();
     markets.sort((a, b) => a.id - b.id);
+    filteredMarkets = markets
+        .where((market) =>
+            (Geolocator.distanceBetween(
+                    positionStore.position!.latitude,
+                    positionStore.position!.longitude,
+                    market.latitude,
+                    market.longitude) /
+                1000) <
+            filterStore.rating)
+        .toList();
   }
 
   Market getShorterDistance(List<Market> markets) {
@@ -68,31 +75,12 @@ abstract class _MarketStoreBase with Store {
     return closerMarket;
   }
 
-  @computed
-  List<Market> get filteredMarkets {
-    List<Market> newMarkets = markets
-        .where((market) =>
-            (Geolocator.distanceBetween(
-                    positionStore.position!.latitude,
-                    positionStore.position!.longitude,
-                    market.latitude,
-                    market.longitude) /
-                1000) <
-            filterStore.rating)
-        .toList();
-    if (marketId != null && marketId != '') {
-      newMarkets = newMarkets.map((e) {
-        if (e.hashId == marketId) {
-          return e.copyWith(isSelectable: !e.isSelectable);
-        }
-        return e;
-      }).toList();
-      int index = markets.indexWhere((element) => element.hashId == marketId);
-      markets[index] = markets
-          .elementAt(index)
-          .copyWith(isSelectable: !markets.elementAt(index).isSelectable);
-    }
-    return newMarkets;
+  @observable
+  List<Market> filteredMarkets = [];
+
+  @action
+  setFilteredMarkets(List<Market> newMarkets) {
+    filteredMarkets = newMarkets;
   }
 
   Future<Market> findOne(String id) async {

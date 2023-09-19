@@ -6,7 +6,7 @@ part of 'profile_controller.dart';
 // StoreGenerator
 // **************************************************************************
 
-// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
+// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$ProfileStore on _ProfileStoreBase, Store {
   Computed<bool>? _$canUpdateComputed;
@@ -17,7 +17,8 @@ mixin _$ProfileStore on _ProfileStoreBase, Store {
               name: '_ProfileStoreBase.canUpdate'))
           .value;
 
-  final _$inputNameAtom = Atom(name: '_ProfileStoreBase.inputName');
+  late final _$inputNameAtom =
+      Atom(name: '_ProfileStoreBase.inputName', context: context);
 
   @override
   String? get inputName {
@@ -32,7 +33,8 @@ mixin _$ProfileStore on _ProfileStoreBase, Store {
     });
   }
 
-  final _$inputPhoneAtom = Atom(name: '_ProfileStoreBase.inputPhone');
+  late final _$inputPhoneAtom =
+      Atom(name: '_ProfileStoreBase.inputPhone', context: context);
 
   @override
   String? get inputPhone {
@@ -47,7 +49,8 @@ mixin _$ProfileStore on _ProfileStoreBase, Store {
     });
   }
 
-  final _$inputEmailAtom = Atom(name: '_ProfileStoreBase.inputEmail');
+  late final _$inputEmailAtom =
+      Atom(name: '_ProfileStoreBase.inputEmail', context: context);
 
   @override
   String? get inputEmail {
@@ -62,7 +65,8 @@ mixin _$ProfileStore on _ProfileStoreBase, Store {
     });
   }
 
-  final _$inputCEPAtom = Atom(name: '_ProfileStoreBase.inputCEP');
+  late final _$inputCEPAtom =
+      Atom(name: '_ProfileStoreBase.inputCEP', context: context);
 
   @override
   String? get inputCEP {
@@ -77,7 +81,8 @@ mixin _$ProfileStore on _ProfileStoreBase, Store {
     });
   }
 
-  final _$userAtom = Atom(name: '_ProfileStoreBase.user');
+  late final _$userAtom =
+      Atom(name: '_ProfileStoreBase.user', context: context);
 
   @override
   UserModel? get user {
@@ -92,7 +97,8 @@ mixin _$ProfileStore on _ProfileStoreBase, Store {
     });
   }
 
-  final _$selectedStateAtom = Atom(name: '_ProfileStoreBase.selectedState');
+  late final _$selectedStateAtom =
+      Atom(name: '_ProfileStoreBase.selectedState', context: context);
 
   @override
   String? get selectedState {
@@ -107,7 +113,8 @@ mixin _$ProfileStore on _ProfileStoreBase, Store {
     });
   }
 
-  final _$stateStatusAtom = Atom(name: '_ProfileStoreBase.stateStatus');
+  late final _$stateStatusAtom =
+      Atom(name: '_ProfileStoreBase.stateStatus', context: context);
 
   @override
   AppState get stateStatus {
@@ -122,7 +129,8 @@ mixin _$ProfileStore on _ProfileStoreBase, Store {
     });
   }
 
-  final _$userStatusAtom = Atom(name: '_ProfileStoreBase.userStatus');
+  late final _$userStatusAtom =
+      Atom(name: '_ProfileStoreBase.userStatus', context: context);
 
   @override
   AppState get userStatus {
@@ -137,8 +145,8 @@ mixin _$ProfileStore on _ProfileStoreBase, Store {
     });
   }
 
-  final _$userUpdateStatusAtom =
-      Atom(name: '_ProfileStoreBase.userUpdateStatus');
+  late final _$userUpdateStatusAtom =
+      Atom(name: '_ProfileStoreBase.userUpdateStatus', context: context);
 
   @override
   AppState get userUpdateStatus {
@@ -153,7 +161,8 @@ mixin _$ProfileStore on _ProfileStoreBase, Store {
     });
   }
 
-  final _$selectedCityAtom = Atom(name: '_ProfileStoreBase.selectedCity');
+  late final _$selectedCityAtom =
+      Atom(name: '_ProfileStoreBase.selectedCity', context: context);
 
   @override
   String? get selectedCity {
@@ -168,7 +177,8 @@ mixin _$ProfileStore on _ProfileStoreBase, Store {
     });
   }
 
-  final _$cityStatusAtom = Atom(name: '_ProfileStoreBase.cityStatus');
+  late final _$cityStatusAtom =
+      Atom(name: '_ProfileStoreBase.cityStatus', context: context);
 
   @override
   AppState get cityStatus {
@@ -183,7 +193,8 @@ mixin _$ProfileStore on _ProfileStoreBase, Store {
     });
   }
 
-  final _$selectedGenreAtom = Atom(name: '_ProfileStoreBase.selectedGenre');
+  late final _$selectedGenreAtom =
+      Atom(name: '_ProfileStoreBase.selectedGenre', context: context);
 
   @override
   String? get selectedGenre {
@@ -198,8 +209,8 @@ mixin _$ProfileStore on _ProfileStoreBase, Store {
     });
   }
 
-  final _$_ProfileStoreBaseActionController =
-      ActionController(name: '_ProfileStoreBase');
+  late final _$_ProfileStoreBaseActionController =
+      ActionController(name: '_ProfileStoreBase', context: context);
 
   @override
   void setName(String value) {

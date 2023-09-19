@@ -6,10 +6,11 @@ part of 'problem_controller.dart';
 // StoreGenerator
 // **************************************************************************
 
-// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
+// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$ProblemStore on _ProblemStoreBase, Store {
-  final _$problemStatusAtom = Atom(name: '_ProblemStoreBase.problemStatus');
+  late final _$problemStatusAtom =
+      Atom(name: '_ProblemStoreBase.problemStatus', context: context);
 
   @override
   AppState get problemStatus {
@@ -24,7 +25,8 @@ mixin _$ProblemStore on _ProblemStoreBase, Store {
     });
   }
 
-  final _$problemTypeAtom = Atom(name: '_ProblemStoreBase.problemType');
+  late final _$problemTypeAtom =
+      Atom(name: '_ProblemStoreBase.problemType', context: context);
 
   @override
   String get problemType {

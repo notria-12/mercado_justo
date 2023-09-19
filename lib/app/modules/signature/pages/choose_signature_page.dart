@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mercado_justo/shared/controllers/signature_store.dart';
-import 'package:mercado_pago_mobile_checkout/mercado_pago_mobile_checkout.dart';
 
 class ChooseSignaturePage extends StatefulWidget {
   const ChooseSignaturePage({Key? key}) : super(key: key);
@@ -19,7 +18,7 @@ class _ChooseSignaturePageState extends State<ChooseSignaturePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Assinar Mercado Justo',
         ),
         centerTitle: true,

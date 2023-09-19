@@ -7,7 +7,9 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:mercado_justo/app/modules/compare/compare_store.dart';
 import 'package:mercado_justo/app/modules/home_auth/home_auth_store.dart';
 import 'package:mercado_justo/app/modules/home_auth/widgets/custom_dialog_selection_markets.dart';
+import 'package:mercado_justo/app/modules/lists/filter_store.dart';
 import 'package:mercado_justo/shared/controllers/ad_store.dart';
+import 'package:mercado_justo/shared/controllers/connectivity_store.dart';
 import 'package:mercado_justo/shared/controllers/fair_price_store.dart';
 import 'package:mercado_justo/shared/controllers/list_store.dart';
 import 'package:mercado_justo/shared/controllers/market_name_store.dart';
@@ -20,8 +22,12 @@ import 'package:mercado_justo/shared/widgets/button_share.dart';
 import 'package:mercado_justo/shared/widgets/custom_table_widget.dart';
 import 'package:mercado_justo/shared/widgets/dialogs.dart';
 import 'package:mercado_justo/shared/widgets/fixed_corner_table_widget.dart';
+import 'package:mercado_justo/shared/widgets/no_connectivity_widget.dart';
 import 'package:mobx/mobx.dart';
 import 'package:share_plus/share_plus.dart';
+
+import '../../../../shared/auth/auth_controller.dart';
+import '../../../../shared/utils/dynamic_links.dart';
 
 class ProductListDetailsPage extends StatefulWidget {
   ListModel listModel;
@@ -41,15 +47,24 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
   final _signatureStore = Modular.get<SignatureStore>();
   BannerAd? _topBanner;
   BannerAd? _bottomBanner;
+  late Future _getFairPriceFromList;
+
   @override
   void initState() {
+    super.initState();
+    _getFairPriceFromList =
+        storeFairPrice.getFairPricesFromList(listId: widget.listModel.id!);
     storeProductList.getProducts(widget.listModel.id!);
+
     _disposer = autorun((_) {
       filteredMarkets = storeMarket.filteredMarkets
           .where((element) => element.isSelectable == true)
           .toList();
+
+      storeProductList.prices = [];
+      storeProductList.marketSelected = 0;
+      storeProductList.getProducts(widget.listModel.id!);
     });
-    super.initState();
   }
 
   @override
@@ -116,6 +131,9 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
           Expanded(
             child: Observer(
               builder: (_) {
+                if (!Modular.get<ConnectivityStore>().hasConnection!) {
+                  return NoConnectionWidget();
+                }
                 if (storeProductList.productState is AppStateSuccess &&
                     storeProductList.prices.isNotEmpty) {
                   if (filteredMarkets.isEmpty) {
@@ -143,13 +161,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                                 style: TextStyle(color: Colors.lightBlue),
                               ),
                               onTap: () {
-                                Modular.to
-                                    .pushNamed('/home_auth/list/filters')
-                                    .then((value) {
-                                  storeProductList.prices = [];
-                                  storeProductList
-                                      .getProducts(widget.listModel.id!);
-                                });
+                                Modular.to.pushNamed('/home_auth/list/filters');
                               },
                             )
                           ],
@@ -165,8 +177,8 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                 }
                 if (storeProductList.productState is AppStateSuccess &&
                     storeProductList.products.isEmpty) {
-                  return Center(
-                    child: const Text(
+                  return const Center(
+                    child: Text(
                       'Lista vazia! Adicione itens a lista para fazer o comparativo de preços',
                       style: TextStyle(
                           color: Colors.black38,
@@ -221,10 +233,8 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
               style:
                   TextStyle(color: Colors.black54, fontWeight: FontWeight.w500),
             ),
-            // Observer(builder: (_) {
             if (storeProductList.isFairPrice &&
                 storeProductList.marketSelected == -1)
-              // return
               FutureBuilder(
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
@@ -265,10 +275,8 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                   }
                   return Container();
                 },
-                future: storeFairPrice.getFairPricesFromList(
-                    listId: widget.listModel.id!),
+                future: _getFairPriceFromList,
               ),
-            // }
             Visibility(
               visible: storeProductList.missingProducts['missingItens'] != 0,
               child: Column(
@@ -301,83 +309,88 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                 ],
               ),
             )
-            // })
           ],
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Observer(builder: (_) {
-                  return (storeProductList.isFairPrice &&
-                          storeProductList.marketSelected == -1)
-                      ? Text(
-                          'R\$ ${storeProductList.getTotalPriceForMyFairPrice(storeFairPrice.fairPricesFromList).toStringAsFixed(2).replaceAll(r'.', ',')}',
-                          style: const TextStyle(
-                              fontSize: 38, fontWeight: FontWeight.bold),
-                        )
-                      : (_signatureStore.signature != null &&
-                              _signatureStore.signature!.status)
-                          ? Text(
-                              'R\$ ${storeProductList.totalPrice.toStringAsFixed(2).replaceAll(r'.', ',')}',
-                              style: const TextStyle(
-                                  fontSize: 38, fontWeight: FontWeight.bold),
-                            )
-                          : InkWell(
-                              onTap: () => Modular.to.pushNamed('/signature/'),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: const [
-                                  Icon(
-                                    Icons.lock,
-                                    color: Colors.green,
-                                  ),
-                                  Text(
-                                    'Assine para desbloquear',
-                                    style: TextStyle(color: Colors.lightBlue),
-                                  )
-                                ],
-                              ),
-                            );
-                }),
-                const SizedBox(height: 5),
-                InkWell(
-                  onTap: () {
-                    Modular.get<CompareStore>()
-                        .addToComparePage(widget.listModel.id!);
-                    Modular.get<HomeAuthStore>().currentIndex = 2;
-                    Modular.to.pop();
-                  },
-                  child: Row(
-                    children: [
-                      Container(
-                        height: 20,
-                        width: 20,
-                        decoration: const BoxDecoration(
-                            shape: BoxShape.circle, color: Colors.lightBlue),
-                        child: const Center(
-                            child: Icon(
-                          Icons.add,
-                          color: Colors.white,
-                          size: 18,
-                        )),
-                      ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      const Text(
-                        'add a comparação',
-                        style: TextStyle(
-                            color: Colors.black54, fontWeight: FontWeight.w500),
-                      ),
-                    ],
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Observer(builder: (_) {
+                    return (storeProductList.isFairPrice &&
+                            storeProductList.marketSelected == -1)
+                        ? Text(
+                            'R\$ ${storeProductList.getTotalPriceForMyFairPrice(storeFairPrice.fairPricesFromList).toStringAsFixed(2).replaceAll(r'.', ',')}',
+                            style: const TextStyle(
+                                fontSize: 38, fontWeight: FontWeight.bold),
+                          )
+                        : (_signatureStore.signature != null &&
+                                _signatureStore.signature!.status)
+                            ? Text(
+                                'R\$ ${storeProductList.totalPrice.toStringAsFixed(2).replaceAll(r'.', ',')}',
+                                style: const TextStyle(
+                                    fontSize: 38, fontWeight: FontWeight.bold),
+                              )
+                            : InkWell(
+                                onTap: () =>
+                                    Modular.to.pushNamed('/signature/'),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    Icon(
+                                      Icons.lock,
+                                      color: Colors.green,
+                                    ),
+                                    Text(
+                                      'Assinar p/ desbloquear',
+                                      style: TextStyle(
+                                          color: Colors.lightBlue,
+                                          fontSize: 14),
+                                    )
+                                  ],
+                                ),
+                              );
+                  }),
+                  const SizedBox(height: 5),
+                  InkWell(
+                    onTap: () {
+                      Modular.get<CompareStore>()
+                          .addToComparePage(widget.listModel.id!);
+                      Modular.get<HomeAuthStore>().currentIndex = 2;
+                      Modular.to.pop();
+                    },
+                    child: Row(
+                      children: [
+                        Container(
+                          height: 20,
+                          width: 20,
+                          decoration: const BoxDecoration(
+                              shape: BoxShape.circle, color: Colors.lightBlue),
+                          child: const Center(
+                              child: Icon(
+                            Icons.add,
+                            color: Colors.white,
+                            size: 18,
+                          )),
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        const Text(
+                          'add a PoupaMais',
+                          style: TextStyle(
+                              color: Colors.black54,
+                              fontWeight: FontWeight.w500),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             Row(
               children: [
@@ -499,12 +512,8 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
             ButtonOptionsListDetail(
               label: 'Filtro',
               onTap: () {
-                Modular.get<MarketStore>().marketId = '';
-                Modular.to.pushNamed('/home_auth/list/filters').then((value) {
-                  storeProductList.prices = [];
-                  storeProductList.getProducts(widget.listModel.id!);
-                  // Modular.get<>();
-                });
+                Modular.get<FilterStore>().marketId = '';
+                Modular.to.pushNamed('/home_auth/list/filters');
               },
             ),
             ButtonOptionsListDetail(
@@ -532,8 +541,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
           height: 20,
         ),
         Expanded(
-            child: Container(
-                child: CustomDataTable(
+            child: CustomDataTable(
           loadMore: false,
           fixedCornerCell: ButtonShare(
             onPressed: (_signatureStore.signature != null &&
@@ -609,7 +617,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                     switch (snapshot.connectionState) {
                       case ConnectionState.none:
                       case ConnectionState.waiting:
-                        return Center(
+                        return const Center(
                           child: CircularProgressIndicator(),
                         );
                       case ConnectionState.done:
@@ -627,7 +635,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                                 softWrap: true,
                                 maxLines: 3,
                                 overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,
                                 ),
@@ -686,7 +694,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                             switch (snapshot.connectionState) {
                               case ConnectionState.none:
                               case ConnectionState.waiting:
-                                return Center(
+                                return const Center(
                                   child: CircularProgressIndicator(),
                                 );
 
@@ -790,7 +798,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
               ),
             );
           },
-        )))
+        ))
       ],
     );
   }
@@ -834,8 +842,10 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
         }
         pricesString += marketsInfo;
 
-        Share.share(pricesString +
-            '\n\nAcesse o nosso app e tenha uma visualização completa dos melhores preços.');
+        DynamicLinkProvider()
+            .createLink(Modular.get<AuthController>().user!.id)
+            .then((value) => Share.share(pricesString +
+                '\n\nAcesse o nosso app e tenha uma visualização completa dos melhores preços.\n\n$value'));
       }
     });
   }

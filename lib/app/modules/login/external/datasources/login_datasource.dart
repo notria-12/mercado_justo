@@ -108,9 +108,14 @@ class LoginDatasourceImpl implements ILoginDatasource {
   }
 
   @override
-  Future<void> signUpUsecase({required UserModel user}) async {
+  Future<void> signUpUsecase(
+      {required UserModel user, String? inviteId}) async {
     try {
-      await _dio.post('usuarios/app/', data: user.toJson());
+      Map<String, dynamic> userMap = user.toMap();
+      if (inviteId != null) {
+        userMap.addAll({"invitedBy": inviteId});
+      }
+      await _dio.post('usuarios/app/', data: userMap);
     } on DioError catch (e) {
       throw Failure(title: 'Erro login', message: e.response!.data['mensagem']);
     } catch (e) {

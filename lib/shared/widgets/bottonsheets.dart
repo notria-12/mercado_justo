@@ -24,17 +24,21 @@ class CustomBottonSheets {
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     width: 20,
                   ),
-                  Text(
-                    'Selecione ou Adicione uma lista',
-                    textAlign: TextAlign.center,
-                    style:
-                        TextStyle(fontSize: 19.sp, fontWeight: FontWeight.w600),
+                  Expanded(
+                    child: Text(
+                      'Selecione ou Adicione uma lista',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 19.sp, fontWeight: FontWeight.w600),
+                    ),
                   ),
                   IconButton(
+                      padding: EdgeInsets.zero,
                       onPressed: () {
                         Modular.to.pop();
                       },

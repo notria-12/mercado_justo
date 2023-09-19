@@ -101,7 +101,7 @@ class Market {
 
   @override
   String toString() {
-    return 'Market(id: $id, hashId: $hashId, order: $order, isVisible: $isVisible, latitude: $latitude, longitude: $longitude, cnpj: $cnpj, phoneNumber: $phoneNumber, name: $name, imagePath: $imagePath, siteAddress: $siteAddress, address: $address)';
+    return 'Market(id: $id, hashId: $hashId, order: $order, isVisible: $isVisible, latitude: $latitude, longitude: $longitude, cnpj: $cnpj, phoneNumber: $phoneNumber, name: $name, imagePath: $imagePath, siteAddress: $siteAddress, address: $address, isSelectable: $isSelectable)';
   }
 
   @override

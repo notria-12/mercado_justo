@@ -6,10 +6,11 @@ part of 'signature_store.dart';
 // StoreGenerator
 // **************************************************************************
 
-// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
+// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$SignatureStore on _SignatureStoreBase, Store {
-  final _$signatureAtom = Atom(name: '_SignatureStoreBase.signature');
+  late final _$signatureAtom =
+      Atom(name: '_SignatureStoreBase.signature', context: context);
 
   @override
   SignatureModel? get signature {
@@ -24,7 +25,8 @@ mixin _$SignatureStore on _SignatureStoreBase, Store {
     });
   }
 
-  final _$paymentByPixAtom = Atom(name: '_SignatureStoreBase.paymentByPix');
+  late final _$paymentByPixAtom =
+      Atom(name: '_SignatureStoreBase.paymentByPix', context: context);
 
   @override
   bool get paymentByPix {
@@ -39,8 +41,8 @@ mixin _$SignatureStore on _SignatureStoreBase, Store {
     });
   }
 
-  final _$paymentByCreditCardAtom =
-      Atom(name: '_SignatureStoreBase.paymentByCreditCard');
+  late final _$paymentByCreditCardAtom =
+      Atom(name: '_SignatureStoreBase.paymentByCreditCard', context: context);
 
   @override
   bool get paymentByCreditCard {
@@ -55,8 +57,8 @@ mixin _$SignatureStore on _SignatureStoreBase, Store {
     });
   }
 
-  final _$_SignatureStoreBaseActionController =
-      ActionController(name: '_SignatureStoreBase');
+  late final _$_SignatureStoreBaseActionController =
+      ActionController(name: '_SignatureStoreBase', context: context);
 
   @override
   dynamic setPaymentByCreditCard(bool value) {

@@ -1,105 +1,187 @@
 class InvoiceModel {
-  String? preapprovalId;
-  int? id;
-  String? type;
-  String? status;
-  DateTime? dateCreated;
-  String? lastModified;
-  int? transactionAmount;
-  String? currencyId;
-  String? reason;
-  String? externalReference;
-  Payment? payment;
-  String? rejectionCode;
-  int? retryAttempt;
-  DateTime? nextRetryDate;
-  DateTime? expireDate;
-  DateTime? debitDate;
-  String? paymentMethodId;
+  Customer? customer;
+  RecurrentPayment? recurrentPayment;
 
-  InvoiceModel(
-      {this.preapprovalId,
-      this.id,
-      this.type,
-      this.status,
-      this.dateCreated,
-      this.lastModified,
-      this.transactionAmount,
-      this.currencyId,
-      this.reason,
-      this.externalReference,
-      this.payment,
-      this.rejectionCode,
-      this.retryAttempt,
-      this.nextRetryDate,
-      this.expireDate,
-      this.debitDate,
-      this.paymentMethodId});
+  InvoiceModel({this.customer, this.recurrentPayment});
 
   InvoiceModel.fromJson(Map<String, dynamic> json) {
-    preapprovalId = json['preapproval_id'];
-    id = json['id'];
-    type = json['type'];
-    status = json['status'];
-    dateCreated = DateTime.parse(json['date_created']);
-    lastModified = json['last_modified'];
-    transactionAmount = json['transaction_amount'];
-    currencyId = json['currency_id'];
-    reason = json['reason'];
-    externalReference = json['external_reference'];
-    payment =
-        json['payment'] != null ? new Payment.fromJson(json['payment']) : null;
-    rejectionCode = json['rejection_code'];
-    retryAttempt = json['retry_attempt'];
-    nextRetryDate = DateTime.parse(json['next_retry_date']);
-    expireDate = DateTime.parse(json['expire_date']);
-    debitDate = DateTime.parse(json['debit_date']);
-    paymentMethodId = json['payment_method_id'];
+    customer = json['Customer'] != null
+        ? new Customer.fromJson(json['Customer'])
+        : null;
+    recurrentPayment = json['RecurrentPayment'] != null
+        ? new RecurrentPayment.fromJson(json['RecurrentPayment'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['preapproval_id'] = this.preapprovalId;
-    data['id'] = this.id;
-    data['type'] = this.type;
-    data['status'] = this.status;
-    data['date_created'] = this.dateCreated;
-    data['last_modified'] = this.lastModified;
-    data['transaction_amount'] = this.transactionAmount;
-    data['currency_id'] = this.currencyId;
-    data['reason'] = this.reason;
-    data['external_reference'] = this.externalReference;
-    if (this.payment != null) {
-      data['payment'] = this.payment!.toJson();
+    if (this.customer != null) {
+      data['Customer'] = this.customer!.toJson();
     }
-    data['rejection_code'] = this.rejectionCode;
-    data['retry_attempt'] = this.retryAttempt;
-    data['next_retry_date'] = this.nextRetryDate;
-    data['expire_date'] = this.expireDate;
-    data['debit_date'] = this.debitDate;
-    data['payment_method_id'] = this.paymentMethodId;
+    if (this.recurrentPayment != null) {
+      data['RecurrentPayment'] = this.recurrentPayment!.toJson();
+    }
     return data;
   }
 }
 
-class Payment {
-  int? id;
-  String? status;
-  String? statusDetail;
+class Customer {
+  String? name;
+  String? identity;
+  String? identityType;
+  String? email;
 
-  Payment({this.id, this.status, this.statusDetail});
+  Customer({this.name, this.identity, this.identityType, this.email});
 
-  Payment.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    status = json['status'];
-    statusDetail = json['status_detail'];
+  Customer.fromJson(Map<String, dynamic> json) {
+    name = json['Name'];
+    identity = json['Identity'];
+    identityType = json['IdentityType'];
+    email = json['Email'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['status'] = this.status;
-    data['status_detail'] = this.statusDetail;
+    data['Name'] = this.name;
+    data['Identity'] = this.identity;
+    data['IdentityType'] = this.identityType;
+    data['Email'] = this.email;
+    return data;
+  }
+}
+
+class RecurrentPayment {
+  String? recurrentPaymentId;
+  String? nextRecurrency;
+  String? startDate;
+  String? interval;
+  int? amount;
+  String? country;
+  String? createDate;
+  String? currency;
+  int? currentRecurrencyTry;
+  String? orderNumber;
+  String? provider;
+  int? recurrencyDay;
+  int? successfulRecurrences;
+  List<Links>? links;
+  List<RecurrentTransactions>? recurrentTransactions;
+  int? status;
+
+  RecurrentPayment(
+      {this.recurrentPaymentId,
+      this.nextRecurrency,
+      this.startDate,
+      this.interval,
+      this.amount,
+      this.country,
+      this.createDate,
+      this.currency,
+      this.currentRecurrencyTry,
+      this.orderNumber,
+      this.provider,
+      this.recurrencyDay,
+      this.successfulRecurrences,
+      this.links,
+      this.recurrentTransactions,
+      this.status});
+
+  RecurrentPayment.fromJson(Map<String, dynamic> json) {
+    recurrentPaymentId = json['RecurrentPaymentId'];
+    nextRecurrency = json['NextRecurrency'];
+    startDate = json['StartDate'];
+    interval = json['Interval'];
+    amount = json['Amount'];
+    country = json['Country'];
+    createDate = json['CreateDate'];
+    currency = json['Currency'];
+    currentRecurrencyTry = json['CurrentRecurrencyTry'];
+    orderNumber = json['OrderNumber'];
+    provider = json['Provider'];
+    recurrencyDay = json['RecurrencyDay'];
+    successfulRecurrences = json['SuccessfulRecurrences'];
+    if (json['Links'] != null) {
+      links = <Links>[];
+      json['Links'].forEach((v) {
+        links!.add(new Links.fromJson(v));
+      });
+    }
+    if (json['RecurrentTransactions'] != null) {
+      recurrentTransactions = <RecurrentTransactions>[];
+      json['RecurrentTransactions'].forEach((v) {
+        recurrentTransactions!.add(new RecurrentTransactions.fromJson(v));
+      });
+    }
+    status = json['Status'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['RecurrentPaymentId'] = this.recurrentPaymentId;
+    data['NextRecurrency'] = this.nextRecurrency;
+    data['StartDate'] = this.startDate;
+    data['Interval'] = this.interval;
+    data['Amount'] = this.amount;
+    data['Country'] = this.country;
+    data['CreateDate'] = this.createDate;
+    data['Currency'] = this.currency;
+    data['CurrentRecurrencyTry'] = this.currentRecurrencyTry;
+    data['OrderNumber'] = this.orderNumber;
+    data['Provider'] = this.provider;
+    data['RecurrencyDay'] = this.recurrencyDay;
+    data['SuccessfulRecurrences'] = this.successfulRecurrences;
+    if (this.links != null) {
+      data['Links'] = this.links!.map((v) => v.toJson()).toList();
+    }
+    if (this.recurrentTransactions != null) {
+      data['RecurrentTransactions'] =
+          this.recurrentTransactions!.map((v) => v.toJson()).toList();
+    }
+    data['Status'] = this.status;
+    return data;
+  }
+}
+
+class Links {
+  String? method;
+  String? rel;
+  String? href;
+
+  Links({this.method, this.rel, this.href});
+
+  Links.fromJson(Map<String, dynamic> json) {
+    method = json['Method'];
+    rel = json['Rel'];
+    href = json['Href'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['Method'] = this.method;
+    data['Rel'] = this.rel;
+    data['Href'] = this.href;
+    return data;
+  }
+}
+
+class RecurrentTransactions {
+  String? paymentId;
+  int? paymentNumber;
+  int? tryNumber;
+
+  RecurrentTransactions({this.paymentId, this.paymentNumber, this.tryNumber});
+
+  RecurrentTransactions.fromJson(Map<String, dynamic> json) {
+    paymentId = json['PaymentId'];
+    paymentNumber = json['PaymentNumber'];
+    tryNumber = json['TryNumber'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['PaymentId'] = this.paymentId;
+    data['PaymentNumber'] = this.paymentNumber;
+    data['TryNumber'] = this.tryNumber;
     return data;
   }
 }

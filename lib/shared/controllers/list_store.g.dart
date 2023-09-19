@@ -6,7 +6,7 @@ part of 'list_store.dart';
 // StoreGenerator
 // **************************************************************************
 
-// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
+// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$ListStore on _ListStoreBase, Store {
   Computed<double>? _$totalPriceComputed;
@@ -31,7 +31,8 @@ mixin _$ListStore on _ListStoreBase, Store {
               name: '_ListStoreBase.groupProducts'))
       .value;
 
-  final _$product_listAtom = Atom(name: '_ListStoreBase.product_list');
+  late final _$product_listAtom =
+      Atom(name: '_ListStoreBase.product_list', context: context);
 
   @override
   List<ListModel> get product_list {
@@ -46,7 +47,8 @@ mixin _$ListStore on _ListStoreBase, Store {
     });
   }
 
-  final _$isFairPriceAtom = Atom(name: '_ListStoreBase.isFairPrice');
+  late final _$isFairPriceAtom =
+      Atom(name: '_ListStoreBase.isFairPrice', context: context);
 
   @override
   bool get isFairPrice {
@@ -61,7 +63,8 @@ mixin _$ListStore on _ListStoreBase, Store {
     });
   }
 
-  final _$productsAtom = Atom(name: '_ListStoreBase.products');
+  late final _$productsAtom =
+      Atom(name: '_ListStoreBase.products', context: context);
 
   @override
   List<Product> get products {
@@ -76,7 +79,8 @@ mixin _$ListStore on _ListStoreBase, Store {
     });
   }
 
-  final _$pricesAtom = Atom(name: '_ListStoreBase.prices');
+  late final _$pricesAtom =
+      Atom(name: '_ListStoreBase.prices', context: context);
 
   @override
   List<List<String>> get prices {
@@ -91,7 +95,8 @@ mixin _$ListStore on _ListStoreBase, Store {
     });
   }
 
-  final _$quantitiesAtom = Atom(name: '_ListStoreBase.quantities');
+  late final _$quantitiesAtom =
+      Atom(name: '_ListStoreBase.quantities', context: context);
 
   @override
   List<int> get quantities {
@@ -106,7 +111,8 @@ mixin _$ListStore on _ListStoreBase, Store {
     });
   }
 
-  final _$marketSelectedAtom = Atom(name: '_ListStoreBase.marketSelected');
+  late final _$marketSelectedAtom =
+      Atom(name: '_ListStoreBase.marketSelected', context: context);
 
   @override
   int get marketSelected {
@@ -121,7 +127,8 @@ mixin _$ListStore on _ListStoreBase, Store {
     });
   }
 
-  final _$listStateAtom = Atom(name: '_ListStoreBase.listState');
+  late final _$listStateAtom =
+      Atom(name: '_ListStoreBase.listState', context: context);
 
   @override
   AppState get listState {
@@ -136,7 +143,8 @@ mixin _$ListStore on _ListStoreBase, Store {
     });
   }
 
-  final _$productStateAtom = Atom(name: '_ListStoreBase.productState');
+  late final _$productStateAtom =
+      Atom(name: '_ListStoreBase.productState', context: context);
 
   @override
   AppState get productState {
@@ -151,7 +159,8 @@ mixin _$ListStore on _ListStoreBase, Store {
     });
   }
 
-  final _$priceStateAtom = Atom(name: '_ListStoreBase.priceState');
+  late final _$priceStateAtom =
+      Atom(name: '_ListStoreBase.priceState', context: context);
 
   @override
   AppState get priceState {
@@ -166,8 +175,8 @@ mixin _$ListStore on _ListStoreBase, Store {
     });
   }
 
-  final _$updateQuantityStatusAtom =
-      Atom(name: '_ListStoreBase.updateQuantityStatus');
+  late final _$updateQuantityStatusAtom =
+      Atom(name: '_ListStoreBase.updateQuantityStatus', context: context);
 
   @override
   AppState get updateQuantityStatus {
@@ -183,8 +192,8 @@ mixin _$ListStore on _ListStoreBase, Store {
     });
   }
 
-  final _$_ListStoreBaseActionController =
-      ActionController(name: '_ListStoreBase');
+  late final _$_ListStoreBaseActionController =
+      ActionController(name: '_ListStoreBase', context: context);
 
   @override
   void setMarketSelected(int value) {

@@ -1,10 +1,11 @@
 import 'package:mercado_justo/shared/controllers/market_store.dart';
-import 'package:mercado_justo/shared/controllers/price_store.dart';
-import 'package:mercado_justo/shared/models/market_model.dart';
 import 'package:mercado_justo/shared/models/price_model.dart';
+import 'package:mercado_justo/shared/models/product_list_model.dart';
 import 'package:mercado_justo/shared/models/product_model.dart';
 import 'package:mercado_justo/shared/repositories/list_repository.dart';
 import 'package:mercado_justo/shared/repositories/price_repository.dart';
+import 'package:mercado_justo/shared/utils/app_state.dart';
+import 'package:mercado_justo/shared/utils/error.dart';
 import 'package:mobx/mobx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -15,11 +16,10 @@ class CompareStore = _CompareStoreBase with _$CompareStore;
 abstract class _CompareStoreBase with Store {
   ListRepository repository;
   final PriceRepository priceRepository;
-  // final PriceStore priceStore;
+
   final MarketStore marketStore;
   _CompareStoreBase({
     required this.repository,
-    // required this.priceStore,
     required this.priceRepository,
     required this.marketStore,
   });
@@ -38,6 +38,15 @@ abstract class _CompareStoreBase with Store {
 
   @observable
   List<Map<String, dynamic>> listTotal = [];
+
+  @observable
+  List<Product> products = [];
+
+  @observable
+  AppState productState = AppStateEmpty();
+
+  @observable
+  List<int> quantities = [];
 
   @action
   setTotal(double value) => total = value;
@@ -65,6 +74,29 @@ abstract class _CompareStoreBase with Store {
 
   @action
   setListTotal(Map<String, dynamic> value) => listTotal = [...listTotal, value];
+
+  Future getProducts(int listId) async {
+    List<int> auxQuantities = [];
+    // productState = AppStateLoading();
+    try {
+      List<ProductListModel> listProducts =
+          await repository.getProductsByList(listId);
+      products = await repository
+          .getProducts(listProducts.map((e) => e.productId).toList());
+      if (products.isNotEmpty) {
+        for (Product product in products) {
+          auxQuantities
+              .add(await repository.getQuantity(listId, product.productId!));
+        }
+        quantities = auxQuantities;
+      }
+
+      productState = AppStateSuccess();
+    } catch (e) {
+      productState = AppStateError(error: Failure(title: '', message: ''));
+      rethrow;
+    }
+  }
 
   Future getProductsPrices(List<Product> products) async {
     List<List<Map<String, dynamic>>> listPricesAux = [];

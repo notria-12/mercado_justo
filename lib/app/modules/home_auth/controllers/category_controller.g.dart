@@ -6,11 +6,11 @@ part of 'category_controller.dart';
 // StoreGenerator
 // **************************************************************************
 
-// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
+// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$CategoryStore on _CategoryStoreBase, Store {
-  final _$selectedCategoryAtom =
-      Atom(name: '_CategoryStoreBase.selectedCategory');
+  late final _$selectedCategoryAtom =
+      Atom(name: '_CategoryStoreBase.selectedCategory', context: context);
 
   @override
   CategoryModel? get selectedCategory {
@@ -25,7 +25,8 @@ mixin _$CategoryStore on _CategoryStoreBase, Store {
     });
   }
 
-  final _$canUpdateAtom = Atom(name: '_CategoryStoreBase.canUpdate');
+  late final _$canUpdateAtom =
+      Atom(name: '_CategoryStoreBase.canUpdate', context: context);
 
   @override
   bool get canUpdate {
@@ -40,8 +41,8 @@ mixin _$CategoryStore on _CategoryStoreBase, Store {
     });
   }
 
-  final _$secondaryCategoriesStatusAtom =
-      Atom(name: '_CategoryStoreBase.secondaryCategoriesStatus');
+  late final _$secondaryCategoriesStatusAtom = Atom(
+      name: '_CategoryStoreBase.secondaryCategoriesStatus', context: context);
 
   @override
   AppState get secondaryCategoriesStatus {
