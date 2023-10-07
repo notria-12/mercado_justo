@@ -50,7 +50,7 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
       TextEditingController(text: '1');
 
   final productToListStore = Modular.get<ProductToListStore>();
-  final TextEditingController _searchController = TextEditingController();
+  
   final _formKey = GlobalKey<FormState>();
 
   final _signatureStore = Modular.get<SignatureStore>();
@@ -143,7 +143,7 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                           color: Colors.grey,
                         )),
                     child: TextFormField(
-                      controller: _searchController,
+                      controller: productStore.searchController,
                       focusNode: searchFocus,
                       onFieldSubmitted: (value) {
                         if (_formKey.currentState!.validate()) {
@@ -151,7 +151,7 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                           productStore.getProductsByDescription(
                               description: value);
                           // dialogResultSearchProducts(context);
-                          _searchController.text = '';
+                          //_searchController.text = '';
                           searchFocus.unfocus();
                         }
                       },
@@ -171,9 +171,9 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                                   if (_formKey.currentState!.validate()) {
                                     productStore.onlyButtonLoadMore = false;
                                     productStore.getProductsByDescription(
-                                        description: _searchController.text);
+                                        description: productStore.searchController.text);
                                     // dialogResultSearchProducts(context);
-                                    _searchController.text = '';
+                                    //_searchController.text = '';
                                     searchFocus.unfocus();
                                   }
                                 },
@@ -265,6 +265,8 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                             }).then((value) {
                           if (Modular.get<CategoryStore>().canUpdate) {
                             productStore.onlyButtonLoadMore = false;
+                            productStore.isSearch =false;
+                            searchFocus.unfocus();
                             productStore.isCategorySearch = true;
                             productStore.getProductsByCategories(
                                 categoryName: Modular.get<CategoryStore>()
@@ -401,7 +403,7 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                                       productStore.onlyButtonLoadMore = true;
                                       if (productStore.isSearch) {
                                         productStore.getProductsByDescription(
-                                            description: _searchController.text,
+                                            description: productStore.searchController.text,
                                             isNewSearch: false);
                                       } else if (productStore
                                           .isCategorySearch) {

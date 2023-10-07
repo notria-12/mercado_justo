@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:mercado_justo/shared/models/product_model.dart';
 import 'package:mercado_justo/shared/repositories/product_repository.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
@@ -35,6 +36,8 @@ abstract class _ProductStoreBase with Store {
   @observable
   int page = 1;
 
+  final TextEditingController searchController = TextEditingController();
+
   Future getAllProducts({bool initialProducts = false}) async {
     try {
       if (initialProducts) {
@@ -42,7 +45,8 @@ abstract class _ProductStoreBase with Store {
         page = 1;
       }
       isSearch = false;
-      isCategorySearch = false;
+      searchController.text = ''
+;      isCategorySearch = false;
       productState = AppStateLoading();
       var productsResult = await repository.getAllProducts(page: page);
       if (productsResult.length < 15) {
@@ -115,6 +119,7 @@ abstract class _ProductStoreBase with Store {
   void getProductsByCategories(
       {required String categoryName, bool isNewSearch = true}) async {
     try {
+      searchController.text ='';
       if (isCategorySearch) {
         if (isNewSearch) {
           page = 1;

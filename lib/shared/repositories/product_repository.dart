@@ -24,7 +24,7 @@ class ProductRepository {
 
       return products;
     } catch (e) {
-      //TODO: tratar esse erro com decência
+      
       rethrow;
     }
   }
