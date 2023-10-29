@@ -77,7 +77,8 @@ abstract class _CompareStoreBase with Store {
 
   Future getProducts(int listId) async {
     List<int> auxQuantities = [];
-    // productState = AppStateLoading();
+    print('DEBUG:: getProducts');
+    productState = AppStateLoading();
     try {
       List<ProductListModel> listProducts =
           await repository.getProductsByList(listId);
@@ -100,7 +101,7 @@ abstract class _CompareStoreBase with Store {
 
   Future getProductsPrices(List<Product> products) async {
     List<List<Map<String, dynamic>>> listPricesAux = [];
-
+   
     try {
       List<List<Price>>? pricesAux =
           await priceRepository.getProductPricesByMarkets(
@@ -111,6 +112,7 @@ abstract class _CompareStoreBase with Store {
                   )
                   .map((e) => e.id)
                   .toList());
+                  print('DEBUG:: CHAMOU PRICES');
       for (int i = 0; i < pricesAux!.length; i++) {
         List<Map<String, dynamic>> pricesByProducts = [];
         for (Price currentPrice in pricesAux[i]) {
@@ -143,6 +145,7 @@ abstract class _CompareStoreBase with Store {
     List<Map<String, dynamic>> fairPrices = [];
     List<List<Map<String, dynamic>>> groupFairPrices = [];
     if (prices.isNotEmpty) {
+      print('DEBUG:: COMPUTED');
       for (int i = 0; i < prices.length; i++) {
         var map = prices[i]
             .map((e) => <String, dynamic>{

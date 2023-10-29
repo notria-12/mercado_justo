@@ -19,6 +19,7 @@ import 'package:mercado_justo/shared/models/product_model.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/utils/dynamic_links.dart';
 import 'package:mercado_justo/shared/widgets/button_share.dart';
+import 'package:mobx/mobx.dart';
 
 import 'package:share_plus/share_plus.dart';
 
@@ -42,6 +43,11 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
     super.initState();
 
     store.getCurrentList();
+    // autorun((_){
+    //     if(store.listId != null){
+    //       store.getProducts(store.listId!);
+    //     }
+    // });
   }
 
   @override
@@ -287,6 +293,7 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                               .where((element) => element.isSelectable == true)
                               .toList()
                               .isNotEmpty) {
+                                
                         return FutureBuilder(
                           builder: (context, snapshot) {
                             switch (snapshot.connectionState) {
@@ -306,210 +313,211 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
 
                               case ConnectionState.done:
                                 if (snapshot.hasError) {
-                                  return Text(
+                                  return const Text(
                                       'Obtivemos problemas ao montar a lista de PoupaMais');
                                 }
-
-                                return Container(
-                                  child: ListView.builder(
-                                    itemBuilder: (context, index) {
-                                      Market market = Modular.get<MarketStore>()
-                                          .filteredMarkets
-                                          .where(
-                                              (element) => element.isSelectable)
-                                          .toList()
-                                          .firstWhere((market) =>
-                                              store.getFairPrice[index][0]
-                                                  ['market_id'] ==
-                                              market.hashId);
-                                      return Column(
-                                        children: [
-                                          const SizedBox(
-                                            height: 10,
-                                          ),
-                                          Container(
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                    const BorderRadius.all(
-                                                        Radius.circular(12)),
-                                                border: Border.all(
-                                                    color: Color.fromARGB(
-                                                        255, 240, 241, 241))),
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 8, horizontal: 4),
-                                            child: Observer(builder: (_) {
-                                              return Row(
-                                                children: [
-                                                  Container(
-                                                    height: 80,
-                                                    width: 70,
-                                                    child: (_signatureStore
-                                                                    .signature !=
+                                
+                                var auxFairPrice = store.getFairPrice;
+                                return ListView.builder(
+                                  itemBuilder: (context, index) {
+                                    
+                                    Market market = Modular.get<MarketStore>()
+                                        .filteredMarkets
+                                        .where(
+                                            (element) => element.isSelectable)
+                                        .toList()
+                                        .firstWhere((market) =>
+                                            auxFairPrice[index][0]
+                                                ['market_id'] ==
+                                            market.hashId);
+                                    return Column(
+                                      children: [
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        Container(
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  const BorderRadius.all(
+                                                      Radius.circular(12)),
+                                              border: Border.all(
+                                                  color: Color.fromARGB(
+                                                      255, 240, 241, 241))),
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 8, horizontal: 4),
+                                          child: 
+                                          // Observer(builder: (_) {
+                                            // return
+                                             Row(
+                                              children: [
+                                                Container(
+                                                  height: 80,
+                                                  width: 70,
+                                                  child: (_signatureStore
+                                                                  .signature !=
+                                                              null &&
+                                                          _signatureStore
+                                                              .signature!
+                                                              .status)
+                                                      ? CachedNetworkImage(
+                                                          imageUrl: market
+                                                              .imagePath!,
+                                                          memCacheHeight: 150,
+                                                          memCacheWidth: 180,
+                                                        )
+                                                      : Container(
+                                                          child: const Center(
+                                                          child: Text(
+                                                            'SEJA PREMIUM',
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color: Colors
+                                                                    .lightBlue),
+                                                            textAlign:
+                                                                TextAlign
+                                                                    .center,
+                                                          ),
+                                                        )),
+                                                ),
+                                                Expanded(
+                                                    child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment
+                                                          .start,
+                                                  children: [
+                                                    Text(
+                                                      market.address,
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight
+                                                                  .bold),
+                                                    ),
+                                                    const SizedBox(
+                                                      height: 2,
+                                                    ),
+                                                    Observer(builder: (_) {
+                                                      return Text(
+                                                          'Distância: ${(Geolocator.distanceBetween(positionStore.position!.latitude, positionStore.position!.longitude, market.latitude, market.longitude) / 1000).toStringAsFixed(2).replaceAll(r'.', ',')} km');
+                                                    }),
+                                                    const SizedBox(
+                                                      height: 2,
+                                                    ),
+                                                    (_signatureStore.signature !=
                                                                 null &&
                                                             _signatureStore
                                                                 .signature!
                                                                 .status)
-                                                        ? CachedNetworkImage(
-                                                            imageUrl: market
-                                                                .imagePath!,
-                                                            memCacheHeight: 150,
-                                                            memCacheWidth: 180,
+                                                        ? Text(
+                                                            'R\$ ${auxFairPrice[index].where((element) => element['market_id'] == market.hashId).map((e) {
+                                                                  return e['value'] *
+                                                                          e['quantity']
+                                                                      as double;
+                                                                }).reduce((value, element) => value + element).toStringAsFixed(2).replaceAll(r'.', ',')}',
+                                                            style: TextStyle(
+                                                                fontSize:
+                                                                    18.sp,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color: Colors
+                                                                        .green[
+                                                                    700]),
                                                           )
-                                                        : Container(
-                                                            child: const Center(
-                                                            child: Text(
-                                                              'SEJA PREMIUM',
-                                                              style: TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  color: Colors
-                                                                      .lightBlue),
-                                                              textAlign:
-                                                                  TextAlign
-                                                                      .center,
-                                                            ),
-                                                          )),
-                                                  ),
-                                                  Expanded(
-                                                      child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Text(
-                                                        market.address,
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                      ),
-                                                      const SizedBox(
-                                                        height: 2,
-                                                      ),
-                                                      Observer(builder: (_) {
-                                                        return Text(
-                                                            'Distância: ${(Geolocator.distanceBetween(positionStore.position!.latitude, positionStore.position!.longitude, market.latitude, market.longitude) / 1000).toStringAsFixed(2).replaceAll(r'.', ',')} km');
-                                                      }),
-                                                      const SizedBox(
-                                                        height: 2,
-                                                      ),
-                                                      (_signatureStore.signature !=
-                                                                  null &&
-                                                              _signatureStore
-                                                                  .signature!
-                                                                  .status)
-                                                          ? Text(
-                                                              'R\$ ${store.getFairPrice[index].where((element) => element['market_id'] == market.hashId).map((e) {
-                                                                    return e['value'] *
-                                                                            e['quantity']
-                                                                        as double;
-                                                                  }).reduce((value, element) => value + element).toStringAsFixed(2).replaceAll(r'.', ',')}',
-                                                              style: TextStyle(
-                                                                  fontSize:
-                                                                      18.sp,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  color: Colors
-                                                                          .green[
-                                                                      700]),
-                                                            )
-                                                          : Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                          .only(
-                                                                      left:
-                                                                          16.0),
-                                                              child: Icon(
-                                                                  Icons.lock),
-                                                            )
-                                                    ],
-                                                  ))
-                                                ],
-                                              );
-                                            }),
-                                          ),
-                                          const SizedBox(
-                                            height: 15,
-                                          ),
-                                          Observer(
-                                            builder: (_) {
-                                              if (Modular.get<ConfigStore>()
-                                                      .separetedByCategory ==
-                                                  false) {
-                                                return productsTable(
-                                                    store.getFairPrice[index]
-                                                        .map((fairPrice) =>
-                                                            Product.fromMap(
-                                                                fairPrice[
-                                                                    'product_id']))
-                                                        .toList(),
-                                                    index);
-                                              } else {
-                                                return Column(
-                                                  children: [
-                                                    ...store
-                                                        .groupProducts(store
-                                                            .getFairPrice[index]
-                                                            .map((fairPrice) =>
-                                                                Product.fromMap(
-                                                                    fairPrice[
-                                                                        'product_id']))
-                                                            .toList())
-                                                        .map((e) => Container(
-                                                              decoration: const BoxDecoration(
-                                                                  border: Border(
-                                                                      top: BorderSide(
-                                                                          width:
-                                                                              0.3,
-                                                                          color:
-                                                                              Colors.black54))),
-                                                              child:
-                                                                  ExpansionTile(
-                                                                maintainState:
-                                                                    true,
-                                                                collapsedBackgroundColor:
-                                                                    const Color
-                                                                            .fromARGB(
-                                                                        255,
-                                                                        240,
-                                                                        241,
-                                                                        241),
-                                                                title: Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .spaceBetween,
-                                                                  children: [
-                                                                    Text(e[0]
-                                                                        .category!),
-                                                                    (_signatureStore.signature !=
-                                                                                null &&
-                                                                            _signatureStore
-                                                                                .signature!.status)
-                                                                        ? Text(
-                                                                            ' R\$ ${store.getFairPrice[index].where((element) => element['product_id']['categoria_1'] == e[0].category).map((e) => e['quantity'] * e['value'] as double).reduce((value, element) => value + element).toStringAsFixed(2).replaceAll(r'.', ',')}',
-                                                                          )
-                                                                        : Icon(Icons
-                                                                            .lock),
-                                                                  ],
-                                                                ),
+                                                        : Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .only(
+                                                                    left:
+                                                                        16.0),
+                                                            child: Icon(
+                                                                Icons.lock),
+                                                          )
+                                                  ],
+                                                ))
+                                              ],
+                                            )
+                                          // }),
+                                        ),
+                                        const SizedBox(
+                                          height: 15,
+                                        ),
+                                        Observer(
+                                          builder: (_) {
+                                            if (Modular.get<ConfigStore>()
+                                                    .separetedByCategory ==
+                                                false) {
+                                              return productsTable(
+                                                  auxFairPrice[index]
+                                                      .map((fairPrice) =>
+                                                          Product.fromMap(
+                                                              fairPrice[
+                                                                  'product_id']))
+                                                      .toList(),
+                                                  index, auxFairPrice);
+                                            } else {
+                                              return Column(
+                                                children: [
+                                                  ...store
+                                                      .groupProducts(auxFairPrice[index]
+                                                          .map((fairPrice) =>
+                                                              Product.fromMap(
+                                                                  fairPrice[
+                                                                      'product_id']))
+                                                          .toList())
+                                                      .map((e) => Container(
+                                                            decoration: const BoxDecoration(
+                                                                border: Border(
+                                                                    top: BorderSide(
+                                                                        width:
+                                                                            0.3,
+                                                                        color:
+                                                                            Colors.black54))),
+                                                            child:
+                                                                ExpansionTile(
+                                                              maintainState:
+                                                                  true,
+                                                              collapsedBackgroundColor:
+                                                                  const Color
+                                                                          .fromARGB(
+                                                                      255,
+                                                                      240,
+                                                                      241,
+                                                                      241),
+                                                              title: Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .spaceBetween,
                                                                 children: [
-                                                                  productsTable(
-                                                                      e, index)
+                                                                  Text(e[0]
+                                                                      .category!),
+                                                                  (_signatureStore.signature !=
+                                                                              null &&
+                                                                          _signatureStore
+                                                                              .signature!.status)
+                                                                      ? Text(
+                                                                          ' R\$ ${auxFairPrice[index].where((element) => element['product_id']['categoria_1'] == e[0].category).map((e) => e['quantity'] * e['value'] as double).reduce((value, element) => value + element).toStringAsFixed(2).replaceAll(r'.', ',')}',
+                                                                        )
+                                                                      : Icon(Icons
+                                                                          .lock),
                                                                 ],
                                                               ),
-                                                            ))
-                                                  ],
-                                                );
-                                              }
-                                            },
-                                          )
-                                        ],
-                                      );
-                                    },
-                                    itemCount: store.getFairPrice.length,
-                                  ),
+                                                              children: [
+                                                                productsTable(
+                                                                    e, index, auxFairPrice)
+                                                              ],
+                                                            ),
+                                                          ))
+                                                ],
+                                              );
+                                            }
+                                          },
+                                        )
+                                      ],
+                                    );
+                                  },
+                                  itemCount: auxFairPrice.length,
                                 );
                               default:
                                 return Container();
@@ -657,7 +665,7 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
             '\n\nAcesse o nosso app e tenha uma visualização completa dos melhores preços.\n\n$value'));
   }
 
-  DataTable productsTable(List<Product> products, int index) {
+  DataTable productsTable(List<Product> products, int index, List<List<Map<String, dynamic>>> fairPrice) {
     return DataTable(
       border: const TableBorder(
         verticalInside: BorderSide(color: Colors.grey, width: 0.2),
@@ -672,7 +680,7 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
         DataColumn(label: Text(''))
       ],
       rows: List.generate(products.length, (i) {
-        var row = store.getFairPrice[index].firstWhere(
+        var row = fairPrice[index].firstWhere(
             (element) => element['product_id']['_id'] == products[i].id);
         return DataRow(cells: [
           DataCell(
