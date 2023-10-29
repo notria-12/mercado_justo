@@ -323,6 +323,19 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                       mainAxisAlignment: MainAxisAlignment.center,
                     ),
                   );
+                }else if(marketStore.marketStatus is AppStateLoading){
+                  return Center(
+                    child: Column(
+                      children: const [
+                        Text("Os Mercados próximos estão sendo carregados..."),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        CircularProgressIndicator()
+                      ],
+                      mainAxisAlignment: MainAxisAlignment.center,
+                    ),
+                  );
                 } else {
                   if (productStore.products.isNotEmpty) {
                     if (marketStore.filteredMarkets

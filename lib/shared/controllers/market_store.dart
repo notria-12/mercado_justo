@@ -3,6 +3,8 @@ import 'package:mercado_justo/app/modules/lists/filter_store.dart';
 import 'package:mercado_justo/shared/controllers/position_store.dart';
 import 'package:mercado_justo/shared/models/market_model.dart';
 import 'package:mercado_justo/shared/repositories/market_repository.dart';
+import 'package:mercado_justo/shared/utils/app_state.dart';
+import 'package:mercado_justo/shared/utils/error.dart';
 import 'package:mobx/mobx.dart';
 
 part 'market_store.g.dart';
@@ -26,14 +28,20 @@ abstract class _MarketStoreBase with Store {
   List<List<Market>> groupMarkets = [];
 
   @observable
+  AppState marketStatus = AppStateEmpty();
+
+  @observable
   int page = 1;
 
   Future getGroupMarkets() async {
     try {
+      marketStatus = AppStateLoading();
       groupMarkets = await repository.getGroupMarkets();
 
       setMarkets();
+      marketStatus = AppStateSuccess();
     } catch (e) {
+      marketStatus = AppStateError(error: Failure(message: '', title: ''));
       rethrow;
     }
   }

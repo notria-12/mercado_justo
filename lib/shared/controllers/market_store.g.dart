@@ -41,6 +41,22 @@ mixin _$MarketStore on _MarketStoreBase, Store {
     });
   }
 
+  late final _$marketStatusAtom =
+      Atom(name: '_MarketStoreBase.marketStatus', context: context);
+
+  @override
+  AppState get marketStatus {
+    _$marketStatusAtom.reportRead();
+    return super.marketStatus;
+  }
+
+  @override
+  set marketStatus(AppState value) {
+    _$marketStatusAtom.reportWrite(value, super.marketStatus, () {
+      super.marketStatus = value;
+    });
+  }
+
   late final _$pageAtom = Atom(name: '_MarketStoreBase.page', context: context);
 
   @override
@@ -91,6 +107,7 @@ mixin _$MarketStore on _MarketStoreBase, Store {
     return '''
 markets: ${markets},
 groupMarkets: ${groupMarkets},
+marketStatus: ${marketStatus},
 page: ${page},
 filteredMarkets: ${filteredMarkets}
     ''';
