@@ -521,7 +521,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
               },
             ),
             ButtonOptionsListDetail(
-              label: 'Meu Preço Justo',
+              label: 'Insira Seu Preço',
               tapped: storeProductList.isFairPrice,
               onTap: () {
                 storeProductList.isFairPrice = !storeProductList.isFairPrice;
