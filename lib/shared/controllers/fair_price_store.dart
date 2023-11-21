@@ -1,3 +1,5 @@
+import 'package:mercado_justo/shared/utils/app_state.dart';
+import 'package:mercado_justo/shared/utils/error.dart';
 import 'package:mobx/mobx.dart';
 
 import 'package:mercado_justo/shared/repositories/fair_price_repository.dart';
@@ -7,7 +9,7 @@ part 'fair_price_store.g.dart';
 class FairPriceStore = _FairPriceStoreBase with _$FairPriceStore;
 
 abstract class _FairPriceStoreBase with Store {
-  FairPriceRepository _repository;
+  final FairPriceRepository _repository;
   _FairPriceStoreBase(
     this._repository,
   );
@@ -15,11 +17,30 @@ abstract class _FairPriceStoreBase with Store {
   @observable
   List<Map> fairPricesFromList = [];
 
+  @observable
+  double? price;
+
+  @action
+  setPrice(double? value) {
+    price = value;
+  }
+
+  @observable
+  AppState fairPriceStatus = AppStateEmpty();
+
   Future<double?> getFairPrice(
       {required int listId, required productId}) async {
+        
     try {
-      return _repository.getFairPrice(listId, productId);
+      fairPriceStatus = AppStateLoading();
+      double?   fairPrice = await  _repository.getFairPrice(listId, productId);
+      
+      if(fairPrice != null) setPrice(fairPrice);
+      fairPriceStatus = AppStateSuccess();
+      
+      return fairPrice;
     } catch (e) {
+      fairPriceStatus = AppStateError(error: Failure(title: '', message: ''));
       rethrow;
     }
   }
@@ -27,6 +48,7 @@ abstract class _FairPriceStoreBase with Store {
   Future deleteFairPrice({required int listId, required productId}) async {
     try {
       await _repository.deleteFairPrice(listId, productId);
+      setPrice(null);
     } catch (e) {
       rethrow;
     }
@@ -51,6 +73,7 @@ abstract class _FairPriceStoreBase with Store {
       required int productId}) async {
     try {
       await _repository.saveFairPrice(value, listId, productId);
+      setPrice(value);
     } catch (e) {
       rethrow;
     }
@@ -62,6 +85,7 @@ abstract class _FairPriceStoreBase with Store {
       required int productId}) async {
     try {
       await _repository.updateFairPrice(value, listId, productId);
+      setPrice(value);
     } catch (e) {
       rethrow;
     }

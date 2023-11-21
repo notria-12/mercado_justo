@@ -114,7 +114,7 @@ class Dialogs {
   }
 
   Future addNewFairPrice(BuildContext context,
-      {required int listId, required int productId, double? value}) {
+      {required int listId, required int productId, double? value, required FairPriceStore store}) {
     final _formValuekey = GlobalKey<FormState>();
     final _valueController = TextEditingController();
     if (value != null) {
@@ -172,7 +172,7 @@ class Dialogs {
                         child: ElevatedButton(
                           child: Text('Excluir Preço Salvo'),
                           onPressed: () {
-                            Modular.get<FairPriceStore>()
+                            store
                                 .deleteFairPrice(
                                     listId: listId, productId: productId)
                                 .then((value) => Modular.to.pop());
@@ -195,14 +195,14 @@ class Dialogs {
                                 .replaceAll(r',', '.');
 
                             if (value != null) {
-                              Modular.get<FairPriceStore>()
+                              store
                                   .updateFairPrice(
                                       value: double.parse(newValue),
                                       listId: listId,
                                       productId: productId)
                                   .then((value) => Modular.to.pop());
                             } else {
-                              Modular.get<FairPriceStore>()
+                              store
                                   .saveFairPrice(
                                       value: double.parse(newValue),
                                       listId: listId,

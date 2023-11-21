@@ -8,6 +8,7 @@ import 'package:mercado_justo/app/modules/compare/compare_store.dart';
 import 'package:mercado_justo/app/modules/home_auth/home_auth_store.dart';
 import 'package:mercado_justo/app/modules/home_auth/widgets/custom_dialog_selection_markets.dart';
 import 'package:mercado_justo/app/modules/lists/filter_store.dart';
+
 import 'package:mercado_justo/shared/controllers/ad_store.dart';
 import 'package:mercado_justo/shared/controllers/connectivity_store.dart';
 import 'package:mercado_justo/shared/controllers/fair_price_store.dart';
@@ -17,11 +18,12 @@ import 'package:mercado_justo/shared/controllers/market_store.dart';
 import 'package:mercado_justo/shared/controllers/signature_store.dart';
 import 'package:mercado_justo/shared/models/list_model.dart';
 import 'package:mercado_justo/shared/models/market_model.dart';
+import 'package:mercado_justo/shared/repositories/fair_price_repository.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/widgets/button_share.dart';
 import 'package:mercado_justo/shared/widgets/custom_table_widget.dart';
 import 'package:mercado_justo/shared/widgets/dialogs.dart';
-import 'package:mercado_justo/shared/widgets/fixed_corner_table_widget.dart';
+
 import 'package:mercado_justo/shared/widgets/no_connectivity_widget.dart';
 import 'package:mobx/mobx.dart';
 import 'package:share_plus/share_plus.dart';
@@ -42,7 +44,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
   final storeProductList = Modular.get<ListStore>();
   final storeFairPrice = Modular.get<FairPriceStore>();
   List<Market> filteredMarkets = [];
-  double price = 0.0;
+
   late ReactionDisposer _disposer;
   final _signatureStore = Modular.get<SignatureStore>();
   BannerAd? _topBanner;
@@ -52,8 +54,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
   @override
   void initState() {
     super.initState();
-    _getFairPriceFromList =
-        storeFairPrice.getFairPricesFromList(listId: widget.listModel.id!);
+    
     storeProductList.getProducts(widget.listModel.id!);
 
     _disposer = autorun((_) {
@@ -242,40 +243,43 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                       visible: storeProductList.products.length -
                               storeFairPrice.fairPricesFromList.length >
                           0,
-                      child: Column(
-                        children: [
-                          RichText(
-                              text: TextSpan(
-                                  children: [
-                                TextSpan(
-                                    text:
-                                        ' ${storeProductList.products.length - storeFairPrice.fairPricesFromList.length} '),
-                                const TextSpan(text: 'item')
-                              ],
-                                  text: 'Falta',
-                                  style: TextStyle(
-                                      color: Colors.red,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16.sp))),
-                          RichText(
-                              text: TextSpan(
-                                  children: [
-                                TextSpan(
-                                    text:
-                                        ' R\$ ${storeProductList.getAverageMissingProducts(storeFairPrice.fairPricesFromList.map((e) => e['product_id'] as int).toList()).toStringAsFixed(2)} '),
-                              ],
-                                  text: 'Valor médio',
-                                  style: TextStyle(
-                                      color: Colors.red,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 12.sp)))
-                        ],
-                      ),
+                      child: Observer(builder: (_) {
+                        return Column(
+                          children: [
+                            RichText(
+                                text: TextSpan(
+                                    children: [
+                                  TextSpan(
+                                      text:
+                                          ' ${storeProductList.products.length - storeFairPrice.fairPricesFromList.length} '),
+                                  const TextSpan(text: 'item')
+                                ],
+                                    text: 'Falta',
+                                    style: TextStyle(
+                                        color: Colors.red,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16.sp))),
+                            RichText(
+                                text: TextSpan(
+                                    children: [
+                                  TextSpan(
+                                      text:
+                                          ' R\$ ${storeProductList.getAverageMissingProducts(storeFairPrice.fairPricesFromList.map((e) => e['product_id'] as int).toList()).toStringAsFixed(2)} '),
+                                ],
+                                    text: 'Valor médio',
+                                    style: TextStyle(
+                                        color: Colors.red,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 12.sp)))
+                          ],
+                        );
+                      }),
                     );
                   }
                   return Container();
                 },
-                future: _getFairPriceFromList,
+                future: storeFairPrice.getFairPricesFromList(
+                    listId: widget.listModel.id!),
               ),
             Visibility(
               visible: storeProductList.missingProducts['missingItens'] != 0,
@@ -685,83 +689,17 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
               (index) => [
                     Text(storeProductList.products[index].description),
                     if (storeProductList.isFairPrice)
-                      FutureBuilder<double?>(
-                          future: storeFairPrice.getFairPrice(
-                              listId: widget.listModel.id!,
-                              productId:
-                                  storeProductList.products[index].productId!),
-                          builder: (context, snapshot) {
-                            switch (snapshot.connectionState) {
-                              case ConnectionState.none:
-                              case ConnectionState.waiting:
-                                return const Center(
-                                  child: CircularProgressIndicator(),
-                                );
-
-                              case ConnectionState.done:
-                                if (snapshot.hasError) {
-                                  return Container();
-                                }
-                                if (snapshot.hasData) {
-                                  price = snapshot.data!;
-                                  return InkWell(
-                                    onTap: () {
-                                      Dialogs()
-                                          .addNewFairPrice(context,
-                                              listId: widget.listModel.id!,
-                                              productId: storeProductList
-                                                  .products[index].productId!,
-                                              value: snapshot.data)
-                                          .then((value) {
-                                        setState(() {});
-                                      });
-                                    },
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text("R\$ " +
-                                            snapshot.data!
-                                                .toStringAsFixed(2)
-                                                .replaceAll(r'.', ',')),
-                                        const SizedBox(
-                                          height: 20,
-                                        ),
-                                        Text(
-                                          'R\$ ${(snapshot.data! * storeProductList.quantities[index]).toStringAsFixed(2).replaceAll(r'.', ',')}',
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16),
-                                        )
-                                      ],
-                                    ),
-                                  );
-                                } else {
-                                  return InkWell(
-                                    onTap: () {
-                                      Dialogs()
-                                          .addNewFairPrice(context,
-                                              listId: widget.listModel.id!,
-                                              productId: storeProductList
-                                                  .products[index].productId!)
-                                          .then((value) {
-                                        setState(() {});
-                                      });
-                                    },
-                                    child: const Text(
-                                      'Inserir Preço ',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  );
-                                }
-
-                              default:
-                                return Container();
-                            }
-                          }),
+                      FairPriceInput(
+                        storeFairPrice: storeFairPrice,
+                        listId: widget.listModel.id!,
+                        storeProductList: storeProductList,
+                        index: index,
+                        function: () {
+                          _getFairPriceFromList =
+                              storeFairPrice.getFairPricesFromList(
+                                  listId: widget.listModel.id!);
+                        },
+                      ),
                     ...storeProductList.prices[index]
                         .map((e) => (_signatureStore.signature != null &&
                                 _signatureStore.signature!.status)
@@ -848,6 +786,111 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                 '\n\nAcesse o nosso app e tenha uma visualização completa dos melhores preços.\n\n$value'));
       }
     });
+  }
+}
+
+class FairPriceInput extends StatefulWidget {
+  FairPriceInput(
+      {Key? key,
+      required this.storeFairPrice,
+      required this.listId,
+      required this.storeProductList,
+      required this.index,
+      required this.function})
+      : super(key: key);
+  Function function;
+  FairPriceStore storeFairPrice;
+  int listId;
+  ListStore storeProductList;
+  int index;
+
+  @override
+  State<FairPriceInput> createState() => _FairPriceInputState();
+}
+
+class _FairPriceInputState extends State<FairPriceInput> {
+  FairPriceStore storeFairPrice =
+      FairPriceStore(Modular.get<FairPriceRepository>());
+  late Future<double?> _getFairPrice;
+  @override
+  void initState() {
+    super.initState();
+    _getFairPrice = storeFairPrice.getFairPrice(
+        listId: widget.listId,
+        productId: widget.storeProductList.products[widget.index].productId!);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<double?>(
+      builder: (ctxt, snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.none:
+          case ConnectionState.waiting:
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          case ConnectionState.done:
+            if (storeFairPrice.price != null) {
+              return InkWell(
+                onTap: () {
+                  Dialogs()
+                      .addNewFairPrice(context,
+                          listId: widget.listId,
+                          productId: widget.storeProductList
+                              .products[widget.index].productId!,
+                          value: storeFairPrice.price!,
+                          store: storeFairPrice)
+                      .then((value) {
+                    setState(() {
+                      _getFairPrice = storeFairPrice.getFairPrice(
+                          listId: widget.listId,
+                          productId: widget.storeProductList
+                              .products[widget.index].productId!);
+                      widget.function();
+                    });
+                  });
+                },
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("R\$ " +
+                        storeFairPrice.price!
+                            .toStringAsFixed(2)
+                            .replaceAll(r'.', ',')),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      'R\$ ${(storeFairPrice.price! * widget.storeProductList.quantities[widget.index]).toStringAsFixed(2).replaceAll(r'.', ',')}',
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 16),
+                    )
+                  ],
+                ),
+              );
+            } else {
+              return InkWell(
+                onTap: () {
+                  Dialogs().addNewFairPrice(context,
+                      listId: widget.listId,
+                      productId: widget
+                          .storeProductList.products[widget.index].productId!,
+                      store: storeFairPrice);
+                },
+                child: const Text(
+                  'Inserir Preço ',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              );
+            }
+          default:
+            return Container();
+        }
+      },
+      future: _getFairPrice,
+    );
   }
 }
 
