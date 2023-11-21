@@ -48,6 +48,9 @@ abstract class _CompareStoreBase with Store {
   @observable
   List<int> quantities = [];
 
+  @observable
+  int missingItens = 0;
+
   @action
   setTotal(double value) => total = value;
 
@@ -77,7 +80,7 @@ abstract class _CompareStoreBase with Store {
 
   Future getProducts(int listId) async {
     List<int> auxQuantities = [];
-    print('DEBUG:: getProducts');
+    
     productState = AppStateLoading();
     try {
       List<ProductListModel> listProducts =
@@ -112,7 +115,7 @@ abstract class _CompareStoreBase with Store {
                   )
                   .map((e) => e.id)
                   .toList());
-                  print('DEBUG:: CHAMOU PRICES');
+                  
       for (int i = 0; i < pricesAux!.length; i++) {
         List<Map<String, dynamic>> pricesByProducts = [];
         for (Price currentPrice in pricesAux[i]) {
@@ -145,7 +148,7 @@ abstract class _CompareStoreBase with Store {
     List<Map<String, dynamic>> fairPrices = [];
     List<List<Map<String, dynamic>>> groupFairPrices = [];
     if (prices.isNotEmpty) {
-      print('DEBUG:: COMPUTED');
+      
       for (int i = 0; i < prices.length; i++) {
         var map = prices[i]
             .map((e) => <String, dynamic>{
@@ -178,6 +181,7 @@ abstract class _CompareStoreBase with Store {
     } else {
       groupFairPrices = [];
     }
+    
     return groupFairPrices;
   }
 
@@ -196,12 +200,28 @@ abstract class _CompareStoreBase with Store {
     }
     double sum = 0;
     getFairPrice.forEach((element) {
+      
       sum += element.map((e) {
+        
         return e['value'] * e['quantity'] as double;
       }).reduce((value, element) => value + element);
     });
     setTotal(sum);
     return groupProducts;
+  }
+
+  @action
+  setMissingProducts(List<List<Map<String, dynamic>>> fairPrices){
+    missingItens = 0;
+     fairPrices.forEach((element) {
+      
+      element.forEach((e) {
+        if(e['value'] == 0.0){
+          missingItens++;
+        }
+        
+      });
+    });
   }
 
   double _parseToDouble(String value) => value.isEmpty || value == 'Em Falta'

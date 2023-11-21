@@ -25,10 +25,58 @@ mixin _$FairPriceStore on _FairPriceStoreBase, Store {
     });
   }
 
+  late final _$priceAtom =
+      Atom(name: '_FairPriceStoreBase.price', context: context);
+
+  @override
+  double? get price {
+    _$priceAtom.reportRead();
+    return super.price;
+  }
+
+  @override
+  set price(double? value) {
+    _$priceAtom.reportWrite(value, super.price, () {
+      super.price = value;
+    });
+  }
+
+  late final _$fairPriceStatusAtom =
+      Atom(name: '_FairPriceStoreBase.fairPriceStatus', context: context);
+
+  @override
+  AppState get fairPriceStatus {
+    _$fairPriceStatusAtom.reportRead();
+    return super.fairPriceStatus;
+  }
+
+  @override
+  set fairPriceStatus(AppState value) {
+    _$fairPriceStatusAtom.reportWrite(value, super.fairPriceStatus, () {
+      super.fairPriceStatus = value;
+    });
+  }
+
+  late final _$_FairPriceStoreBaseActionController =
+      ActionController(name: '_FairPriceStoreBase', context: context);
+
+  @override
+  dynamic setPrice(double? value) {
+    final _$actionInfo = _$_FairPriceStoreBaseActionController.startAction(
+        name: '_FairPriceStoreBase.setPrice');
+    try {
+      return super.setPrice(value);
+    } finally {
+      _$_FairPriceStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
   @override
   String toString() {
     return '''
-fairPricesFromList: ${fairPricesFromList}
+fairPricesFromList: ${fairPricesFromList},
+price: ${price},
+fairPriceStatus: ${fairPriceStatus}
     ''';
   }
 }

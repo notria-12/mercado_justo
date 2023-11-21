@@ -146,6 +146,22 @@ mixin _$CompareStore on _CompareStoreBase, Store {
     });
   }
 
+  late final _$missingItensAtom =
+      Atom(name: '_CompareStoreBase.missingItens', context: context);
+
+  @override
+  int get missingItens {
+    _$missingItensAtom.reportRead();
+    return super.missingItens;
+  }
+
+  @override
+  set missingItens(int value) {
+    _$missingItensAtom.reportWrite(value, super.missingItens, () {
+      super.missingItens = value;
+    });
+  }
+
   late final _$_CompareStoreBaseActionController =
       ActionController(name: '_CompareStoreBase', context: context);
 
@@ -172,6 +188,17 @@ mixin _$CompareStore on _CompareStoreBase, Store {
   }
 
   @override
+  dynamic setMissingProducts(List<List<Map<String, dynamic>>> fairPrices) {
+    final _$actionInfo = _$_CompareStoreBaseActionController.startAction(
+        name: '_CompareStoreBase.setMissingProducts');
+    try {
+      return super.setMissingProducts(fairPrices);
+    } finally {
+      _$_CompareStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 newQuantity: ${newQuantity},
@@ -182,6 +209,7 @@ listTotal: ${listTotal},
 products: ${products},
 productState: ${productState},
 quantities: ${quantities},
+missingItens: ${missingItens},
 getFairPrice: ${getFairPrice}
     ''';
   }

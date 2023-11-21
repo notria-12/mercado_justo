@@ -19,7 +19,6 @@ import 'package:mercado_justo/shared/models/product_model.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/utils/dynamic_links.dart';
 import 'package:mercado_justo/shared/widgets/button_share.dart';
-import 'package:mobx/mobx.dart';
 
 import 'package:share_plus/share_plus.dart';
 
@@ -43,11 +42,6 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
     super.initState();
 
     store.getCurrentList();
-    // autorun((_){
-    //     if(store.listId != null){
-    //       store.getProducts(store.listId!);
-    //     }
-    // });
   }
 
   @override
@@ -77,265 +71,263 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      // padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Column(
-        children: [
-          if (_topBanner != null)
-            Observer(builder: (_) {
-              return Visibility(
-                visible: !(_signatureStore.signature != null &&
-                    _signatureStore.signature!.status),
-                child: Align(
-                  child: Container(
-                    alignment: Alignment.center,
-                    child: AdWidget(ad: _topBanner!),
-                    width: _topBanner!.size.width.toDouble(),
-                    height: _topBanner!.size.height.toDouble(),
-                  ),
+    return Column(
+      children: [
+        if (_topBanner != null)
+          Observer(builder: (_) {
+            return Visibility(
+              visible: !(_signatureStore.signature != null &&
+                  _signatureStore.signature!.status),
+              child: Align(
+                child: Container(
+                  alignment: Alignment.center,
+                  child: AdWidget(ad: _topBanner!),
+                  width: _topBanner!.size.width.toDouble(),
+                  height: _topBanner!.size.height.toDouble(),
                 ),
-              );
-            }),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              'Total dos melhores preços dos mercados selecionados',
-              style:
-                  TextStyle(color: Colors.black54, fontWeight: FontWeight.w600),
-            ),
-          ),
-          Observer(builder: (context) {
-            double sum = 0;
-            if (store.getFairPrice.isNotEmpty) {
-              store.getFairPrice.forEach((element) {
-                sum += element.map((e) {
-                  return e['value'] * e['quantity'] as double;
-                }).reduce((value, element) => value + element);
-              });
-            }
-            return Padding(
-              padding: EdgeInsets.symmetric(horizontal: 14.sp),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  (_signatureStore.signature != null &&
-                          _signatureStore.signature!.status)
-                      ? Text(
-                          'R\$ ${sum.toStringAsFixed(2).replaceAll(r'.', ',')}',
-                          style: TextStyle(
-                              fontSize: 30.h, fontWeight: FontWeight.bold),
-                        )
-                      : Padding(
-                          padding: const EdgeInsets.symmetric(),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.lock,
-                                color: Colors.green,
-                              ),
-                              Text(
-                                'Valor total bloqueado',
-                                style: TextStyle(
-                                    color: Colors.lightBlue, fontSize: 16.sp),
-                              )
-                            ],
-                          ),
-                        ),
-                  Row(
-                    children: [
-                      ButtonOptionsListDetail(
-                        label: 'Filtro',
-                        onTap: () {
-                          Modular.get<FilterStore>().marketId = '';
-                          Modular.to
-                              .pushNamed('/home_auth/list/filters')
-                              .then((value) => store.reloadList());
-                        },
-                      ),
-                      ButtonShare(
-                        onPressed: store.getFairPrice.isNotEmpty &&
-                                (_signatureStore.signature != null &&
-                                    _signatureStore.signature!.status)
-                            ? sharePrices
-                            : null,
-                        size: 20.sp,
-                      ),
-                      InkWell(
-                        onTap: () {
-                          if (store.getFairPrice.isNotEmpty)
-                            showModalBottomSheet(
-                                context: context,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12)),
-                                builder: (context) {
-                                  return Container(
-                                    padding: EdgeInsets.all(16),
-                                    child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          const SizedBox(
-                                            height: 10,
-                                          ),
-                                          const Text(
-                                            "Tem certeza que deseja remover a lista de melhores preços?",
-                                            style: TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          const SizedBox(
-                                            height: 4,
-                                          ),
-                                          const Text(
-                                              "A tela atual ficará vazia"),
-                                          const SizedBox(
-                                            height: 8,
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceAround,
-                                            children: [
-                                              InkWell(
-                                                onTap: () {
-                                                  store
-                                                      .removeListInComparePage();
-                                                  Modular.to.pop();
-                                                },
-                                                child: Container(
-                                                  width: 170,
-                                                  padding: EdgeInsets.all(16),
-                                                  decoration: BoxDecoration(
-                                                      color: Colors.red,
-                                                      borderRadius:
-                                                          BorderRadius.all(
-                                                              Radius.circular(
-                                                                  5))),
-                                                  child: Center(
-                                                    child: Text(
-                                                      'Remover',
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 18),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              InkWell(
-                                                onTap: () {
-                                                  Modular.to.pop();
-                                                },
-                                                child: Container(
-                                                  width: 170,
-                                                  padding: EdgeInsets.all(16),
-                                                  decoration: BoxDecoration(
-                                                      color: Colors.white,
-                                                      border: Border.all(
-                                                          color: Colors.grey),
-                                                      borderRadius:
-                                                          BorderRadius.all(
-                                                              Radius.circular(
-                                                                  5))),
-                                                  child: Center(
-                                                    child: Text(
-                                                      'Cancelar',
-                                                      style: TextStyle(
-                                                          fontSize: 18),
-                                                    ),
-                                                  ),
-                                                ),
-                                              )
-                                            ],
-                                          )
-                                        ]),
-                                  );
-                                });
-                        },
-                        child: Icon(
-                          Icons.delete_outline_outlined,
-                          size: 25.sp,
-                        ),
-                      )
-                    ],
-                  )
-                ],
               ),
             );
           }),
-          Expanded(
-              child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Observer(
-              builder: (context) {
-                if (store.listId != null) {
-                  store.getProducts(store.listId!);
-                  return Observer(
-                    builder: (_) {
-                      if (store.productState is AppStateLoading) {
-                        return Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
-                              Text('Carregando produtos...'),
-                              SizedBox(
-                                height: 8,
-                              ),
-                              CircularProgressIndicator(),
-                            ],
-                          ),
-                        );
-                      }
-                      if (store.productState is AppStateSuccess &&
-                          Modular.get<MarketStore>()
-                              .filteredMarkets
-                              .where((element) => element.isSelectable == true)
-                              .toList()
-                              .isNotEmpty) {
-                                
-                        return FutureBuilder(
-                          builder: (context, snapshot) {
-                            switch (snapshot.connectionState) {
-                              case ConnectionState.none:
-                              case ConnectionState.waiting:
-                                return Center(
-                                    child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: const [
-                                    Text('Calculando preço justo...'),
-                                    SizedBox(
-                                      height: 8,
-                                    ),
-                                    CircularProgressIndicator(),
-                                  ],
-                                ));
-
-                              case ConnectionState.done:
-                                if (snapshot.hasError) {
-                                  return const Text(
-                                      'Obtivemos problemas ao montar a lista de PoupaMais');
-                                }
-                                
-                                var auxFairPrice = store.getFairPrice;
-                                return ListView.builder(
-                                  itemBuilder: (context, index) {
-                                    
-                                    Market market = Modular.get<MarketStore>()
-                                        .filteredMarkets
-                                        .where(
-                                            (element) => element.isSelectable)
-                                        .toList()
-                                        .firstWhere((market) =>
-                                            auxFairPrice[index][0]
-                                                ['market_id'] ==
-                                            market.hashId);
-                                    return Column(
+        Observer(builder: (_) {
+          
+          return  Padding(
+            padding: const EdgeInsets.only(left: 16, right: 16, top: 8),
+            child: Text.rich(TextSpan(text: 'Total dos melhores preços dos mercados selecionados', children: [TextSpan(text:store.missingItens > 0 ? ' Falta ${store.missingItens} item':'', style:  const TextStyle(
+                  color: Colors.red, fontWeight: FontWeight.w600))])
+              ,
+              style: const TextStyle(
+                  color: Colors.black54, fontWeight: FontWeight.w600),
+            ),
+          );
+        }),
+        Observer(builder: (context) {
+          double sum = 0;
+          if (store.getFairPrice.isNotEmpty) {
+            store.getFairPrice.forEach((element) {
+              sum += element.map((e) {
+                return e['value'] * e['quantity'] as double;
+              }).reduce((value, element) => value + element);
+            });
+          }
+          return Padding(
+            padding: EdgeInsets.symmetric(horizontal: 14.sp),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                (_signatureStore.signature != null &&
+                        _signatureStore.signature!.status)
+                    ? Text(
+                        'R\$ ${sum.toStringAsFixed(2).replaceAll(r'.', ',')}',
+                        style: TextStyle(
+                            fontSize: 30.h, fontWeight: FontWeight.bold),
+                      )
+                    : Padding(
+                        padding: const EdgeInsets.symmetric(),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.lock,
+                              color: Colors.green,
+                            ),
+                            Text(
+                              'Valor total bloqueado',
+                              style: TextStyle(
+                                  color: Colors.lightBlue, fontSize: 16.sp),
+                            )
+                          ],
+                        ),
+                      ),
+                Row(
+                  children: [
+                    ButtonOptionsListDetail(
+                      label: 'Filtro',
+                      onTap: () {
+                        Modular.get<FilterStore>().marketId = '';
+                        Modular.to
+                            .pushNamed('/home_auth/list/filters')
+                            .then((value) => store.reloadList());
+                      },
+                    ),
+                    ButtonShare(
+                      onPressed: store.getFairPrice.isNotEmpty &&
+                              (_signatureStore.signature != null &&
+                                  _signatureStore.signature!.status)
+                          ? sharePrices
+                          : null,
+                      size: 20.sp,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        if (store.getFairPrice.isNotEmpty) {
+                          showModalBottomSheet(
+                              context: context,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12)),
+                              builder: (context) {
+                                return Container(
+                                  padding: EdgeInsets.all(16),
+                                  child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
                                       children: [
                                         const SizedBox(
                                           height: 10,
                                         ),
-                                        Container(
+                                        const Text(
+                                          "Tem certeza que deseja remover a lista de melhores preços?",
+                                          style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        const SizedBox(
+                                          height: 4,
+                                        ),
+                                        const Text("A tela atual ficará vazia"),
+                                        const SizedBox(
+                                          height: 8,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceAround,
+                                          children: [
+                                            InkWell(
+                                              onTap: () {
+                                                store.removeListInComparePage();
+                                                Modular.to.pop();
+                                              },
+                                              child: Container(
+                                                width: 170,
+                                                padding:
+                                                    const EdgeInsets.all(16),
+                                                decoration: const BoxDecoration(
+                                                    color: Colors.red,
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                5))),
+                                                child: const Center(
+                                                  child: Text(
+                                                    'Remover',
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 18),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            InkWell(
+                                              onTap: () {
+                                                Modular.to.pop();
+                                              },
+                                              child: Container(
+                                                width: 170,
+                                                padding: EdgeInsets.all(16),
+                                                decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    border: Border.all(
+                                                        color: Colors.grey),
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                5))),
+                                                child: Center(
+                                                  child: Text(
+                                                    'Cancelar',
+                                                    style:
+                                                        TextStyle(fontSize: 18),
+                                                  ),
+                                                ),
+                                              ),
+                                            )
+                                          ],
+                                        )
+                                      ]),
+                                );
+                              });
+                        }
+                      },
+                      child: Icon(
+                        Icons.delete_outline_outlined,
+                        size: 25.sp,
+                      ),
+                    )
+                  ],
+                )
+              ],
+            ),
+          );
+        }),
+        Expanded(
+            child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Observer(
+            builder: (context) {
+              if (store.listId != null) {
+                store.getProducts(store.listId!);
+                return Observer(
+                  builder: (_) {
+                    if (store.productState is AppStateLoading) {
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Text('Carregando produtos...'),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            CircularProgressIndicator(),
+                          ],
+                        ),
+                      );
+                    }
+                    if (store.productState is AppStateSuccess &&
+                        Modular.get<MarketStore>()
+                            .filteredMarkets
+                            .where((element) => element.isSelectable == true)
+                            .toList()
+                            .isNotEmpty) {
+                      return FutureBuilder(
+                        builder: (context, snapshot) {
+                          switch (snapshot.connectionState) {
+                            case ConnectionState.none:
+                            case ConnectionState.waiting:
+                              return Center(
+                                  child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const [
+                                  Text('Calculando preço justo...'),
+                                  SizedBox(
+                                    height: 8,
+                                  ),
+                                  CircularProgressIndicator(),
+                                ],
+                              ));
+
+                            case ConnectionState.done:
+                              if (snapshot.hasError) {
+                                return const Text(
+                                    'Obtivemos problemas ao montar a lista de PoupaMais');
+                              }
+
+                              var auxFairPrice = store.getFairPrice;
+                              return ListView.builder(
+                                itemBuilder: (context, index) {
+                                  Market market = Modular.get<MarketStore>()
+                                      .filteredMarkets
+                                      .where((element) => element.isSelectable)
+                                      .toList()
+                                      .firstWhere((market) =>
+                                          auxFairPrice[index][0]['market_id'] ==
+                                          market.hashId);
+                                  return Column(
+                                    children: [
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Container(
                                           decoration: BoxDecoration(
                                               borderRadius:
                                                   const BorderRadius.all(
@@ -345,294 +337,288 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                                                       255, 240, 241, 241))),
                                           padding: const EdgeInsets.symmetric(
                                               vertical: 8, horizontal: 4),
-                                          child: 
-                                          // Observer(builder: (_) {
-                                            // return
-                                             Row(
-                                              children: [
-                                                Container(
-                                                  height: 80,
-                                                  width: 70,
-                                                  child: (_signatureStore
-                                                                  .signature !=
+                                          child:
+                                              // Observer(builder: (_) {
+                                              // return
+                                              Row(
+                                            children: [
+                                              Container(
+                                                height: 80,
+                                                width: 70,
+                                                child: (_signatureStore
+                                                                .signature !=
+                                                            null &&
+                                                        _signatureStore
+                                                            .signature!.status)
+                                                    ? CachedNetworkImage(
+                                                        imageUrl:
+                                                            market.imagePath!,
+                                                        memCacheHeight: 150,
+                                                        memCacheWidth: 180,
+                                                      )
+                                                    : Container(
+                                                        child: const Center(
+                                                        child: Text(
+                                                          'SEJA PREMIUM',
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color: Colors
+                                                                  .lightBlue),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                      )),
+                                              ),
+                                              Expanded(
+                                                  child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    market.address,
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 2,
+                                                  ),
+                                                  Observer(builder: (_) {
+                                                    return Text(
+                                                        'Distância: ${(Geolocator.distanceBetween(positionStore.position!.latitude, positionStore.position!.longitude, market.latitude, market.longitude) / 1000).toStringAsFixed(2).replaceAll(r'.', ',')} km');
+                                                  }),
+                                                  const SizedBox(
+                                                    height: 2,
+                                                  ),
+                                                  (_signatureStore.signature !=
                                                               null &&
                                                           _signatureStore
                                                               .signature!
                                                               .status)
-                                                      ? CachedNetworkImage(
-                                                          imageUrl: market
-                                                              .imagePath!,
-                                                          memCacheHeight: 150,
-                                                          memCacheWidth: 180,
+                                                      ? Text(
+                                                          'R\$ ${auxFairPrice[index].where((element) => element['market_id'] == market.hashId).map((e) {
+                                                                return e['value'] *
+                                                                        e['quantity']
+                                                                    as double;
+                                                              }).reduce((value, element) => value + element).toStringAsFixed(2).replaceAll(r'.', ',')}',
+                                                          style: TextStyle(
+                                                              fontSize: 18.sp,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color: Colors
+                                                                  .green[700]),
                                                         )
-                                                      : Container(
-                                                          child: const Center(
-                                                          child: Text(
-                                                            'SEJA PREMIUM',
-                                                            style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color: Colors
-                                                                    .lightBlue),
-                                                            textAlign:
-                                                                TextAlign
-                                                                    .center,
-                                                          ),
-                                                        )),
-                                                ),
-                                                Expanded(
-                                                    child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment
-                                                          .start,
-                                                  children: [
-                                                    Text(
-                                                      market.address,
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight
-                                                                  .bold),
-                                                    ),
-                                                    const SizedBox(
-                                                      height: 2,
-                                                    ),
-                                                    Observer(builder: (_) {
-                                                      return Text(
-                                                          'Distância: ${(Geolocator.distanceBetween(positionStore.position!.latitude, positionStore.position!.longitude, market.latitude, market.longitude) / 1000).toStringAsFixed(2).replaceAll(r'.', ',')} km');
-                                                    }),
-                                                    const SizedBox(
-                                                      height: 2,
-                                                    ),
-                                                    (_signatureStore.signature !=
-                                                                null &&
-                                                            _signatureStore
-                                                                .signature!
-                                                                .status)
-                                                        ? Text(
-                                                            'R\$ ${auxFairPrice[index].where((element) => element['market_id'] == market.hashId).map((e) {
-                                                                  return e['value'] *
-                                                                          e['quantity']
-                                                                      as double;
-                                                                }).reduce((value, element) => value + element).toStringAsFixed(2).replaceAll(r'.', ',')}',
-                                                            style: TextStyle(
-                                                                fontSize:
-                                                                    18.sp,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color: Colors
-                                                                        .green[
-                                                                    700]),
-                                                          )
-                                                        : Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                        .only(
-                                                                    left:
-                                                                        16.0),
-                                                            child: Icon(
-                                                                Icons.lock),
-                                                          )
-                                                  ],
-                                                ))
-                                              ],
-                                            )
+                                                      : Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  left: 16.0),
+                                                          child:
+                                                              Icon(Icons.lock),
+                                                        )
+                                                ],
+                                              ))
+                                            ],
+                                          )
                                           // }),
-                                        ),
-                                        const SizedBox(
-                                          height: 15,
-                                        ),
-                                        Observer(
-                                          builder: (_) {
-                                            if (Modular.get<ConfigStore>()
-                                                    .separetedByCategory ==
-                                                false) {
-                                              return productsTable(
-                                                  auxFairPrice[index]
-                                                      .map((fairPrice) =>
-                                                          Product.fromMap(
-                                                              fairPrice[
-                                                                  'product_id']))
-                                                      .toList(),
-                                                  index, auxFairPrice);
-                                            } else {
-                                              return Column(
-                                                children: [
-                                                  ...store
-                                                      .groupProducts(auxFairPrice[index]
-                                                          .map((fairPrice) =>
-                                                              Product.fromMap(
-                                                                  fairPrice[
-                                                                      'product_id']))
-                                                          .toList())
-                                                      .map((e) => Container(
-                                                            decoration: const BoxDecoration(
-                                                                border: Border(
-                                                                    top: BorderSide(
-                                                                        width:
-                                                                            0.3,
-                                                                        color:
-                                                                            Colors.black54))),
-                                                            child:
-                                                                ExpansionTile(
-                                                              maintainState:
-                                                                  true,
-                                                              collapsedBackgroundColor:
-                                                                  const Color
-                                                                          .fromARGB(
-                                                                      255,
-                                                                      240,
-                                                                      241,
-                                                                      241),
-                                                              title: Row(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .spaceBetween,
-                                                                children: [
-                                                                  Text(e[0]
-                                                                      .category!),
-                                                                  (_signatureStore.signature !=
-                                                                              null &&
-                                                                          _signatureStore
-                                                                              .signature!.status)
-                                                                      ? Text(
-                                                                          ' R\$ ${auxFairPrice[index].where((element) => element['product_id']['categoria_1'] == e[0].category).map((e) => e['quantity'] * e['value'] as double).reduce((value, element) => value + element).toStringAsFixed(2).replaceAll(r'.', ',')}',
-                                                                        )
-                                                                      : Icon(Icons
-                                                                          .lock),
-                                                                ],
-                                                              ),
+                                          ),
+                                      const SizedBox(
+                                        height: 15,
+                                      ),
+                                      Observer(
+                                        builder: (_) {
+                                          store.setMissingProducts(auxFairPrice);
+                                          if (Modular.get<ConfigStore>()
+                                                  .separetedByCategory ==
+                                              false) {
+                                            return productsTable(
+                                                auxFairPrice[index]
+                                                    .map((fairPrice) =>
+                                                        Product.fromMap(
+                                                            fairPrice[
+                                                                'product_id']))
+                                                    .toList(),
+                                                index,
+                                                auxFairPrice);
+                                          } else {
+                                            return Column(
+                                              children: [
+                                                ...store
+                                                    .groupProducts(auxFairPrice[
+                                                            index]
+                                                        .map((fairPrice) =>
+                                                            Product.fromMap(
+                                                                fairPrice[
+                                                                    'product_id']))
+                                                        .toList())
+                                                    .map((e) => Container(
+                                                          decoration: const BoxDecoration(
+                                                              border: Border(
+                                                                  top: BorderSide(
+                                                                      width:
+                                                                          0.3,
+                                                                      color: Colors
+                                                                          .black54))),
+                                                          child: ExpansionTile(
+                                                            maintainState: true,
+                                                            collapsedBackgroundColor:
+                                                                const Color
+                                                                        .fromARGB(
+                                                                    255,
+                                                                    240,
+                                                                    241,
+                                                                    241),
+                                                            title: Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
                                                               children: [
-                                                                productsTable(
-                                                                    e, index, auxFairPrice)
+                                                                Text(e[0]
+                                                                    .category!),
+                                                                (_signatureStore.signature !=
+                                                                            null &&
+                                                                        _signatureStore
+                                                                            .signature!
+                                                                            .status)
+                                                                    ? Text(
+                                                                        ' R\$ ${auxFairPrice[index].where((element) => element['product_id']['categoria_1'] == e[0].category).map((e) => e['quantity'] * e['value'] as double).reduce((value, element) => value + element).toStringAsFixed(2).replaceAll(r'.', ',')}',
+                                                                      )
+                                                                    : Icon(Icons
+                                                                        .lock),
                                                               ],
                                                             ),
-                                                          ))
-                                                ],
-                                              );
-                                            }
-                                          },
-                                        )
-                                      ],
-                                    );
-                                  },
-                                  itemCount: auxFairPrice.length,
-                                );
-                              default:
-                                return Container();
-                            }
-                          },
-                          future: store.getProductsPrices(store.products),
-                        );
-                      }
-                      return Container(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Com base na sua localização atual, infelizmente não foi possível listar os mercados!',
-                              style: TextStyle(
-                                  color: Colors.black38,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.center,
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                    'Ajuste o raio de distância ou altere sua localização '),
-                              ],
-                            )
-                          ],
-                        ),
+                                                            children: [
+                                                              productsTable(
+                                                                  e,
+                                                                  index,
+                                                                  auxFairPrice)
+                                                            ],
+                                                          ),
+                                                        ))
+                                              ],
+                                            );
+                                          }
+                                        },
+                                      )
+                                    ],
+                                  );
+                                },
+                                itemCount: auxFairPrice.length,
+                              );
+                            default:
+                              return Container();
+                          }
+                        },
+                        future: store.getProductsPrices(store.products),
                       );
-                    },
-                  );
-                }
-
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      'O seu PoupaMais está vazio.',
-                      textAlign: TextAlign.center,
-                      style:
-                          TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(
-                      height: 22,
-                    ),
-                    const Text(
-                      'Selecione a lista de compras desejada e clique em: ',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black54),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
+                    }
+                    return Container(
+                      child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Container(
-                            height: 20,
-                            width: 20,
-                            decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.lightBlue),
-                            child: const Center(
-                                child: Icon(
-                              Icons.add,
-                              color: Colors.white,
-                              size: 18,
-                            )),
-                          ),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          const Text(
-                            'add a PoupaMais',
+                          Text(
+                            'Com base na sua localização atual, infelizmente não foi possível listar os mercados!',
                             style: TextStyle(
-                                color: Colors.black54,
-                                fontWeight: FontWeight.w500),
+                                color: Colors.black38,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center,
                           ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                  'Ajuste o raio de distância ou altere sua localização '),
+                            ],
+                          )
                         ],
                       ),
-                    ),
-                    const Text(
-                      'Assim você verá os melhores preços de cada supermercado.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black54),
-                    ),
-                  ],
+                    );
+                  },
                 );
-              },
-            ),
-          )),
-          if (_bottomBanner != null)
-            Observer(builder: (_) {
-              return Visibility(
-                visible: !(_signatureStore.signature != null &&
-                    _signatureStore.signature!.status),
-                child: Container(
-                  alignment: Alignment.center,
-                  child: AdWidget(ad: _bottomBanner!),
-                  width: _bottomBanner!.size.width.toDouble(),
-                  height: _bottomBanner!.size.height.toDouble(),
-                ),
+              }
+
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    'O seu PoupaMais está vazio.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(
+                    height: 22,
+                  ),
+                  const Text(
+                    'Selecione a lista de compras desejada e clique em: ',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black54),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          height: 20,
+                          width: 20,
+                          decoration: const BoxDecoration(
+                              shape: BoxShape.circle, color: Colors.lightBlue),
+                          child: const Center(
+                              child: Icon(
+                            Icons.add,
+                            color: Colors.white,
+                            size: 18,
+                          )),
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        const Text(
+                          'add a PoupaMais',
+                          style: TextStyle(
+                              color: Colors.black54,
+                              fontWeight: FontWeight.w500),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Text(
+                    'Assim você verá os melhores preços de cada supermercado.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black54),
+                  ),
+                ],
               );
-            }),
-        ],
-      ),
+            },
+          ),
+        )),
+        if (_bottomBanner != null)
+          Observer(builder: (_) {
+            return Visibility(
+              visible: !(_signatureStore.signature != null &&
+                  _signatureStore.signature!.status),
+              child: Container(
+                alignment: Alignment.center,
+                child: AdWidget(ad: _bottomBanner!),
+                width: _bottomBanner!.size.width.toDouble(),
+                height: _bottomBanner!.size.height.toDouble(),
+              ),
+            );
+          }),
+      ],
     );
   }
 
@@ -665,7 +651,8 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
             '\n\nAcesse o nosso app e tenha uma visualização completa dos melhores preços.\n\n$value'));
   }
 
-  DataTable productsTable(List<Product> products, int index, List<List<Map<String, dynamic>>> fairPrice) {
+  DataTable productsTable(List<Product> products, int index,
+      List<List<Map<String, dynamic>>> fairPrice) {
     return DataTable(
       border: const TableBorder(
         verticalInside: BorderSide(color: Colors.grey, width: 0.2),
@@ -745,7 +732,7 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                         children: [
                           Text(
                             'R\$ ${(row['value'] as double).toStringAsFixed(2).replaceAll(r'.', ',')}',
-                            style: TextStyle(
+                            style: const TextStyle(
                                 color: Colors.black54,
                                 fontWeight: FontWeight.w500),
                           ),
@@ -759,7 +746,7 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                           )
                         ],
                       )
-                    : Expanded(
+                    : const Expanded(
                         child: Center(
                         child: Icon(Icons.lock),
                       ))
@@ -992,8 +979,6 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
           )),
           DataCell(Container(
             height: 100,
-            // width: 130,
-            // padding: const EdgeInsets.all(8),
             child: Center(
               child: CachedNetworkImage(
                 imageUrl: e[i].imagePath!,
