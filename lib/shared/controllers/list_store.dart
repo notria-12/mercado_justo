@@ -121,7 +121,7 @@ abstract class _ListStoreBase with Store {
 
   int getNumberOfPricesEmpty(List<String> prices) {
     int numberOfPricesEmpty = 0;
-    print('Prices $prices');
+
     for (var price in prices) {
       if (priceIsEmpty(price)) numberOfPricesEmpty++;
     }
@@ -154,15 +154,19 @@ abstract class _ListStoreBase with Store {
             prices[i][marketSelected] == 'R\$ 0,00' ||
             prices[i][marketSelected] == 'Em Falta') {
           missingItens++;
-          average += ((prices[i]
-                      .map((e) => _parseToDouble(e))
-                      .reduce((value, element) => value + element)) /
-                  (marketStore.filteredMarkets
-                          .where((element) => element.isSelectable == true)
-                          .toList()
-                          .length -
-                      getNumberOfPricesEmpty(prices[i]))) *
-              quantities[i];
+
+          var sumOfPricesForLine = (prices[i]
+              .map((e) => _parseToDouble(e))
+              .reduce((value, element) => value + element));
+          if (sumOfPricesForLine > 0) {
+            average += (sumOfPricesForLine /
+                    (marketStore.filteredMarkets
+                            .where((element) => element.isSelectable == true)
+                            .toList()
+                            .length -
+                        getNumberOfPricesEmpty(prices[i]))) *
+                quantities[i];
+          }
         }
       }
     }
