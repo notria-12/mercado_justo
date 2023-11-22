@@ -358,7 +358,7 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                             ),
                             Text(
                               position != null
-                                  ? 'Não há mercados no disponíveis para sua localização'
+                                  ? 'Não há mercados disponíveis para sua localização'
                                   : 'GPS desligado! Ative o GPS para aparecer os produtos dos supermercados mais próximos de você.',
                               textAlign: TextAlign.center,
                             ),
