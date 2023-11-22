@@ -6,6 +6,7 @@ import 'package:mercado_justo/shared/models/market_model.dart';
 import 'package:mercado_justo/shared/models/price_model.dart';
 import 'package:mercado_justo/shared/models/product_list_model.dart';
 import 'package:mercado_justo/shared/models/product_model.dart';
+import 'package:mercado_justo/shared/repositories/fair_price_repository.dart';
 import 'package:mercado_justo/shared/repositories/price_repository.dart';
 import 'package:mercado_justo/shared/utils/app_state.dart';
 import 'package:mercado_justo/shared/utils/error.dart';
@@ -19,10 +20,11 @@ class ListStore = _ListStoreBase with _$ListStore;
 
 abstract class _ListStoreBase with Store {
   final PriceRepository priceRepository;
+  final FairPriceRepository fairPriceRepository;
   final MarketStore marketStore;
   final ListRepository _repository;
   _ListStoreBase(this._repository,
-      {required this.priceRepository, required this.marketStore});
+      {required this.priceRepository, required this.marketStore,  required this.fairPriceRepository});
 
   @observable
   List<ListModel> product_list = [];
@@ -104,15 +106,18 @@ abstract class _ListStoreBase with Store {
       for (var i = 0; i < newList.length; i++) {
         int index = products.indexOf(
             products.firstWhere((element) => element.productId! == newList[i]));
-        average += (prices[index]
+        double sumOfPricesForLine = prices[index]
                     .map((e) => _parseToDouble(e))
-                    .reduce((value, element) => value + element) /
+                    .reduce((value, element) => value + element);
+        if(sumOfPricesForLine > 0){
+          average += ( sumOfPricesForLine /
                 (marketStore.filteredMarkets
                         .where((element) => element.isSelectable == true)
                         .toList()
                         .length -
                     getNumberOfPricesEmpty(prices[index]))) *
             quantities[index];
+        }
       }
     }
 
@@ -201,6 +206,7 @@ abstract class _ListStoreBase with Store {
       {required int listId, required int productId}) async {
     try {
       await _repository.deleteProductOfList(listId, productId);
+      await fairPriceRepository.deleteFairPrice(listId, productId);
       prices = [];
 
       getProducts(listId);

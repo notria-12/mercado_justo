@@ -20,6 +20,7 @@ import 'package:mercado_justo/shared/controllers/market_store.dart';
 import 'package:mercado_justo/shared/controllers/price_store.dart';
 import 'package:mercado_justo/shared/controllers/product_store.dart';
 import 'package:mercado_justo/shared/controllers/product_to_list_store.dart';
+import 'package:mercado_justo/shared/repositories/fair_price_repository.dart';
 import 'package:mercado_justo/shared/repositories/list_repository.dart';
 import 'package:mercado_justo/shared/repositories/market_repository.dart';
 import 'package:mercado_justo/shared/repositories/price_repository.dart';
@@ -41,11 +42,12 @@ class HomeAuthModule extends Module {
     Bind.factory((i) => PriceStore(repository: i())),
     Bind.lazySingleton((i) => ListRepository()),
     Bind.lazySingleton(
-        (i) => ListStore(i(), priceRepository: i(), marketStore: i())),
+        (i) => ListStore(i(), priceRepository: i(), marketStore: i(), fairPriceRepository: i())),
     Bind.lazySingleton((i) => ProductToListStore(i())),
     Bind.lazySingleton((i) => ProductToListRepository()),
     Bind.lazySingleton((i) => CategoryStore(i())),
     Bind.lazySingleton((i) => CategoryRepository(i())),
+    Bind.lazySingleton((i) => FairPriceRepository()),
     Bind.lazySingleton((i) => ProblemStore(i())),
     Bind.lazySingleton((i) => ProblemRepository(i())),
     Bind.factory((i) => AveragePriceRepository(i())),

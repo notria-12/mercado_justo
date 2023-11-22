@@ -258,7 +258,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                                     style: TextStyle(
                                         color: Colors.red,
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 16.sp))),
+                                        fontSize: 14.sp))),
                             RichText(
                                 text: TextSpan(
                                     children: [
@@ -270,7 +270,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                                     style: TextStyle(
                                         color: Colors.red,
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 12.sp)))
+                                        fontSize: 10.sp)))
                           ],
                         );
                       }),
@@ -328,6 +328,7 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                             storeProductList.marketSelected == -1)
                         ? Text(
                             'R\$ ${storeProductList.getTotalPriceForMyFairPrice(storeFairPrice.fairPricesFromList).toStringAsFixed(2).replaceAll(r'.', ',')}',
+                            // '0,00',
                             style: const TextStyle(
                                 fontSize: 38, fontWeight: FontWeight.bold),
                           )
