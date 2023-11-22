@@ -477,14 +477,14 @@ class _ComparePageState extends ModularState<ComparePage, CompareStore> {
                                                                       .spaceBetween,
                                                               children: [
                                                                 Text(e[0]
-                                                                    .category!),
+                                                                    .category!, style: TextStyle(fontSize: 14.sp),),
                                                                 (_signatureStore.signature !=
                                                                             null &&
                                                                         _signatureStore
                                                                             .signature!
                                                                             .status)
                                                                     ? Text(
-                                                                        ' R\$ ${auxFairPrice[index].where((element) => element['product_id']['categoria_1'] == e[0].category).map((e) => e['quantity'] * e['value'] as double).reduce((value, element) => value + element).toStringAsFixed(2).replaceAll(r'.', ',')}',
+                                                                        ' R\$ ${auxFairPrice[index].where((element) => element['product_id']['categoria_1'] == e[0].category).map((e) => e['quantity'] * e['value'] as double).reduce((value, element) => value + element).toStringAsFixed(2).replaceAll(r'.', ',')}', style: TextStyle(fontSize: 14.sp),
                                                                       )
                                                                     : Icon(Icons
                                                                         .lock),

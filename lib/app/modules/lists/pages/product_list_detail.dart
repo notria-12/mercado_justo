@@ -225,95 +225,98 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
   Column productsAndPricesTable(List<Market> filteredMarkets) {
     return Column(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Valor total da lista por Mercado',
-              style:
-                  TextStyle(color: Colors.black54, fontWeight: FontWeight.w500),
-            ),
-            if (storeProductList.isFairPrice &&
-                storeProductList.marketSelected == -1)
-              FutureBuilder(
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    return Visibility(
-                      visible: storeProductList.products.length -
-                              storeFairPrice.fairPricesFromList.length >
-                          0,
-                      child: Observer(builder: (_) {
-                        return Column(
-                          children: [
-                            RichText(
-                                text: TextSpan(
-                                    children: [
-                                  TextSpan(
-                                      text:
-                                          ' ${storeProductList.products.length - storeFairPrice.fairPricesFromList.length} '),
-                                  const TextSpan(text: 'item')
-                                ],
-                                    text: 'Falta',
-                                    style: TextStyle(
-                                        color: Colors.red,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14.sp))),
-                            RichText(
-                                text: TextSpan(
-                                    children: [
-                                  TextSpan(
-                                      text:
-                                          ' R\$ ${storeProductList.getAverageMissingProducts(storeFairPrice.fairPricesFromList.map((e) => e['product_id'] as int).toList()).toStringAsFixed(2)} '),
-                                ],
-                                    text: 'Valor médio',
-                                    style: TextStyle(
-                                        color: Colors.red,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 10.sp)))
-                          ],
-                        );
-                      }),
-                    );
-                  }
-                  return Container();
-                },
-                future: storeFairPrice.getFairPricesFromList(
-                    listId: widget.listModel.id!),
+        Padding(
+          padding: const EdgeInsets.only(top:8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+               Text(
+                'Valor total por Mercado',
+                style:
+                    TextStyle(color: Colors.black54, fontWeight: FontWeight.w500, fontSize: 13.sp),
               ),
-            Visibility(
-              visible: storeProductList.missingProducts['missingItens'] != 0,
-              child: Column(
-                children: [
-                  RichText(
-                      text: TextSpan(
-                          children: [
-                        TextSpan(
-                            text:
-                                ' ${storeProductList.missingProducts['missingItens']} '),
-                        const TextSpan(text: 'item')
-                      ],
-                          text: 'Falta',
-                          style: TextStyle(
-                              color: Colors.red,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16.sp))),
-                  RichText(
-                      text: TextSpan(
-                          children: [
-                        TextSpan(
-                            text:
-                                ' R\$ ${storeProductList.missingProducts['average']} '),
-                      ],
-                          text: 'Valor médio',
-                          style: TextStyle(
-                              color: Colors.red,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12.sp)))
-                ],
-              ),
-            )
-          ],
+              if (storeProductList.isFairPrice &&
+                  storeProductList.marketSelected == -1)
+                FutureBuilder(
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      return Visibility(
+                        visible: storeProductList.products.length -
+                                storeFairPrice.fairPricesFromList.length >
+                            0,
+                        child: Observer(builder: (_) {
+                          return Column(
+                            children: [
+                              RichText(
+                                  text: TextSpan(
+                                      children: [
+                                    TextSpan(
+                                        text:
+                                            ' ${storeProductList.products.length - storeFairPrice.fairPricesFromList.length} '),
+                                    const TextSpan(text: 'item')
+                                  ],
+                                      text: 'Falta',
+                                      style: TextStyle(
+                                          color: Colors.red,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14.sp))),
+                              RichText(
+                                  text: TextSpan(
+                                      children: [
+                                    TextSpan(
+                                        text:
+                                            ' R\$ ${storeProductList.getAverageMissingProducts(storeFairPrice.fairPricesFromList.map((e) => e['product_id'] as int).toList()).toStringAsFixed(2)} '),
+                                  ],
+                                      text: 'Valor médio',
+                                      style: TextStyle(
+                                          color: Colors.red,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 10.sp)))
+                            ],
+                          );
+                        }),
+                      );
+                    }
+                    return Container();
+                  },
+                  future: storeFairPrice.getFairPricesFromList(
+                      listId: widget.listModel.id!),
+                ),
+              Visibility(
+                visible: storeProductList.missingProducts['missingItens'] != 0,
+                child: Column(
+                  children: [
+                    RichText(
+                        text: TextSpan(
+                            children: [
+                          TextSpan(
+                              text:
+                                  ' ${storeProductList.missingProducts['missingItens']} '),
+                          const TextSpan(text: 'item')
+                        ],
+                            text: 'Falta',
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14.sp))),
+                    RichText(
+                        text: TextSpan(
+                            children: [
+                          TextSpan(
+                              text:
+                                  ' R\$ ${storeProductList.missingProducts['average']} '),
+                        ],
+                            text: 'Valor médio',
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 10.sp)))
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -328,16 +331,16 @@ class _ProductListDetailsPageState extends State<ProductListDetailsPage> {
                             storeProductList.marketSelected == -1)
                         ? Text(
                             'R\$ ${storeProductList.getTotalPriceForMyFairPrice(storeFairPrice.fairPricesFromList).toStringAsFixed(2).replaceAll(r'.', ',')}',
-                            // '0,00',
-                            style: const TextStyle(
-                                fontSize: 38, fontWeight: FontWeight.bold),
+                            
+                            style:  TextStyle(
+                                fontSize: 30.h, fontWeight: FontWeight.bold),
                           )
                         : (_signatureStore.signature != null &&
                                 _signatureStore.signature!.status)
                             ? Text(
                                 'R\$ ${storeProductList.totalPrice.toStringAsFixed(2).replaceAll(r'.', ',')}',
-                                style: const TextStyle(
-                                    fontSize: 38, fontWeight: FontWeight.bold),
+                                style:  TextStyle(
+                                    fontSize: 30.h, fontWeight: FontWeight.bold),
                               )
                             : InkWell(
                                 onTap: () =>
