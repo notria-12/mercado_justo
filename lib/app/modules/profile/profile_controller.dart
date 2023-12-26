@@ -132,22 +132,17 @@ abstract class _ProfileStoreBase with Store {
   void updateUser() async {
     try {
       userUpdateStatus = AppStateLoading();
-      if (selectedState != null && selectedCity != null) {
+      
         UserModel newUser = user!.copyWith(
             name: inputName,
             phone: inputPhone,
             email: inputEmail,
             genre: selectedGenre!.toLowerCase(),
-            address: AddressModel(
-                state: selectedState!, city: selectedCity!, cep: inputCEP));
+            address: AddressModel( cep: inputCEP));
         user = await _repository.updateUser(user: newUser);
         _authController.setUser(user);
         userUpdateStatus = AppStateSuccess();
-      } else {
-        throw Failure(
-            title: 'Cidade e estado',
-            message: 'Estado e cidade são obrigatórios');
-      }
+     
     } on Failure catch (e) {
       userUpdateStatus = AppStateError(error: e);
     }

@@ -78,7 +78,7 @@ class UserModel {
         email: map['email'] ?? '',
         phone: map['telefone'] ?? '',
         age: map['idade']?.toInt(),
-        genre: map['orientacao'],
+        genre: map['orientacao'] ,
         registerDate: map['data_cadastro'] != null
             ? DateTime.tryParse(map['data_cadastro'])
             : null,
@@ -121,16 +121,16 @@ class UserModel {
 }
 
 class AddressModel {
-  String state;
-  String city;
+  String? state;
+  String? city;
   String? street;
   String? neighborhood;
   String? number;
   String? cep;
   String? complement;
   AddressModel({
-    required this.state,
-    required this.city,
+     this.state ,
+     this.city,
     this.street,
     this.neighborhood,
     this.number,
@@ -160,8 +160,8 @@ class AddressModel {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'uf': state,
-      'cidade': city,
+      if(state != null)'uf': state,
+      if(city != null)'cidade': city,
       if (street != null) 'rua': street,
       if (neighborhood != null) 'bairro': neighborhood,
       if (number != null) 'numero': number,
@@ -172,8 +172,8 @@ class AddressModel {
 
   factory AddressModel.fromMap(Map<String, dynamic> map) {
     return AddressModel(
-      state: map['uf'] as String,
-      city: map['cidade'] as String,
+      state: map['uf'] != null ? map['uf'] as String : null,
+      city: map['cidade'] != null ? map['cidade'] as String: null,
       street: map['rua'] != null ? map['rua'] as String : null,
       neighborhood: map['bairro'] != null ? map['bairro'] as String : null,
       number: map['numero'] != null ? map['numero'] as String : null,
