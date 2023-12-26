@@ -177,7 +177,7 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                                     searchFocus.unfocus();
                                   }
                                 },
-                                child: Icon(
+                                child:const Icon(
                                   Icons.search,
                                   size: 30,
                                 ),
@@ -379,27 +379,12 @@ class _HomeAuthContentState extends State<HomeAuthContent> {
                     }
                     return Observer(
                       builder: (_) {
-                        // if (priceStore.allPriceStatus is AppStateLoading) {
-                        //   return Center(
-                        //     child: Column(
-                        //       children: const [
-                        //         Text(
-                        //             "Aguarde enquanto os preços são carregados..."),
-                        //         SizedBox(
-                        //           height: 8,
-                        //         ),
-                        //         CircularProgressIndicator()
-                        //       ],
-                        //       mainAxisAlignment: MainAxisAlignment.center,
-                        //     ),
-                        //   );
-                        // }
 
                         return CustomDataTable(
                           fixedColWidth: 80.w,
                           loadMoreWidget: productStore.productState
                                   is AppStateLoading
-                              ? Container(
+                              ?  Container(
                                   height: 40,
                                   child: const Center(
                                     child: CircularProgressIndicator(),
