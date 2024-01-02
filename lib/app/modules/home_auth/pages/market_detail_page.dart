@@ -25,7 +25,7 @@ class MarketDetail extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               Row(
@@ -47,10 +47,10 @@ class MarketDetail extends StatelessWidget {
                       children: [
                         Text(
                           market.name,
-                          style: TextStyle(
+                          style:const TextStyle(
                               fontSize: 20, fontWeight: FontWeight.w700),
                         ),
-                        SizedBox(
+                       const SizedBox(
                           height: 20,
                         ),
                         Row(

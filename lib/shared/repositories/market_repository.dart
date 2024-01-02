@@ -38,14 +38,18 @@ class MarketRepository {
   Future<List<List<Market>>> getGroupMarkets() async {
     try {
       List<List<Market>> listMarkets = [];
-      final result;
+      final Response result;
 
       result = await dio.get('/mercados/listar');
       List list = result.data['dados'] as List;
       for (var item in list) {
-        var response = await dio.get(
-            'mercados?itens_pagina=20&pagina=1&ordernar=_id,1&procurar=%5B%7B%22termo%22%3A%22nome%22%2C%22valor%22%3A%22${item['value']}%22%7D%5D');
-        List mapMarkets = response.data['dados'] as List;
+        
+         
+         var response = await dio.get(
+              'mercados?itens_pagina=100&pagina=1&ordernar=_id,1&procurar=%5B%7B%22termo%22%3A%22nome%22%2C%22valor%22%3A%22${item['value']}%22%7D%5D');
+          List mapMarkets= response.data['dados'] as List;
+          
+        
         List<Market> markets =
             mapMarkets.map((e) => Market.fromMap(e)).toList();
         listMarkets.add(markets);
