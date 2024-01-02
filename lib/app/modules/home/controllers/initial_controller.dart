@@ -122,6 +122,8 @@ abstract class InitialStoreBase with Store {
   }
 
   List<Market> getMarketsByName(String name) {
-    return groupMarkets.firstWhere((element) => element[0].name == name);
+    List<Market> markets = groupMarkets.firstWhere((element) => element[0].name == name);
+     markets.sort((a, b) => Geolocator.distanceBetween(positionStore.position!.latitude, positionStore.position!.longitude, a.latitude, a.longitude).compareTo(Geolocator.distanceBetween(positionStore.position!.latitude, positionStore.position!.longitude, b.latitude, b.longitude)));
+     return markets.length >= 5 ? markets.sublist(0,5) : markets.sublist(0,markets.length);
   }
 }

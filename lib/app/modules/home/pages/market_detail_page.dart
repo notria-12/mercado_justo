@@ -53,12 +53,12 @@ class MarketDetail extends StatelessWidget {
                       SizedBox(
                         height: 20,
                       ),
-                      Wrap(
+                      Row(
                         children: [
                           Text(
                             'Visitar o site:',
                             style: TextStyle(
-                                fontSize: 16.sp, fontWeight: FontWeight.w400),
+                                fontSize: 14.sp, fontWeight: FontWeight.w400),
                           ),
                           TextButton(
                               style: TextButton.styleFrom(
@@ -69,7 +69,7 @@ class MarketDetail extends StatelessWidget {
                               child: Text(
                                 'Clique Aqui!',
                                 style: TextStyle(
-                                    color: Colors.red, fontSize: 16.sp),
+                                    color: Colors.red, fontSize: 14.sp),
                               )),
                         ],
                       )
@@ -77,15 +77,15 @@ class MarketDetail extends StatelessWidget {
                   )
                 ],
               ),
-              SizedBox(
+             const SizedBox(
                 height: 50,
               ),
               Text(
                 'Escolha o endereço que deseja ir:',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+                style: TextStyle(fontSize: 17.sp, fontWeight: FontWeight.w700),
               ),
               SizedBox(
-                height: 20,
+                height: 15.h,
               ),
               Expanded(
                   child: ListView.builder(
@@ -144,23 +144,23 @@ class _AddressWidgetState extends State<AddressWidget> {
                 children: [
                   Text(
                     widget.market.address,
-                    style: TextStyle(fontSize: 20),
+                    style: TextStyle(fontSize: 17.sp),
                   ),
                   Observer(builder: (_) {
                     return RichText(
                         text: TextSpan(
                             text: 'Distância: ',
-                            style: const TextStyle(
+                            style:  TextStyle(
                                 fontWeight: FontWeight.normal,
-                                fontSize: 20,
+                                fontSize: 17.sp,
                                 color: Colors.black),
                             children: [
                           TextSpan(
                               text:
                                   '${(Geolocator.distanceBetween(positionStore.position!.latitude, positionStore.position!.longitude, widget.market.latitude, widget.market.longitude) / 1000).toStringAsFixed(2).replaceAll(r'.', ',')} km',
-                              style: const TextStyle(
+                              style:  TextStyle(
                                 fontWeight: FontWeight.w700,
-                                fontSize: 20,
+                                fontSize: 17.sp,
                               ))
                         ]));
                   }),
