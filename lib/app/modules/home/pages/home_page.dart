@@ -342,6 +342,11 @@ class _HomePageState extends ModularState<HomePage, HomeStore> {
                                               imageUrl: snapshot.data!,
                                               memCacheWidth: 175,
                                               memCacheHeight: 105,
+                                               errorWidget: (context,
+                                                        error, stackTrace) {
+                                                      return Image.asset(
+                                                          'assets/img/image_not_found.jpg');
+                                                    }
                                             );
                                           }
                                           return Center(
