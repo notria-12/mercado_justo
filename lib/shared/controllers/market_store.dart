@@ -110,6 +110,6 @@ abstract class _MarketStoreBase with Store {
   List<Market> getMarketsByName(String name) {
     List<Market> markets = groupMarkets.firstWhere((element) => element[0].name == name);
      markets.sort((a, b) => Geolocator.distanceBetween(positionStore.position!.latitude, positionStore.position!.longitude, a.latitude, a.longitude).compareTo(Geolocator.distanceBetween(positionStore.position!.latitude, positionStore.position!.longitude, b.latitude, b.longitude)));
-     return markets.sublist(0,5);
+     return markets.length >= 5 ? markets.sublist(0,5) : markets.sublist(0,markets.length);
   }
 }
